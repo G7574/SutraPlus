@@ -1,0 +1,192 @@
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+<c-row>
+    <c-col md="12">
+        <div class="bg-light d-flex flex-row justify-content-end align-items-center">
+            <button cButton class="px-0 text-dark fw-bold text-decoration-none" color="link" (click)="back()">
+                <svg cIcon name="cilChevronLeft"></svg> Back
+            </button>
+        </div>
+    </c-col>
+</c-row>
+
+<c-row>
+    <c-col xs="12">
+        <form [formGroup]="addProduct">
+            <c-card class="my-3">
+                <c-card-header>
+                    <h4 class="mb-0">Update Item/Service Details</h4>
+                </c-card-header>
+                <c-card-body>
+                    <c-row class="mb-3">
+                        <label cLabel="col" class="text-end" cCol [sm]="2">
+                            Item Name <span class="text-danger">*</span>
+                        </label>
+                        <c-col [sm]="3">
+                            <input cFormControl type="text" placeholder="Enter item name" formControlName="itemName"
+                                [ngClass]="{ 'is-invalid': submitted && add['itemName'].errors }" />
+                            <div *ngIf="submitted && add['itemName'].errors" class="invalid-feedback fw-semibold">
+                                <div *ngIf="add['itemName'].errors['required']">Enter item name</div>
+                            </div>
+                        </c-col>
+
+                        <label cLabel="col" class="text-end" cCol [sm]="2">
+                            Units <span class="text-danger">*</span>
+                        </label>
+                        <c-col [sm]="3">
+                            <select aria-label="Default select example" cSelect formControlName="units"
+                                [ngClass]="{ 'is-invalid': submitted && add['units'].errors }">
+                                <option value="" selected>-- Select --</option>
+                                <option *ngFor="let item of unitList" [value]="item.Mou">{{item.Mou}}</option>
+                            </select>
+                            <div *ngIf="submitted && add['units'].errors" class="invalid-feedback fw-semibold">
+                                <div *ngIf="add['units'].errors['required']">Select Units</div>
+                            </div>
+                        </c-col>
+                    </c-row>
+
+                    <c-row class="mb-3">
+                        <label cLabel="col" class="text-end" cCol [sm]="2">
+                            HSN 
+                        </label>
+                        <c-col [sm]="3">
+                            <input cFormControl type="text" placeholder="Enter HSN" formControlName="hsn"
+                                 />
+                            
+                        </c-col>
+
+                        <label cLabel="col" class="text-end" cCol [sm]="2">
+                            IGST <span class="text-danger">*</span>
+                        </label>
+                        <c-col [sm]="3">
+                            <input #igst cFormControl type="text" placeholder="Enter igst" formControlName="igst"
+                                [ngClass]="{ 'is-invalid': submitted && add['igst'].errors }"
+                                (keyup)="onChangeIGST(igst.value)"
+                                (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                            <div *ngIf="submitted && add['igst'].errors" class="invalid-feedback fw-semibold">
+                                <div *ngIf="add['igst'].errors['required']">Enter igst</div>
+                            </div>
+                        </c-col>
+                    </c-row>
+                    <c-row class="mb-3">
+                        <label cLabel="col" class="text-end" cCol [sm]="2">
+                            SGST <span class="text-danger">*</span>
+                        </label>
+                        <c-col [sm]="3">
+                            <input cFormControl type="text" placeholder="Enter sgst" formControlName="sgst"
+                                [ngClass]="{ 'is-invalid': submitted && add['sgst'].errors }" (keyup)="onChangeSGST()"
+                                (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                            <div *ngIf="submitted && add['sgst'].errors" class="invalid-feedback fw-semibold">
+                                <div *ngIf="add['sgst'].errors['required']">Enter sgst</div>
+                            </div>
+                        </c-col>
+
+                        <label cLabel="col" class="text-end" cCol [sm]="2">
+                            CGST <span class="text-danger">*</span>
+                        </label>
+                        <c-col [sm]="3">
+                            <input cFormControl type="text" placeholder="Enter cgst" formControlName="cgst"
+                                [ngClass]="{ 'is-invalid': submitted && add['cgst'].errors }" (keyup)="onChangeCGST()"
+                                (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                            <div *ngIf="submitted && add['cgst'].errors" class="invalid-feedback fw-semibold">
+                                <div *ngIf="add['cgst'].errors['required']">Enter cgst</div>
+                            </div>
+                        </c-col>
+                    </c-row>
+
+                    <c-row class="mb-3">
+                        <label cLabel="col" class="text-end" cCol [sm]="2">
+                            Opening Stock (Kg)
+                        </label>
+                        <c-col [sm]="3">
+                            <input cFormControl type="text" placeholder="Enter opening stock"
+                                formControlName="openingStock"
+                                [ngClass]="{ 'is-invalid': submitted && add['openingStock'].errors }" />
+                            <div *ngIf="submitted && add['openingStock'].errors" class="invalid-feedback fw-semibold">
+                                <div *ngIf="add['openingStock'].errors['required']">Enter opening stock</div>
+                            </div>
+                        </c-col>
+
+                        <label cLabel="col" class="text-end" cCol [sm]="2">
+                            Value <span class="text-danger">*</span>
+                        </label>
+                        <c-col [sm]="3">
+                            <input cFormControl type="text" placeholder="Enter value" formControlName="value"
+                                [ngClass]="{ 'is-invalid': submitted && add['value'].errors }" />
+                            <div *ngIf="submitted && add['value'].errors" class="invalid-feedback fw-semibold">
+                                <div *ngIf="add['value'].errors['required']">Enter value</div>
+                            </div>
+                        </c-col>
+                    </c-row>
+
+                    <c-row class="mb-3">
+                        <label cLabel="col" class="text-end" cCol [sm]="2">
+                        </label>
+                        <c-col [sm]="6">
+                            <!-- <c-form-check [inline]="true">
+                                <input cFormCheckInput id="inline1" type="checkbox" name="flexRadioDefault"
+                                    (change)="changeStatus('Trading Item')" />
+                                <label cFormCheckLabel for="inline1">Trading Item</label>
+                            </c-form-check>
+                            <c-form-check [inline]="true">
+                                <input cFormCheckInput id="inline2" type="checkbox" name="flexRadioDefault"
+                                    (change)="changeStatus('Its Service')" />
+                                <label cFormCheckLabel for="inline2">Its Service</label>
+                            </c-form-check>
+                            <c-form-check [inline]="true">
+                                <input cFormCheckInput id="inline3" type="checkbox" name="flexRadioDefault"
+                                    (change)="changeStatus('Deduct Item')" />
+                                <label cFormCheckLabel for="inline3">Deduct Item</label>
+                            </c-form-check>
+                            <c-form-check [inline]="true">
+                                <input cFormCheckInput id="inline4" type="checkbox" name="flexRadioDefault"
+                                    (change)="changeStatus('Deduct 34C TDS')" />
+                                <label cFormCheckLabel for="inline4">Deduct 34C TDS</label>
+                            </c-form-check> -->
+
+
+
+
+
+                            <c-form-check inline>
+                                <input cFormCheckInput type="radio" name="flexRadioDefault"
+                                    (change)="changeStatus('Trading Item')" formControlName="trading"
+                                    [checked]="isTrading == true" />
+                                <label cFormCheckLabel for="inline1">Trading Item</label>
+                            </c-form-check>
+                            <c-form-check inline>
+                                <input cFormCheckInput type="radio" name="flexRadioDefault"
+                                    (change)="changeStatus('Its Service')" formControlName="itsService"
+                                    [checked]="isService == true" />
+                                <label cFormCheckLabel for="inline2">Its Service</label>
+                            </c-form-check>
+
+
+
+
+                            <c-form-check inline>
+                                <input cFormCheckInput type="checkbox" value="one" name="flexRadioDefault3"
+                                (click)="checkboxcheck($event,'deductItem')"
+                                formControlName="deductItem" />                                
+                                <label cFormCheckLabel for="inline3">Default Item</label>
+                            </c-form-check>
+                            <c-form-check inline>
+                                <input cFormCheckInput type="checkbox" value="one" name="flexRadioDefaul4"
+                                formControlName="deductTds"/>
+                                <label cFormCheckLabel for="inline4">Deduct 94C TDS</label>
+                            </c-form-check>
+                        </c-col>
+                    </c-row>
+                    <hr>
+                    <c-row class="mb-0">
+                        <c-col [sm]="12" class="d-flex justify-content-between">
+                            <button (click)="back()" class="btn btn-outline-dark me-2 px-4"
+                                type="reset">Cancel</button>
+                            <button cButton class="btn btn-dark ms-2 px-3" type="submit"
+                                (click)="onSubmit()">Update</button>
+                        </c-col>
+                    </c-row>
+                </c-card-body>
+            </c-card>
+        </form>
+    </c-col>
+</c-row>

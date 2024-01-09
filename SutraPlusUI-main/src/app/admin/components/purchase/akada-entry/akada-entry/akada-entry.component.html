@@ -1,0 +1,249 @@
+<h2>Bazar Purchase</h2>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <form>
+                <div class="form-group row mt-1">
+                    <label for="date" class="col-md-3 col-form-label">Date</label>
+                    <div class="col-md-9">
+                        <input type="date" id="date" [(ngModel)]="date" name="date"
+                            class="form-control">
+                    </div>
+                </div>
+                <div class="form-group row mt-1">
+                    <label for="voucherId" class="col-md-3 col-form-label">Voucher Id</label>
+                    <div class="col-md-9">
+                        <input type="number" id="voucherId" [(ngModel)]="voucherId" name="voucherId"
+                            class="form-control" placeholder="Enter Voucher Id">
+                    </div>
+                </div>
+                <div class="form-group row mt-1">
+                    <label for="voucherNumber" class="col-md-3 col-form-label">Voucher
+                        No.</label>
+                    <div class="col-md-9">
+                        <input type="number" id="voucherNumber" [(ngModel)]="voucherNumber"
+                            name="voucherNumber" class="form-control"
+                            placeholder="Enter Voucher No.">
+                    </div>
+                </div>
+
+                <div class="form-group row mt-1">
+                    <label for="commodity" class="col-md-3 col-form-label">Commodity</label>
+                    <div class="col-md-9">
+                        <select id="commodity" [(ngModel)]="selectedCommodity" name="commodity"
+                            class="form-control" aria-placeholder="Select Commodity">
+                            <option *ngFor="let commodity of commodities" [value]="commodity">
+                                {{commodity.CommodityName}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row mt-1">
+                    <label for="commodity" class="col-md-3 col-form-label">Party</label>
+                    <div class="col-md-9">
+                        <!-- <ng-select #party (keyup)="getPartyList(party.searchTerm)"
+                            [items]="partyList" [(ngModel)]="partyName" bindLabel="ledgerName"
+                            bindValue="ledgerId" placeholder="Select Party"
+                            (focus)="partyList = []">
+                            <ng-template ng-option-tmp let-item="item" let-index="index"
+                                let-search="searchTerm">
+                                <div class="item">
+                                    <div (click)="onClickTest($event, item)">
+                                        {{ item.ledgerName }}
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </ng-select> -->
+                        <input type="text" class="form-control" [value]="partyName" disabled
+                            readonly>
+                    </div>
+                </div>
+
+                <div class="form-group row mt-1">
+                    <label for="lotNo" class="col-md-3 col-form-label">Lot No</label>
+                    <div class="col-md-9">
+                        <input type="number" id="lotNo" [(ngModel)]="lotNo" name="lotNo"
+                            class="form-control" placeholder="Enter Lot No">
+                    </div>
+                </div>
+
+                <div class="form-group row mt-1">
+                    <label for="noOfBags" class="col-md-3 col-form-label">Bags</label>
+                    <div class="col-md-9">
+                        <input type="number" [(ngModel)]="noOfBags" name="noOfBags"
+                            class="form-control" (ngModelChange)="onNoOfBagsChange($event)"
+                            placeholder="Enter No. of Bags">
+                    </div>
+                </div>
+
+                <div class="form-group row mt-1">
+                    <label for="rate" class="col-md-3 col-form-label">Rate</label>
+                    <div class="col-md-9">
+                        <input type="number" [(ngModel)]="rate" name="rate" class="form-control"
+                            (ngModelChange)="onRateChange()" placeholder="Enter Rate">
+                    </div>
+                </div>
+
+                <div class="form-group row mt-1">
+                    <label for="mark" class="col-md-3 col-form-label">Mark</label>
+                    <div class="col-md-9">
+                        <input type="text" id="mark" [(ngModel)]="mark" name="mark"
+                            class="form-control" placeholder="Enter Mark">
+                    </div>
+                </div>
+
+                <div class="form-group row mt-1">
+                    <label for="totalWeight" class="col-md-3 col-form-label">Total Weight</label>
+                    <div class="col-md-9">
+                        <input type="number" id="totalWeight" [(ngModel)]="totalWeight"
+                            name="totalWeight" class="form-control" readonly [disabled]="true">
+                    </div>
+                </div>
+
+                <div class="form-group row mt-1">
+                    <label for="amount" class="col-md-3 col-form-label">Amount</label>
+                    <div class="col-md-9">
+                        <input type="number" id="amount" [(ngModel)]="amount" name="amount"
+                            class="form-control" readonly [disabled]="true">
+                    </div>
+                </div>
+
+                <div class="form-group row mt-1 d-flex justify-content-between">
+                    <div class="col-8">
+                        <button type="button" mat-button class="btn btn-dark btn-sm px-3"
+                            (click)="saveAkadaEntry()">
+                            Submit
+                        </button>
+                        &nbsp;
+                        <button mat-button class="btn btn-danger btn-sm px-3 close"
+                            (click)="onNoClick()">
+                            Clear
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <div class="col-md-4">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">S.no</th>
+                            <th scope="col">Lot No</th>
+                            <th scope="col">No.of bags</th>
+                            <th scope="col">Rate</th>
+                            <th scope="col">Weight</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Mark</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let entry of entries; let i = index">
+                            <td>{{i + 1}}</td>
+                            <td>{{entry.lotNo}}</td>
+                            <td>{{entry.noOfBags}}</td>
+                            <td>{{entry.rate}}</td>
+                            <td>{{entry.totalWeight}}</td>
+                            <td>{{entry.amount}}</td>
+                            <td>{{entry.mark}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <div class="col-md-4">
+            <div class="form-group row mt-1">
+                <label for="commission" class="col-md-5 col-form-label">Commission</label>
+                <div class="col-md-7">
+                    <input type="number" id="commission" [(ngModel)]="commission" name="commission"
+                        class="form-control" placeholder="Enter Commission">
+                </div>
+            </div>
+
+            <div class="form-group row mt-1">
+                <label for="cess" class="col-md-5 col-form-label">Cess</label>
+                <div class="col-md-7">
+                    <input type="number" id="cess" [(ngModel)]="cess" name="cess"
+                        class="form-control" placeholder="Enter Cess">
+                </div>
+            </div>
+
+            <div class="form-group row mt-1">
+                <label for="taxableValue" class="col-md-5 col-form-label">Taxable Value</label>
+                <div class="col-md-7">
+                    <input type="number" id="taxableValue" [(ngModel)]="taxableValue"
+                        name="taxableValue" class="form-control" placeholder="Enter Taxable Value">
+                </div>
+            </div>
+
+            <div class="form-group row mt-1">
+                <label for="sgst" class="col-md-5 col-form-label">SGST</label>
+                <div class="col-md-7">
+                    <input type="number" id="sgst" [(ngModel)]="sgst" name="sgst"
+                        class="form-control" placeholder="Enter SGST">
+                </div>
+            </div>
+
+            <div class="form-group row mt-1">
+                <label for="otherExpenses" class="col-md-5 col-form-label">Other Expenses</label>
+                <div class="col-md-7">
+                    <input type="number" id="otherExpenses" [(ngModel)]="otherExpenses"
+                        name="otherExpenses" class="form-control"
+                        placeholder="Enter Other Expenses">
+                </div>
+            </div>
+
+            <div class="form-group row mt-1">
+                <label for="roundOff" class="col-md-5 col-form-label">Round Off</label>
+                <div class="col-md-7">
+                    <input type="number" id="roundOff" [(ngModel)]="roundOff" name="roundOff"
+                        class="form-control" placeholder="Enter Round Off">
+                </div>
+            </div>
+
+            <div class="form-group row mt-1">
+                <label for="grandTotal" class="col-md-5 col-form-label">Grand Total</label>
+                <div class="col-md-7">
+                    <input type="number" id="grandTotal" [(ngModel)]="grandTotal" name="grandTotal"
+                        class="form-control" placeholder="Enter Grand Total">
+                </div>
+            </div>
+
+            <div class="form-group row mt-1">
+                <label for="partyInvNo" class="col-md-5 col-form-label">Party Inv No.</label>
+                <div class="col-md-7">
+                    <input type="number" id="partyInvNo" [(ngModel)]="partyInvNo" name="partyInvNo"
+                        class="form-control" placeholder="Enter Party Inv No">
+                </div>
+            </div>
+
+            <div class="form-group row mt-1">
+                <label for="gstin" class="col-md-5 col-form-label">GSTIN</label>
+                <div class="col-md-7">
+                    <input type="text" id="gstin" [(ngModel)]="gstin" name="gstin"
+                        class="form-control" placeholder="Enter GSTIN">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    &nbsp;
+
+    <div class="col-md-8 d-flex flex-wrap align-items-start"
+        style="height: 200px; overflow-x: auto; overflow-y: auto; border: strong 1px black;">
+        <div *ngFor="let field of dynamicFields; let i = index">
+            <div class="col-md-3">
+                <input type="text" [(ngModel)]="dynamicFields[i]" name="dynamicField{{i}}"
+                    class="form-control small-input" (ngModelChange)="onDynamicFieldChange()">
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+    </div>
+
+</div>

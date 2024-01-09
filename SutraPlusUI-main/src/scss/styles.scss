@@ -1,0 +1,135 @@
+/* You can add global styles to this file, and also import other style files */
+// If you want to override variables do it here
+@import "variables";
+
+$enable-ltr: true;
+$enable-rtl: true;
+
+// Import styles with default layout.
+@import "@coreui/coreui/scss/coreui";
+
+// Import Chart.js custom tooltips styles
+@import "@coreui/chartjs/scss/coreui-chartjs";
+
+// perfect scrollbar theming for use with [perfectScrollbar] directive
+//@import '~perfect-scrollbar/css/perfect-scrollbar.css';
+
+@import "layout";
+
+// Some temp fixes
+@import "fixes";
+
+// Prism.js
+@import "examples";
+
+// If you want to add something do it here
+@import "custom";
+@import "~@ng-select/ng-select/themes/default.theme.css";
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
+.cursor-pointer {
+    cursor: pointer !important;
+}
+
+.main-layout {
+    min-height: calc(100vh - 90px);
+    background-color: #CDD4DB;
+}
+
+.btn-custom {
+    --cui-btn-padding-x: 3rem;
+    --cui-btn-padding-y: 1rem;
+}
+
+.card-shadow {
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+        rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    transition: all 0.3s ease;
+}
+
+.card-shadow:hover {
+    box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+}
+
+.card-shadow svg {
+    margin-right: 35px;
+    transition: all 0.3s ease;
+}
+
+.card-shadow:hover svg {
+    margin-right: 0;
+}
+
+.startup-page-screen {
+    min-height: calc(100vh - 105px);
+}
+
+.toast-top-center {
+    top: 12px;
+    width: 100% !important;
+    position: fixed !important;
+}
+
+.ngx-pagination {
+    margin-bottom: 0 !important;
+}
+
+.ngx-pagination a {
+    text-decoration: none !important;
+    // cursor: pointer;
+}
+
+.ngx-pagination .current {
+    padding: .1875rem .625rem;
+    background: #321fdb !important;
+    color: #fefefe;
+    cursor: default;
+    border-radius: 3px;
+}
+
+.disabled {
+    background: #e9ecef !important;
+    pointer-events: none !important;
+}
+
+.multiselect .multiselect-dropdown {
+    pointer-events: none !important;
+    background: #e9ecef;
+}
+
+.badge {
+    background: #321fdb;
+    color: #ffff;
+}
+
+.active-page {
+    background: #321fdb;
+    border-radius: 3px;
+    color: #ffff;
+    font-weight: 600;
+    cursor: unset !important;
+}
+
+.page-link {
+    cursor: pointer;
+}
+
+.bg-gray{
+    background-color: #ede2e2;;
+}
+
+#table ng-select{
+    width: 12rem;
+}
+
+@media screen and (max-width: 767px) {
+    .startup-page-screen {
+        min-height: calc(100vh - 120px);
+    }
+}
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

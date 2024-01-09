@@ -1,0 +1,81 @@
+<!--<c-header class="mb-4 d-print-none" position="sticky">-->
+<ng-container>
+  <c-container [fluid]="true">
+    <button toggle="visible" cHeaderToggler [cSidebarToggle]="sidebarId" class="ps-1">
+      <svg cIcon name="cilMenu" size="lg"></svg>
+    </button>
+    <c-header-nav class="d-none d-lg-flex me-auto">
+      <h4 class="mb-0 fw-bold">{{companyName ? companyName : ''}}</h4>
+    </c-header-nav>
+
+    <c-header-nav class="d-none d-lg-flex">
+      <c-nav-item *ngIf="userDetails?.result?.UserType != 'SuperAdmin'">
+        <a cNavLink class="fw-bold text-dark">
+          Financial Year : {{financialYear}}
+        </a>
+      </c-nav-item>
+      <c-nav-item *ngIf="userDetails?.result?.UserType != 'SuperAdmin'">
+        <a cNavLink class="fw-bold text-dark">
+          |
+        </a>
+      </c-nav-item>
+      <c-nav-item>
+        <a cNavLink class="fw-bold text-dark">
+          {{userName}}
+        </a>
+      </c-nav-item>
+    </c-header-nav>
+    <c-header-nav class="ms-3">
+      <ng-container *ngTemplateOutlet="userDropdown"></ng-container>
+
+      <button type="button" style="border: none; background: none;"
+        routerLink="/admin/option-settings">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"
+          class="main-grid-item-icon" fill="none" stroke="currentColor" stroke-linecap="round"
+          stroke-linejoin="round" stroke-width="2">
+          <circle cx="12" cy="12" r="3" />
+          <path
+            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+        </svg>
+      </button>
+
+    </c-header-nav>
+
+  </c-container>
+  <!-- <c-header-divider></c-header-divider>
+  <c-container [fluid]="true">
+    <c-breadcrumb-router class="ms-2"></c-breadcrumb-router>
+  </c-container> -->
+</ng-container>
+<!--</c-header>-->
+
+<ng-template #userDropdown>
+  <c-dropdown alignment="end" variant="nav-item">
+    <button cButton color="" [caret]="false" cDropdownToggle class="py-0">
+      <c-avatar cTextColor="primary" shape="rounded-1" size="md"
+        src="assets/images/default-image.jpg" status="">
+      </c-avatar>
+    </button>
+    <ul cDropdownMenu class="py-0 pr-5 w-auto">
+      <li>
+        <a routerLink="/user-profile" cDropdownItem>
+          <svg cIcon class="me-2" name="cilUser"></svg>
+          Profile
+        </a>
+      </li>
+      <li>
+        <a routerLink="/user-profile" cDropdownItem>
+          <svg cIcon class="me-2" name="cilUser"></svg>
+          Change Password
+        </a>
+      </li>
+      <li>
+        <a (click)="logOut()" class="cursor-pointer" cDropdownItem>
+          <svg cIcon class="me-2" name="cilLockLocked"></svg>
+          Logout
+        </a>
+      </li>
+      <li></li>
+    </ul>
+  </c-dropdown>
+</ng-template>

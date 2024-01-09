@@ -1,0 +1,444 @@
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+<c-row>
+  <c-col md="12">
+    <div class="bg-light d-flex flex-row justify-content-end align-items-center">
+      <button cButton class="px-0 text-dark fw-bold text-decoration-none" color="link"
+        (click)="back()">
+        <svg cIcon name="cilChevronLeft"></svg> Back
+      </button>
+    </div>
+  </c-col>
+</c-row>
+
+<c-row>
+  <c-col md="12">
+    <form [formGroup]="addParty">
+      <c-card class="my-3">
+        <c-card-header class="fw-bold party-details">Party Details</c-card-header>
+        <c-card-body class="p-3">
+          <c-row class="mb-3">
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              Party Name <span class="text-danger">*</span>
+            </label>
+            <c-col [sm]="10">
+              <input cFormControl type="text" placeholder="Enter party name"
+                formControlName="ledgerName"
+                [ngClass]="{ 'is-invalid': submitted && add['ledgerName'].errors }" />
+              <div *ngIf="submitted && add['ledgerName'].errors"
+                class="invalid-feedback fw-semibold">
+                <div *ngIf="add['ledgerName'].errors['required']">Party Name is required</div>
+              </div>
+            </c-col>
+          </c-row>
+
+          <c-row class="mb-3">
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              Ledger Type <span class="text-danger">*</span>
+            </label>
+            <c-col [sm]="4">
+              <select aria-label="Default select example" cSelect formControlName="ledgerType"
+                [ngClass]="{ 'is-invalid': submitted && add['ledgerType'].errors }">
+                <option value="">-- Select --</option>
+                <option *ngFor="let item of ledgerList" [value]="item.LedgerType">
+                  {{item.LedgerType}}</option>
+              </select>
+              <div *ngIf="submitted && add['ledgerType'].errors"
+                class="invalid-feedback fw-semibold">
+                <div *ngIf="add['ledgerType'].errors['required']">Ledger type is required</div>
+              </div>
+            </c-col>
+
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              Dealer Type <span class="text-danger">*</span>
+            </label>
+            <c-col [sm]="4">
+              <select aria-label="Default select example" cSelect formControlName="dealerType"
+                (change)="onDealerChange($event)"
+                [ngClass]="{ 'is-invalid': submitted && add['dealerType'].errors }">
+                <option value="">-- Select --</option>
+                <option *ngFor="let item of dealerList" [value]="item.DealerType">
+                  {{item.DealerType}}</option>
+              </select>
+              <div *ngIf="submitted && add['dealerType'].errors"
+                class="invalid-feedback fw-semibold">
+                <div *ngIf="add['dealerType'].errors['required']">Dealer type is required</div>
+              </div>
+            </c-col>
+          </c-row>
+
+          <c-row class="mb-3">
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              Address 1 <span class="text-danger">*</span>
+            </label>
+            <c-col [sm]="10">
+              <!-- <input type="text" cFormControl (keyup)="onChangeOption('address1')"
+                placeholder="Enter address 1" formControlName="address1"
+                [ngClass]="{ 'is-invalid': submitted && add['address1'].errors }"
+                [matAutocomplete]="address1">
+              <mat-autocomplete #address1="matAutocomplete">
+                <mat-option *ngFor="let add1 of filteredAddress1 " [value]="add1">
+                  {{add1}}
+                </mat-option>
+              </mat-autocomplete> -->
+
+              <c-input-group class="mb-3">
+                <input aria-label="Text input with dropdown button" cFormControl type="text"
+                  placeholder="Enter address 1" formControlName="address1" />
+                <c-dropdown alignment="end" *ngIf="address1Options && address1Options.length > 0">
+                  <button cButton cDropdownToggle color="secondary" variant="outline">
+                  </button>
+                  <div cDropdownMenu class="dropdown-menu-scrollable">
+                    <a cDropdownItem *ngFor="let option of address1Options"
+                      (click)="assignOptionToFormControl('address1', option)">
+                      {{ option }}
+                    </a>
+                  </div>
+                </c-dropdown>
+              </c-input-group>
+
+              <!--input cFormControl type="text" placeholder="Enter address 1" formControlName="address1"
+                [ngClass]="{ 'is-invalid': submitted && add['address1'].errors }" /-->
+              <div *ngIf="submitted && add['address1'].errors" class="invalid-feedback fw-semibold">
+                <div *ngIf="add['address1'].errors['required']">Address is required</div>
+              </div>
+            </c-col>
+          </c-row>
+
+          <c-row class="mb-3">
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              Address 2   <span class="text-danger" *ngIf="Isaddress2">*</span>
+            </label>
+            <c-col [sm]="10">
+              <!-- <input type="text" cFormControl (keyup)="onChangeOption('address2')"
+                placeholder="Enter address 2" formControlName="address2"
+                [ngClass]="{ 'is-invalid': submitted && add['address1'].errors }"
+                [matAutocomplete]="address2">
+              <mat-autocomplete #address2="matAutocomplete">
+                <mat-option *ngFor="let add2 of filteredAddress2" [value]="add2">
+                  {{add2}}
+                </mat-option>
+              </mat-autocomplete> -->
+
+              <c-input-group class="mb-3">
+                <input aria-label="Text input with dropdown button"  [ngClass]="{ 'is-invalid': submitted && add['address2'].errors }" cFormControl type="text"
+                  placeholder="Enter address 2" formControlName="address2" />
+                <c-dropdown alignment="end" *ngIf="address2Options && address2Options.length > 0">
+                  <button cButton cDropdownToggle color="secondary" variant="outline">
+                  </button>
+                  <div cDropdownMenu class="dropdown-menu-scrollable">
+                    <a cDropdownItem *ngFor="let option of address2Options"
+                      (click)="assignOptionToFormControl('address2', option)">
+                      {{ option }}
+                    </a>
+                  </div>
+                </c-dropdown>
+                <div *ngIf="submitted && add['address2'].errors" class="invalid-feedback fw-semibold">
+                  <div *ngIf="add['address2'].errors['required']">Address 2 is required</div>
+                </div>
+              </c-input-group>
+
+              <!--input cFormControl type="text" placeholder="Enter address 2" formControlName="address2" /-->
+            </c-col>
+          </c-row>
+
+          <c-row class="mb-3">
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              Place <span class="text-danger">*</span>
+            </label>
+            <c-col [sm]="4">
+              <!-- <input type="text" cFormControl (keyup)="onChangeOption('place')"
+                placeholder="Enter place" formControlName="place"
+                [ngClass]="{ 'is-invalid': submitted && add['place'].errors }"
+                [matAutocomplete]="place">
+              <mat-autocomplete #place="matAutocomplete">
+                <mat-option *ngFor="let places of filteredPlaces" [value]="places">
+                  {{places}}
+                </mat-option>
+              </mat-autocomplete> -->
+
+              <c-input-group class="mb-3">
+                <input aria-label="Text input with dropdown button" cFormControl type="text"
+                  placeholder="Enter place" formControlName="place" />
+                <c-dropdown alignment="end" *ngIf="placeOptions && placeOptions.length > 0">
+                  <button cButton cDropdownToggle color="secondary" variant="outline">
+                  </button>
+                  <div cDropdownMenu class="dropdown-menu-scrollable">
+                    <a cDropdownItem *ngFor="let option of placeOptions"
+                      (click)="assignOptionToFormControl('place', option)">
+                      {{ option }}
+                    </a>
+                  </div>
+                </c-dropdown>
+              </c-input-group>
+
+              <!--input cFormControl type="text" placeholder="Enter place" formControlName="place"
+                [ngClass]="{ 'is-invalid': submitted && add['place'].errors }" /-->
+              <div *ngIf="submitted && add['place'].errors" class="invalid-feedback fw-semibold">
+                <div *ngIf="add['place'].errors['required']">Place is required</div>
+              </div>
+            </c-col>
+
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              State <span class="text-danger">*</span>
+            </label>
+            <c-col [sm]="4">
+              <select aria-label="Default select example" cSelect formControlName="state"
+                [ngClass]="{ 'is-invalid': submitted && add['state'].errors }">
+                <option value="">-- Select --</option>
+                <option [value]="item.Statename" *ngFor="let item of stateList">
+                  {{item.Statename}}</option>
+              </select>
+              <div *ngIf="submitted && add['state'].errors" class="invalid-feedback fw-semibold">
+                <div *ngIf="add['state'].errors['required']">State is required</div>
+              </div>
+            </c-col>
+          </c-row>
+          <c-row class="mb-3">
+            <label cLabel="col" class="text-end" cCol [sm]="2" *ngIf="checkDealerType">
+              GSTIN<span class="text-danger">*</span>
+            </label>
+            <c-col [sm]="4" *ngIf="checkDealerType">
+              <input cFormControl type="text" placeholder="Enter gstin" formControlName="gstin"
+                maxlength="15" (keyup)="transform()"
+                [ngClass]="{ 'is-invalid': submitted && add['gstin'].errors }" />
+              <div *ngIf="submitted && add['gstin'].errors" class="invalid-feedback fw-semibold">
+                <div *ngIf="add['gstin'].errors['required']">GSTIN is required</div>
+                <div *ngIf="add['gstin'].errors['pattern']">Please enter a valid GSTIN
+                  (eg:12ABCDE1234D2Z5)</div>
+                <div *ngIf="add['gstin'].errors['maxLength']">GSTIN is maximum of 15 characters
+                </div>
+              </div>
+            </c-col>
+
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              Contact Details <span class="text-danger">*</span>
+            </label>
+            <c-col [sm]="4">
+              <input cFormControl type="text" placeholder="Enter contact details"
+                formControlName="contactDetails"
+                [ngClass]="{ 'is-invalid': submitted && add['contactDetails'].errors }" />
+              <div *ngIf="submitted && add['contactDetails'].errors"
+                class="invalid-feedback fw-semibold">
+                <div *ngIf="add['contactDetails'].errors['required']">Contact details is required
+                </div>
+                <div *ngIf="add['contactDetails'].errors['pattern']">Enter valid contact details
+                </div>
+              </div>
+            </c-col>
+          </c-row>
+
+          <c-row class="mb-3">
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              Country <span class="text-danger">*</span>
+            </label>
+            <c-col [sm]="4">
+              <select aria-label="Default select example" cSelect formControlName="country"
+                [ngClass]="{ 'is-invalid': submitted && add['country'].errors }">
+                <option value="">-- Select --</option>
+                <option *ngFor="let item of countryList" [value]="item.CountryName">
+                  {{item.CountryName}}</option>
+              </select>
+              <div *ngIf="submitted && add['country'].errors" class="invalid-feedback fw-semibold">
+                <div *ngIf="add['country'].errors['required']">Country is required</div>
+              </div>
+            </c-col>
+
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              Accounting Group <span class="text-danger">*</span>
+            </label>
+            <c-col [sm]="4">
+              <select aria-label="Default select example" cSelect formControlName="accGroup"
+                [ngClass]="{ 'is-invalid': submitted && add['accGroup'].errors }">
+                <option value="">-- Select --</option>
+                <option *ngFor="let item of accGroupList" [value]="item.AccontingGroupId">
+                  {{item.GroupName}}</option>
+              </select>
+              <div *ngIf="submitted && add['accGroup'].errors" class="invalid-feedback fw-semibold">
+                <div *ngIf="add['accGroup'].errors['required']">Accounting group is required</div>
+              </div>
+            </c-col>
+          </c-row>
+
+          <c-row class="mb-3">
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              Cell No.  <span class="text-danger" *ngIf="IscellPhone">*</span>
+            </label>
+            <c-col [sm]="4">
+              <input cFormControl type="text" placeholder="Enter cell no."
+                formControlName="cellPhone"
+                [ngClass]="{ 'is-invalid': submitted && add['cellPhone'].errors }" />
+              <div *ngIf="submitted && add['cellPhone'].errors"
+                class="invalid-feedback fw-semibold">
+                <div *ngIf="add['cellPhone'].errors['pattern']">Enter valid cell phone</div>
+                <div *ngIf="add['cellPhone'].errors['required']">Cell No is required</div>
+              </div>
+            </c-col>
+
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              Email <span class="text-danger" *ngIf="Isemail">*</span>
+            </label>
+            <c-col [sm]="4">
+              <input cFormControl type="email" placeholder="Enter cell email"
+                formControlName="email" [ngClass]="{ 'is-invalid': submitted && add['email'].errors }" />
+                <div *ngIf="submitted && add['email'].errors" class="invalid-feedback fw-semibold">
+                  <div *ngIf="add['email'].errors['required']">Email is required</div>
+                </div>
+            </c-col>
+          </c-row>
+
+          <c-row class="mb-3">
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              FSSAI
+            </label>
+            <c-col [sm]="4">
+              <input cFormControl type="text" placeholder="Enter fssai" formControlName="fssai"
+                [ngClass]="{ 'is-invalid': submitted && add['fssai'].errors }" />
+              <div *ngIf="submitted && add['fssai'].errors" class="invalid-feedback fw-semibold">
+                <div *ngIf="add['fssai'].errors['required']">FSSAI is required</div>
+              </div>
+            </c-col>
+
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+
+            </label>
+            <c-col [sm]="4">
+              <div class="d-flex justify-content-between align-items-center">
+                <c-col [sm]="7">
+                  <c-form-check>
+                    <input [checked]="true" cFormCheckInput id="checkTwo" type="checkbox"
+                      formControlName="deductChk" />
+                    <label cFormCheckLabel for="checkTwo">Deduct 194C TDS</label>
+                  </c-form-check>
+                </c-col>
+                <c-col [sm]="5">
+                  <div class="d-flex align-items-center">
+                    <p class="mb-0 me-2">%</p>
+                    <input cFormControl type="email" placeholder="Enter percentage"
+                      formControlName="perc" />
+                  </div>
+                </c-col>
+              </div>
+            </c-col>
+          </c-row>
+          <c-row class="mb-3">
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              PAN  <span class="text-danger" *ngIf="Ispan">*</span>
+            </label>
+            <c-col [sm]="4">
+              <input cFormControl type="text" placeholder="Enter PAN" [ngClass]="{ 'is-invalid': submitted && add['pan'].errors }" formControlName="pan" />
+              <div *ngIf="submitted && add['pan'].errors" class="invalid-feedback fw-semibold">
+                <div *ngIf="add['pan'].errors['required']">Pan is required</div>
+              </div>
+            </c-col>
+          </c-row>
+
+        </c-card-body>
+        <c-card-header class="fw-bold">Bank Details</c-card-header>
+        <c-card-body class="p-3">
+          <c-row class="mb-3">
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              Bank Name
+            </label>
+            <c-col [sm]="4">
+              <c-input-group class="mb-3">
+                <input aria-label="Text input with dropdown button" cFormControl type="text"
+                  placeholder="Enter bank name" formControlName="bankName" />
+                <c-dropdown alignment="end" *ngIf="bankNameOptions && bankNameOptions.length > 0">
+                  <button cButton cDropdownToggle color="secondary" variant="outline">
+                  </button>
+                  <div cDropdownMenu class="dropdown-menu-scrollable">
+                    <a cDropdownItem *ngFor="let option of bankNameOptions"
+                      (click)="assignOptionToFormControl('bankName', option)">
+                      {{ option }}
+                    </a>
+                  </div>
+                </c-dropdown>
+              </c-input-group>
+              <!--ng-select [items]="sampleData1" placeholder="Select bank name" bindLabel="name" bindValue="id"
+              addTagText="Create New" 
+              [addTag]="CreateNew">
+                formControlName="bankName">
+              </ng-select>
+              input cFormControl type="text" placeholder="Enter bank name" formControlName="bankName"
+                [ngClass]="{ 'is-invalid': submitted && add['bankName'].errors }" /-->
+
+            </c-col>
+
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              IFSC Code
+            </label>
+            <c-col [sm]="4">
+              <input cFormControl type="text" placeholder="Enter ifsc code"
+                formControlName="ifscCode" />
+
+            </c-col>
+          </c-row>
+
+          <c-row class="mb-3">
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              Account No.
+            </label>
+            <c-col [sm]="4">
+              <input cFormControl type="text" placeholder="Enter account no."
+                formControlName="accNo" />
+
+            </c-col>
+
+          </c-row>
+
+          <c-row class="mb-3">
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              Opening Balance
+            </label>
+            <c-col [sm]="4">
+              <input cFormControl type="text" placeholder="Enter opening balance"
+                formControlName="openingBal"
+                (keypress)="commonService.ValidateNumeric($event.keyCode)"
+                [ngClass]="{ 'is-invalid': submitted && add['openingBal'].errors }" />
+              <!-- <div *ngIf="submitted && add['openingBal'].errors" class="invalid-feedback fw-semibold">
+                <div *ngIf="add['openingBal'].errors['required']">Opening balance is required</div>
+              </div> -->
+            </c-col>
+
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              Credit/Debit
+            </label>
+            <c-col [sm]="4">
+              <select aria-label="Default select example" cSelect formControlName="creditDebit"
+                [ngClass]="{ 'is-invalid': submitted && add['creditDebit'].errors }">
+                <option *ngIf="ifopeningBalance()" value="">-- Select --</option>
+                <option value="Credit">Credit</option>
+                <option value="Debit">Debit</option>
+              </select>
+              <!-- <div *ngIf="submitted && add['creditDebit'].errors" class="invalid-feedback fw-semibold">
+                <div *ngIf="add['creditDebit'].errors['required']">Credit/Debit is required</div>
+              </div> -->
+            </c-col>
+          </c-row>
+
+          <c-row class="mb-3">
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              Book Page No.
+            </label>
+            <c-col [sm]="4">
+              <input cFormControl type="text" placeholder="Enter book page no."
+                formControlName="bookPage"
+                [ngClass]="{ 'is-invalid': submitted && add['bookPage'].errors }" />
+              <!-- <div *ngIf="submitted && add['bookPage'].errors" class="invalid-feedback fw-semibold">
+                <div *ngIf="add['bookPage'].errors['required']">Book page number is required</div>
+              </div> -->
+            </c-col>
+          </c-row>
+          <hr>
+          <c-row class="mb-3">
+            <c-col [sm]="12" class="d-flex justify-content-between">
+              <button class="btn btn-outline-dark me-2 px-3" type="reset">Reset</button>
+              <button cButton class="btn btn-dark ms-2 px-3" type="submit"
+                (click)="onSubmit()">Save</button>
+            </c-col>
+          </c-row>
+        </c-card-body>
+      </c-card>
+    </form>
+  </c-col>
+</c-row>

@@ -1,0 +1,83 @@
+<c-row>
+    <c-col md="12">
+        <c-card class="my-3">
+            <c-card-header>
+                <div class="row">
+                    <div class="col-4">
+                        <h6 class="mb-0 mt-1">Users Details <span class="badge badge-primary">{{totalUser}}</span></h6>
+                    </div>
+                    <div class="col-8 d-flex justify-content-end">
+                        <div class="search">
+                            <input [ngClass]="{ 'is-invalid': errorMsg }" class="search-input" #search
+                                (keyup)="onSearch(search.value)" cFormControl type="text" placeholder="Search Users">
+                            <span *ngIf="errorMsg" class="is-invalid">Enter at least 3 characters</span>
+                        </div>
+
+                        <div>
+                            <button cButton class="btn btn-dark btn-sm px-3" (click)="addUser()">
+                                Add Users
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </c-card-header>
+            <c-card-body class="p-3">
+                <div class="table-responsive">
+                    <table [striped]="true" [responsive]="true" cTable>
+                        <thead>
+                            <tr>
+                                <th scope="col" class="text-center">Sr. No.</th>
+                                <th scope="col">Role</th>
+                                <th scope="col">First Name</th>
+                                <th scope="col">Last Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of userList;let i = index;">
+                                <td class="text-center">{{10 *(pageNumber-1)+i+1}}</td>
+                                <td>{{item.userType ? item.userType : '-'}}</td>
+                                <td>{{(item.firstName | titlecase) ? (item.firstName | titlecase) : '-'}}</td>
+                                <td>{{(item.lastName | titlecase) ? (item.firstName | titlecase): '-'}}</td>
+                                <td>{{item.userName ? item.userName : '-'}}</td>
+                                <td>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <button cButton class="btn btn-dark btn-sm me-1" (click)="onEdit(item)">
+                                            <svg cIcon name="cil-pen"></svg>
+                                        </button>
+                                        <button cButton class="btn btn-danger btn-sm me-1 text-white"
+                                            (click)="delete(item)">
+                                            <svg cIcon name="cil-trash"></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="text-center text-dark" *ngIf="userList.length===0">
+                    No Records Found
+                </div>
+
+                <div class="d-flex justify-content-end align-items-center" *ngIf="userList">
+                    <ul class="pagination">
+                        <li [ngClass]="[pages[0]===1&&commonService.gettotalPages(totalUser)>5 ? 'disabled' : '']"
+                            (click)="pageNumber>1 ? previous() : '' " class="page-item"><a
+                                [ngClass]="[pageNumber===1 ? 'disabled' : '' , pages[0]===1&&commonService.gettotalPages(totalUser)>5 ? 'disabled' : '']"
+                                class="page-link">Previous</a></li>
+                        <li (click)="changePage(data)" *ngFor="let data of pages" class="page-item"><a
+                                [ngClass]="[pageNumber===data ? 'active-page' : '']" class="page-link">{{data}}</a></li>
+                        <li [ngClass]="[pageNumber===commonService.gettotalPages(totalUser) ? 'disabled' : '', commonService.gettotalPages(totalUser)===pages[commonService.getLastIndex(pages)] ? 'disabled' : '']"
+                            (click)="pageNumber<commonService.gettotalPages(totalUser) ? next() : '';"
+                            class="page-item"><a
+                                [ngClass]="[pageNumber===commonService.gettotalPages(totalUser) ? 'disabled' : '', commonService.gettotalPages(totalUser)===pages[commonService.getLastIndex(pages)] ? 'disabled' : '']"
+                                class="page-link">Next</a></li>
+                    </ul>
+                </div>
+            </c-card-body>
+        </c-card>
+    </c-col>
+</c-row>

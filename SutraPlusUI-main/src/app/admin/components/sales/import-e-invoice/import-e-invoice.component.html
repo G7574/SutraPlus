@@ -1,0 +1,46 @@
+<h1>Import Excel Data </h1>
+<div class="container mt-3">
+  <div class="row align-items-center">
+    <div class="col-md-4">
+      <form>
+        <div class="form-group">
+          <input type="file" class="form-control form-control-sm" (change)="onFileChange($event)" id="exampleFormControlFile1" accept=".xls, .xlsx">
+        </div>
+      </form>
+    </div>
+    <div class="col-md-8">
+      <div class="d-flex flex-grow-1">
+        <button type="button" class="btn m-2 btn-sm btn-dark flex-grow-1" (click)="onFormSubmit()">
+         
+          Import
+        </button>
+        <button type="button" class="btn m-2 btn-sm btn-dark flex-grow-1" (click)="saveData()">
+         
+          Save
+        </button>
+        <button class="btn btn-sm m-2 btn-secondary flex-grow-1" type="button" (click)="onOpenEInvoiceClick()">
+         
+          E Invoice
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<table class="table">
+  <thead>
+    <tr>
+      <!-- Display column names in the table header -->
+      <th *ngFor="let columnName of columnNames">{{ columnName }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Iterate over each row of jsonData and display the data -->
+    <tr *ngFor="let rowData of jsonData">
+      <td *ngFor="let cellData of rowData">{{ cellData }}</td>
+    </tr>
+  </tbody>
+</table>

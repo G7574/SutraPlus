@@ -1,0 +1,22 @@
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+#reportTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#reportTable th,
+#reportTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.bold {
+  font-weight: bold;
+}

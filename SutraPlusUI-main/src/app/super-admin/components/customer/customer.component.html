@@ -1,0 +1,95 @@
+<c-row>
+    <c-col md="12">
+        <c-card class="my-3">
+            <c-card-header>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Customer Details</h6>
+                    <!-- <button cButton class="" color="primary"><svg cIcon name="cil-plus"></svg></button> -->
+                    <button cButton class="px-3" color="primary" size="sm" (click)="newCustomer()">
+                        <!-- <svg cIcon name="cilPlus"></svg> -->
+                        New
+                    </button>
+                </div>
+            </c-card-header>
+            <c-card-body class="p-3">
+                <div class="table-responsive">
+                    <table [striped]="true" [responsive]="true" cTable>
+                        <thead>
+                            <tr>
+                                <th scope="col" class="text-center">Sr. No.</th>
+                                <th scope="col">Customer Name</th>
+                                <th scope="col">Code</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Mobile</th>
+                                <th scope="col">ContactPerson</th>
+                                <th scope="col" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of customerList">
+                                <td class="text-center">{{item.Id}}</td>
+                                <td>{{item.Name}}</td>
+                                <td>{{item.Code}}</td>
+                                <td>{{item.Email}}</td>
+                                <td>{{item.Mobile}}</td>
+                                <td>{{item.ContactPerson}}</td>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <button cButton class="me-1" color="primary" size="sm" (click)="onEdit(1)">
+                                            <svg cIcon name="cil-pen"></svg>
+                                        </button>
+                                        <button cButton class="ms-1 text-white" color="danger" size="sm">
+                                            <svg cIcon name="cil-trash"></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- <tr>
+                                <td class="text-center">2</td>
+                                <td>Tata Projects Limited</td>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <button cButton class="me-1" color="primary" size="sm" (click)="onEdit(2)">
+                                            <svg cIcon name="cil-pen"></svg>
+                                        </button>
+                                        <button cButton class="ms-1 text-white" color="danger" size="sm">
+                                            <svg cIcon name="cil-trash"></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-center">3</td>
+                                <td>Hindustan Construction Company (HCC)</td>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <button cButton class="me-1" color="primary" size="sm" (click)="onEdit(3)">
+                                            <svg cIcon name="cil-pen"></svg>
+                                        </button>
+                                        <button cButton class="ms-1 text-white" color="danger" size="sm">
+                                            <svg cIcon name="cil-trash"></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-center">4</td>
+                                <td>Simplex Infrastructures Limited</td>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <button cButton class="me-1" color="primary" size="sm" (click)="onEdit(4)">
+                                            <svg cIcon name="cil-pen"></svg>
+                                        </button>
+                                        <button cButton class="ms-1 text-white" color="danger" size="sm">
+                                            <svg cIcon name="cil-trash"></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr> -->
+                        </tbody>
+                    </table>
+                </div>
+            </c-card-body>
+        </c-card>
+    </c-col>
+</c-row>

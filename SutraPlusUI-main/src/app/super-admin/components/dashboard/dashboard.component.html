@@ -1,0 +1,91 @@
+<c-row>
+    <c-col md="12">
+        <c-card class="my-3">
+            <c-card-header>
+                <div class="row">
+                    <div class="col-4">
+                        <h6 class="mb-0 mt-1">Customer Details <span
+                                class="badge badge-primary">{{totalCustomer}}</span></h6>
+                    </div>
+                    <div class="col-8 d-flex justify-content-end">
+                        <div class="search">
+                            <input [ngClass]="{ 'is-invalid': errorMsg }" class="search-input" #search
+                                (keyup)="onSearch(search.value)" cFormControl type="text" placeholder="Search Customer">
+                            <span *ngIf="errorMsg" class="is-invalid">Enter at least 3 characters</span>
+                        </div>
+
+                        <div>
+                            <button cButton class="px-3" color="primary" size="sm" (click)="newCustomer()">
+                                Add Customer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </c-card-header>
+            <c-card-body class="p-3">
+                <div class="table-responsive">
+                    <table [striped]="true" [responsive]="true" cTable>
+                        <thead>
+                            <tr>
+                                <th scope="col" class="text-center">Sr.&nbsp;No.</th>
+                                <th scope="col">Firm&nbsp;Name</th>
+                                <th scope="col">Code</th>
+                                <th scope="col">GSTIN</th>
+                                <th scope="col">Contact&nbsp;Person</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Created&nbsp;Date</th>
+                                <th scope="col" class="text-center">Is&nbsp;Active</th>
+                                <th scope="col" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngIf="customerList?.length===0">
+                                <td colspan="8" class="text-center">
+                                    No record found
+                                </td>
+                            </tr>
+                            <tr *ngFor="let item of customerList | paginate: 
+                            { itemsPerPage: 10, currentPage: p }; let i = index;">
+                                <td class="text-center">{{10 *(pageNumber-1)+i+1}}</td>
+                                <td>{{item.name}}</td>
+                                <td>{{item.code}}</td>
+                                <td>{{item.gstNo}}</td>
+                                <td>{{item.firstName + ' ' + item.lastName}}</td>
+                                <td>{{item.email}}</td>
+                                <td>{{item.createdDate | date: 'dd/MM/yyyy'}}</td>
+                                <td class="text-center">
+                                    <c-form-check>
+                                        <input [checked]="item.isActive" cFormCheckInput id="checkTwo" type="checkbox"
+                                            (change)="changeStatus(item, $event)" />
+                                    </c-form-check>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <button cButton color="primary" size="sm" (click)="onEdit(item.id)">
+                                            <svg cIcon name="cil-pen"></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-end" *ngIf="customerList">
+                    <ul class="pagination">
+                        <li [ngClass]="[pages[0]===1&&commonService.gettotalPages(totalCustomer)>5 ? 'disabled' : '']"
+                            (click)="pageNumber>1 ? previous() : '' " class="page-item"><a
+                                [ngClass]="[pageNumber===1 ? 'disabled' : '' , pages[0]===1&&commonService.gettotalPages(totalCustomer)>5 ? 'disabled' : '']"
+                                class="page-link">Previous</a></li>
+                        <li (click)="changePage(data)" *ngFor="let data of pages" class="page-item"><a
+                                [ngClass]="[pageNumber===data ? 'active-page' : '']" class="page-link">{{data}}</a></li>
+                        <li [ngClass]="[pageNumber===commonService.gettotalPages(totalCustomer) ? 'disabled' : '', commonService.gettotalPages(totalCustomer)===pages[commonService.getLastIndex(pages)] ? 'disabled' : '']"
+                            (click)="pageNumber<commonService.gettotalPages(totalCustomer) ? next() : '';"
+                            class="page-item"><a
+                                [ngClass]="[pageNumber===commonService.gettotalPages(totalCustomer) ? 'disabled' : '', commonService.gettotalPages(totalCustomer)===pages[commonService.getLastIndex(pages)] ? 'disabled' : '']"
+                                class="page-link">Next</a></li>
+                    </ul>
+                </div>
+            </c-card-body>
+        </c-card>
+    </c-col>
+</c-row>

@@ -1,0 +1,124 @@
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+<c-navbar class="sticky-top">
+  <c-container fluid>
+    <a cNavbarBrand href="https://coreui.io/angular/" target="_blank">
+      {{ companyName }}
+    </a>
+    <form cForm class="d-flex" role="search">
+      <p class="mb-0 text-white">
+        You have selected financial year : {{ financialYear }}
+      </p>
+    </form>
+  </c-container>
+</c-navbar>
+
+<div class="main-layout bg-light">
+  <c-container fluid="">
+    <c-row>
+      <c-col md="12">
+        <c-card class="my-3">
+          <c-card-header>
+            <div class="d-flex justify-content-between align-items-center">
+              <h3 class="mb-0 fw-bold">
+                My Companies (Click On Company Name To Select)
+              </h3>
+              <button
+                cButton
+                class="btn btn-dark btn-sm"
+                (click)="addNew()"
+                style="display: none"
+              >
+                Add New
+              </button>
+            </div>
+          </c-card-header>
+          <c-card-body class="p-3">
+            <div class="table-responsive">
+              <table [striped]="true" [responsive]="true" cTable>
+                <thead>
+                  <tr>
+                    <th scope="col" class="text-center">Sr.&nbsp;No.</th>
+                    <th scope="col">Company&nbsp;Name</th>
+                    <th scope="col">Place</th>
+                    <th scope="col">GSTIN</th>
+                    <th scope="col">Contact&nbsp;Details</th>
+                    <th
+                      scope="col"
+                      class="text-center"
+                      *ngIf="userType == 'Administrator'"
+                    >
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngIf="!companyList">
+                    <td colspan="6" class="text-center">No record found</td>
+                  </tr>
+                  <tr
+                    *ngFor="
+                      let item of companyList
+                        | paginate : { itemsPerPage: 9, currentPage: p }
+                    "
+                  >
+                    <td scope="row" class="text-center">
+                      {{ item.CompanyId }}
+                    </td>
+                    <td (click)="goToDashboard(item)" class="cursor-pointer">
+                      {{ item.CompanyName ? item.CompanyName : "-" }}
+                    </td>
+                    <td>{{ item.Place ? item.Place : "-" }}</td>
+                    <td>{{ item.Gstin ? item.Gstin : "-" }}</td>
+                    <td>
+                      {{ item.ContactDetails ? item.ContactDetails : "-" }}
+                    </td>
+                    <td class="text-center" *ngIf="userType == 'Administrator'">
+                      <div
+                        class="d-flex justify-content-center align-items-center"
+                      >
+                        <button
+                          class="btn btn-dark btn-sm me-1"
+                          (click)="onEdit(item)"
+                        >
+                          <svg cIcon name="cil-pen"></svg>
+                        </button>
+                        <!-- <button cButton class="ms-1 text-white" color="danger" size="sm"
+                                                    (click)="onDelete()">
+                                                    <svg cIcon name="cil-trash"></svg>
+                                                </button> -->
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div
+              class="d-flex justify-content-end align-items-center"
+              *ngIf="companyList"
+            >
+              <pagination-controls
+                (pageChange)="p = $event"
+                class="float-right"
+              ></pagination-controls>
+            </div>
+          </c-card-body>
+        </c-card>
+      </c-col>
+    </c-row>
+  </c-container>
+</div>
+
+<c-footer>
+  <div>
+    <a>Sutra Plus</a>
+    <span>
+      &copy; {{ currentYear }}. Unnati Solutions. All Rights Reserved</span
+    >
+  </div>
+  <div class="ms-auto">
+    Powered by
+    <a href="http://unnatisoftwares.com/" target="_blank">
+      <span> Unnati Solutions</span>
+    </a>
+  </div>
+</c-footer>

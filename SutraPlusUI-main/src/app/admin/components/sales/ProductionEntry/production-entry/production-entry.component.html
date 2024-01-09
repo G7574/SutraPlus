@@ -1,0 +1,103 @@
+<!-- production-entry.component.html -->
+
+<h1>Production Entry</h1>
+
+<div class="row">
+  <div class="col-md-4">
+    <form>
+      <div class="form-group row mt-1">
+        <label for="TranctDate" class="col-md-3 col-form-label">Date</label>
+        <div class="col-md-9">
+          <input type="date" id="TranctDate" [(ngModel)]="addEntryModel.TranctDate"
+            name="TranctDate" class="form-control">
+        </div>
+      </div>
+      <div class="form-group row mt-1">
+        <label for="Refno" class="col-md-3 col-form-label">Ref No.</label>
+        <div class="col-md-9">
+          <input type="number" id="Refno" [(ngModel)]="addEntryModel.Refno" name="Refno"
+            class="form-control" placeholder="Enter Ref No.">
+        </div>
+      </div>
+      <div class="form-group row mt-1">
+        <label for="SentItemName" class="col-md-3 col-form-label">Sent Item:</label>
+        <div class="col-md-9">
+          <input type="text" id="SentItemName" [(ngModel)]="addEntryModel.SentItemName"
+            name="SentItemName" class="form-control" placeholder="Enter Sent Item">
+        </div>
+      </div>
+
+      <div class="form-group row mt-1">
+        <label for="QtySent" class="col-md-3 col-form-label">Sent Qty(kg):</label>
+        <div class="col-md-9">
+          <input type="number" class="form-control" id="QtySent" name="QtySent"
+            [(ngModel)]="addEntryModel.QtySent" placeholder="Enter Quantity sent (kg)">
+        </div>
+      </div>
+
+      <div class="form-group row mt-1">
+        <label for="GoodsValue" class="col-md-3 col-form-label">Value</label>
+        <div class="col-md-9">
+          <input type="number" id="GoodsValue" [(ngModel)]="addEntryModel.GoodsValue"
+            name="GoodsValue" class="form-control" placeholder="Enter Goods value">
+        </div>
+      </div>
+
+      <div class="form-group row mt-1">
+        <label for="ReceivedItemName" class="col-md-3 col-form-label">Recieved Item:</label>
+        <div class="col-md-9">
+          <input type="text" [(ngModel)]="addEntryModel.ReceivedItemName" name="ReceivedItemName"
+            class="form-control" placeholder="Enter Recieved Item">
+        </div>
+      </div>
+
+      <div class="form-group row mt-1">
+        <label for="QtyRcd" class="col-md-3 col-form-label">Recieved Qty(kg):</label>
+        <div class="col-md-9">
+          <input type="number" id="QtyRcd" [(ngModel)]="addEntryModel.QtyRcd" name="QtyRcd"
+            class="form-control" placeholder="Enter Quantity Recieved">
+        </div>
+      </div>
+
+      <div class="form-group row mt-1 d-flex justify-content-between">
+        <div class="col-8">
+          <button type="button" mat-button class="btn btn-dark btn-sm px-3" (click)="addEntry()">
+            Save
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="col-md-8">
+    <table class="table table-bordered table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th>Tranct Date</th>
+          <th>Sent Item Name</th>
+          <th>Qty Sent</th>
+          <th>Received Item Name</th>
+          <th>Qty Rcd</th>
+          <th>Goods Value</th>
+          <th>Ref No</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let production of productionList">
+          <td>{{ formatDate(production.TranctDate) }}</td>
+          <td>{{ production.SentItemName }}</td>
+          <td>{{ production.QtySent }}</td>
+          <td>{{ production.ReceivedItemName }}</td>
+          <td>{{ production.QtyRcd }}</td>
+          <td>{{ production.GoodsValue }}</td>
+          <td>{{ production.Refno }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="row mt-2 text-center">
+  <!-- <div class="col-md-4">
+    <button type="button" class="btn btn-dark " (click)="clearForm()">Add New Entry</button>
+  </div> -->
+</div>

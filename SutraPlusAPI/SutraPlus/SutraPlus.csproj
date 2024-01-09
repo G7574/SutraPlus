@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="iTextSharp" Version="5.5.13.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.15" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="NLog" Version="5.1.2" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="5.2.2" />
+    <PackageReference Include="NumberToWord" Version="1.0.1" />
+    <PackageReference Include="QRCoder" Version="1.4.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SutraPlus_BAL\SutraPlus_BAL.csproj" />
+    <ProjectReference Include="..\SutraPlus_DAL\SutraPlus_DAL.csproj" />
+  </ItemGroup>
+
+</Project>

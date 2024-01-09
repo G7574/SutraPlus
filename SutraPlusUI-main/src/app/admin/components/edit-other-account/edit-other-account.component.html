@@ -1,0 +1,67 @@
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+<c-row>
+    <c-col md="12">
+        <div class="bg-light d-flex flex-row justify-content-end align-items-center">
+            <button cButton class="px-0 text-dark fw-bold text-decoration-none" color="link" (click)="back()">
+                <svg cIcon name="cilChevronLeft"></svg> Back
+            </button>
+        </div>
+    </c-col>
+</c-row>
+
+<c-row>
+    <c-col md="12">
+        <form [formGroup]="addLedger">
+            <c-card class="my-3">
+                <c-card-header class="fw-bold">Edit Account Details</c-card-header>
+                <c-card-body class="p-3">
+                    <c-row class="mb-3">
+                        <label cLabel="col" class="text-end" cCol [sm]="2">
+                            Legder Name <span class="text-danger">*</span>
+                        </label>
+                        <c-col [sm]="4">
+                            <input cFormControl type="text" placeholder="Enter ledger name" formControlName="ledgerName"
+                            [ngClass]="{ 'is-invalid': submitted && add['ledgerName'].errors }" />
+                          <div *ngIf="submitted && add['ledgerName'].errors" class="invalid-feedback fw-semibold">
+                            <div *ngIf="add['ledgerName'].errors['required']">Enter ledger name</div>
+                          </div>
+                        </c-col>
+    
+                        <label cLabel="col" class="text-end" cCol [sm]="2">
+                            Place <span class="text-danger">*</span>
+                        </label>
+                        <c-col [sm]="4">
+                            <input cFormControl type="text" placeholder="Enter place" formControlName="place"
+                            [ngClass]="{ 'is-invalid': submitted && add['place'].errors }" />
+                          <div *ngIf="submitted && add['place'].errors" class="invalid-feedback fw-semibold">
+                            <div *ngIf="add['place'].errors['required']">Enter place</div>
+                             </div>
+                        </c-col>
+                    </c-row>
+    
+                    <c-row class="mb-3">
+                        <label cLabel="col" class="text-end" cCol [sm]="2">
+                            Accounting Group <span class="text-danger">*</span>
+                        </label>
+                        <c-col [sm]="4">
+                            <select [ngClass]="{ 'is-invalid': submitted && add['accGroup'].errors }" formControlName="accGroup" aria-label="Default select example" cSelect>
+                                <option value="">-- Select --</option>
+                                <option *ngFor="let item of accGroupList" [value]="item.GroupName">{{item.GroupName}}</option>
+                            </select>
+                            <div *ngIf="submitted && add['accGroup'].errors" class="invalid-feedback fw-semibold">
+                                <div *ngIf="add['accGroup'].errors['required']">Select Accounting Group</div>
+                              </div>
+                        </c-col>
+                    </c-row>
+                    <hr>
+                    <c-row class="mb-3">
+                        <c-col [sm]="12" class="d-flex justify-content-between">
+                            <button (click)="back()" class="btn btn-outline-dark me-2 px-3" type="reset">Cancel</button>
+                            <button (click)="onSubmit()" cButton class="btn btn-dark ms-2 px-3">Save</button>
+                        </c-col>
+                    </c-row>
+                </c-card-body>
+            </c-card>
+            </form>
+    </c-col>
+</c-row>

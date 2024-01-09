@@ -1,0 +1,733 @@
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+
+<c-row class="mb-3">
+    <c-col md="12">
+        <div class="bg-light d-flex flex-row justify-content-end align-items-center">
+            <button cButton class="px-0 text-dark fw-bold text-decoration-none" color="link" (click)="back()">
+                <svg cIcon name="cilChevronLeft"></svg> Back
+            </button>
+        </div>
+    </c-col>
+</c-row>
+
+<c-row class="mb-3">
+    <c-col xs="12">
+        <c-card>
+            <c-card-header>
+                <h6 class="mb-0 mt-1">Ginning Invoice</h6>
+            </c-card-header>
+            <c-card-body>
+                <form [formGroup]="getParty">
+                    <c-row class="mb-3">
+                        <c-col [sm]="9">
+                            <label cLabel>Party</label>
+                            <ng-select #party (keyup)="getPartyList(party.searchTerm)" [items]="partyList"
+                                [(ngModel)]="selectedCar" bindLabel="ledgerName" bindValue="ledgerId"
+                                placeholder="Select Party" (focus)="partyList=[]">
+                                <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                                    <div class="item">
+                                        <div (click)="onClickTest($event, item)">{{item.ledgerName}}</div>
+                                    </div>
+                                </ng-template>
+                            </ng-select>
+                        </c-col>
+
+                        <c-col [sm]="3">
+                            <label cLabel>Date</label>
+                            <input [max]="getToday()" [value]="todayDate" cFormControl type="text" class="pe-none" />
+                        </c-col>
+                    </c-row>
+
+                    <c-row class="mb-3">
+                        <c-col [sm]="4">
+                            <label cLabel>Dealer Type</label>
+                            <input cFormControl type="text" class="pe-none" placeholder="Dealer Type"
+                                formControlName="dealerType" />
+                        </c-col>
+                        <c-col [sm]="4">
+                            <label cLabel>PAN</label>
+                            <input cFormControl type="text" class="pe-none" placeholder="PAN" formControlName="pan" />
+                        </c-col>
+                        <c-col [sm]="4">
+                            <label cLabel>GST</label>
+                            <input cFormControl type="text" placeholder="GST" formControlName="gst" />
+                        </c-col>
+                    </c-row>
+
+                    <c-row class="mb-3">
+                        <c-col [sm]="4">
+                            <label cLabel>Voucher Type</label>
+                            <input cFormControl type="text" class="pe-none" placeholder="Voucher Type"
+                                formControlName="voucherType" />
+                        </c-col>
+
+                        <c-col [sm]="4">
+                            <label cLabel>Invoice No.</label>
+                            <input cFormControl type="text" id="invoiceNo" placeholder="Invoice No." formControlName="invoiceNo" />
+                        </c-col>
+
+                        <c-col [sm]="4">
+                            <label cLabel>State</label>
+                            <input cFormControl type="text" class="pe-none" placeholder="State"
+                                formControlName="state" />
+                        </c-col>
+                    </c-row>
+                </form>
+            </c-card-body>
+        </c-card>
+    </c-col>
+</c-row>
+
+<c-row class="mb-3">
+    <c-col xs="12">
+        <c-card>
+            <c-card-header>
+                <div class="d-flex justify-content-between align-item-center">
+                    <h6 class="mb-0 mt-1">Item Details <small>(maximum 10 items)</small></h6>
+                </div>
+            </c-card-header>
+            <c-card-body>
+                <c-row class="mb-3">
+                    <c-col xs="12">
+                        <c-card>
+                            <c-card-body>
+                                <div class="table-responsive">
+                                    <table id="table" [striped]="true" [responsive]="true" cTable>
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" class="text-center">Sr.&nbsp;No.</th>
+                                                <th scope="col" class="text-center">Select&nbsp;Item</th>
+                                                <th scope="col" class="text-center">KG/Bag</th>
+                                                <th scope="col" class="text-center">No.&nbsp;of&nbsp;Bags</th>
+                                                <th scope="col" class="text-center">Total&nbsp;Qty.</th>
+                                                <th scope="col" class="text-center">Rate</th>
+                                                <th scope="col" class="text-center">Amount</th>
+                                                <th scope="col" class="text-center">Remarks</th>
+                                                <th scope="col" class="text-center">&nbsp;</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let dynamic of dynamicArray; let i = index;">
+                                                <td class="text-center">{{i+1}}</td>
+                                                <td class="">
+                                                    <ng-select #party (keyup)="getProductList(party.searchTerm)"
+                                                        [items]="productList" bindLabel="commodityName" bindValue="_Id"
+                                                        placeholder="Select Item" (focus)="productList=[]">
+                                                        <ng-template ng-option-tmp let-item="item" let-index="index"
+                                                            let-search="searchTerm">
+                                                            <div class="item">
+                                                                <div (click)="productItemClick($event, item, i)">
+                                                                    {{item.commodityName}}</div>
+                                                            </div>
+                                                        </ng-template>
+                                                    </ng-select>
+                                                </td>
+                                                <td class="text-center">
+                                                    <input class="inputs" cFormControl type="text" placeholder="KG/Bag"
+                                                        #kgBag (keyup)="changeKgBag(kgBag.value, i)"
+                                                        (keypress)="commonService.ValidateNumeric($event.keyCode)"
+                                                        [(ngModel)]="dynamicArray[i].WeightPerBag" />
+                                                </td>
+                                                <td class="text-center">
+                                                    <input class="inputs" cFormControl type="text"
+                                                        placeholder="No. of Bags" #noOfBags
+                                                        (keyup)="changeNoOfBag(noOfBags.value, i)"
+                                                        (keypress)="commonService.ValidateNumeric($event.keyCode)"
+                                                        [(ngModel)]="dynamicArray[i].NoOfBags" />
+                                                </td>
+                                                <td class="text-center">
+                                                    <input class="inputs" cFormControl type="text"
+                                                        placeholder="Total Qty" [value]="totalQty" #totalQaunt
+                                                        (keyup)="changeQty(totalQaunt.value, i)"
+                                                        (keypress)="commonService.ValidateNumeric($event.keyCode)"
+                                                        [(ngModel)]="dynamicArray[i].TotalWeight" />
+                                                </td>
+                                                <td class="text-center">
+                                                    <input class="inputs" cFormControl type="text" placeholder="Rate"
+                                                        #rate (keyup)="calAmt(rate.value, i)"
+                                                        (keypress)="commonService.ValidateNumeric($event.keyCode)"
+                                                        [(ngModel)]="dynamicArray[i].Rate" />
+                                                </td>
+                                                <td class="text-center">
+                                                    <input class="inputs pe-none" cFormControl type="text"
+                                                        placeholder="Amount" [(ngModel)]="dynamicArray[i].Amount" />
+                                                </td>
+                                                <td class="text-center">
+                                                    <input class="inputs" cFormControl type="text" placeholder="Remarks"
+                                                        [(ngModel)]="dynamicArray[i].Remark" />
+                                                </td>
+                                                <td class="text-center">
+                                                    <button type="button" class="btn btn-secondary btn-sm mt-1"
+                                                        (click)="deleteRow(i)" *ngIf="dynamicArray.length != 1"
+                                                        cTooltip="Remove Item" cTooltipPlacement="bottom">
+                                                        <i class="fa-solid fa-xmark"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr *ngIf="dynamicArray.length < 10">
+                                                <td class="text-center">
+                                                    <button type="button" class="btn btn-secondary btn-sm"
+                                                        (click)="addRow(i)" cTooltip="Add Item"
+                                                        cTooltipPlacement="bottom">
+                                                        <i class="fa-solid fa-plus"></i>
+                                                    </button>
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr class="bg-secondary">
+                                                <td class="text-center fw-semibold">
+                                                    Total
+                                                </td>
+                                                <td class="text-center"></td>
+                                                <td class="text-center"></td>
+                                                <td class="text-center">
+                                                    <input class="inputs pe-none" cFormControl type="text"
+                                                        [(ngModel)]="totalNoOfBags" />
+                                                </td>
+                                                <td class="text-center">
+                                                    <input class="inputs pe-none" cFormControl type="text"
+                                                        [(ngModel)]="totalQuantity" />
+                                                </td>
+                                                <td class="text-center"></td>
+                                                <td class="text-center">
+                                                    <input class="inputs pe-none" cFormControl type="text"
+                                                        [(ngModel)]="totalAmount" />
+                                                </td>
+                                                <td class="text-center"></td>
+                                                <td class="text-center"></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                                <c-col xs="3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <!-- <p class="mb-0">Current Stock : <b>20</b></p> -->
+                                        <p class="mb-0">GST Rate: <b>{{ newRate }}%</b></p>
+                                    </div>
+                                </c-col>
+                            </c-card-body>
+                        </c-card>
+                    </c-col>
+                </c-row>
+
+                <c-row class="mb-0">
+                    <c-col xs="12">
+                        <c-card>
+                            <c-card-header>
+                                <div class="d-flex justify-content-between align-item-center">
+                                    <h6 class="mb-0 mt-2">Other Charges</h6>
+                                    <button type="button" class="btn btn-dark btn-sm px-3" (click)="toggleLiveDemo()"
+                                        cButton>Lorry
+                                        Details</button>
+                                </div>
+                            </c-card-header>
+                            <c-card-body>
+                                <form [formGroup]="formGroup1">
+                                    <c-row class="mb-3" *ngIf="otherChargesInfo == true">
+                                        <c-col class="align-items-start" [sm]="4">
+                                            <input type="text" cFormControl class="pe-none"
+                                                formControlName="otherChargesAny">
+                                        </c-col>
+                                        <c-col class="align-items-start" [sm]="4">
+                                            <input type="text" cFormControl class="pe-none"
+                                                formControlName="otherChargesAnyValue">
+                                        </c-col>
+                                    </c-row>
+
+                                    <c-row class="mb-3">
+                                        <c-col class="align-items-start" [sm]="4">
+                                            <ng-select #otherAcc1 (keyup)="getOtherAccList(otherAcc1.searchTerm)"
+                                                [items]="otherAccList" [(ngModel)]="selectedCar" bindLabel="ledgerName"
+                                                bindValue="ledgerId" placeholder="Select Other Account"
+                                                (focus)="otherAccList=[]">
+                                                <ng-template ng-option-tmp let-item="item" let-index="index"
+                                                    let-search="searchTerm">
+                                                    <div class="item">
+                                                        <div (click)="onOtherAcc1(item)">{{item.ledgerName}}
+                                                        </div>
+                                                    </div>
+                                                </ng-template>
+                                            </ng-select>
+                                        </c-col>
+                                        <c-col class="align-items-start" [sm]="4">
+                                            <input cFormControl placeholder="Amount" type="text"
+                                                formControlName="otherCharges1" #otherCharges1
+                                                (keyup)="otherChrgs1(otherCharges1.value)"
+                                                (keypress)="commonService.ValidateNumeric($event.keyCode)"
+                                                [(ngModel)]="othrChrgs1" />
+                                        </c-col>
+                                    </c-row>
+
+                                    <c-row class="mb-3">
+                                        <c-col class="align-items-start" [sm]="4">
+                                            <ng-select #otherAcc2 (keyup)="getOtherAccList(otherAcc2.searchTerm)"
+                                                [items]="otherAccList" [(ngModel)]="selectedCar" bindLabel="ledgerName"
+                                                bindValue="ledgerId" placeholder="Select Other Account"
+                                                (focus)="otherAccList=[]">
+                                                <ng-template ng-option-tmp let-item="item" let-index="index"
+                                                    let-search="searchTerm">
+                                                    <div class="item">
+                                                        <div (click)="onOtherAcc2(item)">{{item.ledgerName}}
+                                                        </div>
+                                                    </div>
+                                                </ng-template>
+                                            </ng-select>
+                                        </c-col>
+
+                                        <c-col class="align-items-start" [sm]="4">
+                                            <input cFormControl placeholder="Amount" type="text"
+                                                formControlName="otherCharges2" #otherCharges2
+                                                (keyup)="otherChrgs2(otherCharges2.value)"
+                                                (keypress)="commonService.ValidateNumeric($event.keyCode)"
+                                                [(ngModel)]="othrChrgs2" />
+                                        </c-col>
+                                    </c-row>
+
+                                    <c-row class="mb-3">
+                                        <c-col class="align-items-start" [sm]="4">
+                                            <ng-select #otherAcc3 (keyup)="getOtherAccList(otherAcc3.searchTerm)"
+                                                [items]="otherAccList" [(ngModel)]="selectedCar" bindLabel="ledgerName"
+                                                bindValue="ledgerId" placeholder="Select Other Account"
+                                                (focus)="otherAccList=[]">
+                                                <ng-template ng-option-tmp let-item="item" let-index="index"
+                                                    let-search="searchTerm">
+                                                    <div class="item">
+                                                        <div (click)="onOtherAcc3(item)">{{item.ledgerName}}
+                                                        </div>
+                                                    </div>
+                                                </ng-template>
+                                            </ng-select>
+                                        </c-col>
+                                        <c-col class="align-items-start" [sm]="4">
+                                            <input cFormControl placeholder="Amount" type="text"
+                                                formControlName="otherCharges3" #otherCharges3
+                                                (keyup)="otherChrgs3(otherCharges3.value)"
+                                                (keypress)="commonService.ValidateNumeric($event.keyCode)"
+                                                [(ngModel)]="othrChrgs3" />
+                                        </c-col>
+                                    </c-row>
+
+                                    <c-row class="mb-0">
+                                        <label cLabel="col" class="text-end fw-semibold" cCol [sm]="4">
+                                            Total Charges:
+                                        </label>
+                                        <c-col class="align-items-start" [sm]="4">
+                                            <label cLabel="col"
+                                                class="text-end fw-semibold">{{totalOtherCharges}}</label>
+                                        </c-col>
+                                    </c-row>
+                                </form>
+                            </c-card-body>
+                        </c-card>
+                    </c-col>
+                </c-row>
+            </c-card-body>
+        </c-card>
+    </c-col>
+</c-row>
+
+<c-row class="mb-3">
+    <c-col xs="12">
+        <c-card>
+            <c-card-header>
+                <h6 class="mb-0 mt-1">Payment Details</h6>
+            </c-card-header>
+            <c-card-body>
+                <form [formGroup]="formGroup2">
+                    <c-row class="mb-3">
+                        <label cLabel="col" class="text-end" cCol [sm]="2">
+                            Taxable Amount
+                        </label>
+                        <c-col class="align-items-start" [sm]="2">
+                            <input cFormControl type="text" formControlName="taxableAmt" class="pe-none bg-gray"
+                                [(ngModel)]="taxableAmt" />
+                        </c-col>
+                        <label cLabel="col" class="text-end" cCol [sm]="2">
+                            Discount (%)
+                        </label>
+                        <c-col class="align-items-start" [sm]="2">
+                            <input cFormControl type="text" formControlName="discount" #discAmt
+                                (keyup)="onChangeDiscount(discAmt.value)"
+                                (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                        </c-col>
+                        <label cLabel="col" class="text-end" cCol [sm]="2"></label>
+                        <c-col [sm]="2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <c-col [sm]="7">
+                                    <c-form-check>
+                                        <input [checked]="false" cFormCheckInput id="checkTwo" type="checkbox"
+                                            (change)="fieldsChange($event)" formControlName="sezSale" />
+                                        <label cFormCheckLabel for="checkTwo">SEZ Sale</label>
+                                    </c-form-check>
+                                </c-col>
+                            </div>
+                        </c-col>
+                    </c-row>
+
+                    <c-row class="mb-3">
+                        <label cLabel="col" class="text-end" cCol [sm]="2"
+                            *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
+                            SGST (%)
+                        </label>
+                        <c-col class="align-items-start" [sm]="2"
+                            *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
+                            <input cFormControl type="text" [ngClass]="disableRates==true ? 'pe-none bg-gray' : ''"
+                                formControlName="sgstRate" (keyup)="onChangeSGST()"
+                                (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                        </c-col>
+
+                        <label cLabel="col" class="text-end" cCol [sm]="2"
+                            *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
+                            CGST (%)
+                        </label>
+                        <c-col class="align-items-start" [sm]="2"
+                            *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
+                            <input cFormControl type="text" [ngClass]="disableRates==true ? 'pe-none bg-gray' : ''"
+                                formControlName="cgstRate" (keyup)="onChangeCGST()"
+                                (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                        </c-col>
+
+                        <label cLabel="col" class="text-end" cCol [sm]="2"
+                            *ngIf="igstShow == true && sgstShow == false && cgstShow == false">
+                            IGST (%)
+                        </label>
+                        <c-col class="align-items-start" [sm]="2"
+                            *ngIf="igstShow == true && sgstShow == false && cgstShow == false">
+                            <input cFormControl type="text" [ngClass]="disableRates==true ? 'pe-none bg-gray' : ''"
+                                formControlName="igstRate" (keyup)="onChangeIGST()"
+                                (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                        </c-col>
+
+                        <label cLabel="col" class="text-end" cCol [sm]="2"
+                            *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
+                            Total GST (%)
+                        </label>
+                        <c-col class="align-items-start" [sm]="2"
+                            *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
+                            <input cFormControl type="text" formControlName="totalGst" class="pe-none" />
+                        </c-col>
+                    </c-row>
+
+                    <c-row class="mb-3">
+                        <label cLabel="col" class="text-end" cCol [sm]="2">
+                            Total GST Amount
+                        </label>
+                        <c-col class="align-items-start" [sm]="2">
+                            <input cFormControl type="text" formControlName="totalGstAmt" class="pe-none" />
+                        </c-col>                        
+
+                        <label cLabel="col" class="text-end" cCol [sm]="2">
+                            Round OFF
+                        </label>
+                        <c-col class="align-items-start" [sm]="2">
+                            <input cFormControl type="text" formControlName="roundOff" />
+                        </c-col>
+                        <label cLabel="col" class="text-end fw-bold" cCol [sm]="2">
+                            Grand Total
+                        </label>
+                        <c-col class="align-items-start" [sm]="2">
+                            <input cFormControl type="text" class="pe-none bg-gray" formControlName="grandTotal"
+                                [(ngModel)]="grandTotalAmount" />
+                        </c-col>
+                    </c-row>
+                </form>
+            </c-card-body>
+        </c-card>
+    </c-col>
+</c-row>
+
+<c-row class="mb-3">
+    <c-col xs="12">
+        <c-card>
+            <c-card-header>
+                <h6 class="mb-0 mt-1">Address Details</h6>
+            </c-card-header>
+            <c-card-body>
+                <form [formGroup]="formGroup3">
+                    <c-row class="mb-3">
+                        <label cLabel="col" class="text-end" cCol [sm]="2">
+                            Address<span class="text-danger">*</span>
+                        </label>
+                        <c-col class="align-items-start" [sm]="8">
+                            <textarea cFormControl cols="30" formControlName="address" class="pe-none"></textarea>
+                        </c-col>
+                    </c-row>
+
+                    <c-row class="mb-3">
+                        <label cLabel="col" class="text-end" cCol [sm]="2">
+                            From <span class="text-danger">*</span>
+                        </label>
+                        <c-col class="align-items-start" [sm]="3">
+                            <input cFormControl type="text" formControlName="fromPlace" />
+                        </c-col>
+                        <label cLabel="col" class="text-end" cCol [sm]="2">
+                            To <span class="text-danger">*</span>
+                        </label>
+                        <c-col class="align-items-start" [sm]="3">
+                            <input cFormControl type="text" formControlName="toPlace" />
+                        </c-col>
+                    </c-row>
+                </form>
+            </c-card-body>
+        </c-card>
+    </c-col>
+</c-row>
+
+<c-row class="mb-3">
+    <c-col xs="12">
+        <c-card>
+            <c-card-body>
+                <c-row class="mb-0">
+                    <c-col [sm]="2"></c-col>
+                    <c-col [sm]="8">
+                        <div class="d-flex justify-content-between">
+                            <button class="btn btn-outline-dark me-2 px-3" type="reset">Reset</button>
+                            <button cButton class="btn btn-dark ms-2 px-3" type="submit"
+                                (click)="onSave()">Save</button>
+                        </div>
+                    </c-col>
+                </c-row>
+            </c-card-body>
+        </c-card>
+    </c-col>
+</c-row>
+
+<c-modal size="xl" id="liveDemoModal" [visible]="visible" (visibleChange)="handleLiveDemoChange($event)">
+    <c-modal-header>
+        <h5 cModalTitle>Lorry Details</h5><button (click)="toggleLiveDemo()" cButtonClose class="fw-bold"></button>
+    </c-modal-header>
+    <c-modal-body>
+        <form [formGroup]="formGroup4">
+            <c-row class="mb-3">
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    PO No. <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="3">
+                    <input cFormControl type="text" placeholder="Enter po no." formControlName="poNo" />
+                </c-col>
+
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    E-Way Bill No. <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="3">
+                    <input cFormControl type="text" placeholder="Enter e-way bill no." formControlName="eWayBill" />
+                </c-col>
+            </c-row>
+
+            <c-row class="mb-3">
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    Transporter <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="3">
+                    <input cFormControl type="text" placeholder="Enter transporter" formControlName="transporter" />
+                </c-col>
+
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    Lorry No. <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="3">
+                    <input cFormControl type="text" placeholder="Enter lorry no." formControlName="lorryNo" />
+                </c-col>
+            </c-row>
+
+            <c-row class="mb-3">
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    Owner <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="3">
+                    <input cFormControl type="text" placeholder="Enter owner" formControlName="owner" />
+                </c-col>
+
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    Driver <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="3">
+                    <input cFormControl type="text" placeholder="Enter driver" formControlName="driver" />
+                </c-col>
+            </c-row>
+
+            <c-row class="mb-3">
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    DL No. <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="3">
+                    <input cFormControl type="text" placeholder="Enter dl no." formControlName="dlNo" />
+                </c-col>
+
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    Check Post <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="3">
+                    <input cFormControl type="text" placeholder="Enter check post" formControlName="checkPost" />
+                </c-col>
+            </c-row>
+
+            <c-row class="mb-3">
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    Frieght/Bag <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="3">
+                    <input cFormControl type="text" placeholder="Enter frieght/bag" formControlName="frieght_bag"
+                        (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                </c-col>
+
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    Total Frieght <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="3">
+                    <input cFormControl type="text" placeholder="Enter total frieght" #totalFr
+                        (keyup)="changeTotFr(totalFr.value)" formControlName="totalFrieght"
+                        (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                </c-col>
+            </c-row>
+
+            <c-row class="mb-3">
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    Advance Paid <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="3">
+                    <input cFormControl type="text" placeholder="Enter advance paid" #advancePaid
+                        (keyup)="changeAdvPaid(advancePaid.value)" [(ngModel)]="advPaid" formControlName="advancePaid"
+                        (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                </c-col>
+
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    Balance Frieght <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="3">
+                    <input cFormControl type="text" class="pe-none" placeholder="Enter balance frieght"
+                        [(ngModel)]="balanceFr" formControlName="balanceFrieght"
+                        (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                </c-col>
+            </c-row>
+
+            <c-row class="mb-3">
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    Frieght Plus/Less <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="3">
+                    <select aria-label="Default select example" cSelect formControlName="frieght_Plus_Less">
+                        <option value="" selected>-- Select --</option>
+                        <option value="Party Lorry Frieght">Party Lorry Frieght</option>
+                        <option value="Own Lorry Frieght">Own Lorry Frieght</option>
+                    </select>
+                </c-col>
+
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    TDS (%) <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="3">
+                    <input cFormControl type="text" placeholder="Enter tds" formControlName="tds"
+                        (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                </c-col>
+            </c-row>
+
+            <c-row class="my-2">
+                <c-col [sm]="12" class=" bg-secondary">
+                    <h6 class="text-center mt-1">Delivery Address Details</h6>
+                </c-col>
+            </c-row>
+
+            <c-row class="mb-3">
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    Name <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="9">
+                    <input cFormControl type="text" placeholder="Enter party name" formControlName="partyName" />
+                </c-col>
+            </c-row>
+
+            <c-row class="mb-3">
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    Address 1 <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="9">
+                    <input cFormControl type="text" placeholder="Enter address line 1" formControlName="address1" />
+                </c-col>
+            </c-row>
+
+            <c-row class="mb-3">
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    Address 2 <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="9">
+                    <input cFormControl type="text" placeholder="Enter address line 2" formControlName="address2" />
+                </c-col>
+            </c-row>
+
+            <c-row class="mb-3">
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    Place <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="3">
+                    <input cFormControl type="text" placeholder="Enter place" formControlName="place" />
+                </c-col>
+
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    Pin Code <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="3">
+                    <input cFormControl type="text" placeholder="Enter pin code" formControlName="pinCode" />
+                </c-col>
+            </c-row>
+
+            <c-row class="mb-3">
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    State <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="3">
+                    <select #fruits aria-label="Default select example" cSelect formControlName="state"
+                        (change)="onStateChange($event)">
+                        <option value="" selected>-- Select --</option>
+                        <option *ngFor="let item of stateList" [value]="item.Statename">{{item.Statename}}</option>
+                    </select>
+                </c-col>
+
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    State Code <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="3">
+                    <input cFormControl type="text" placeholder="Enter state code" class="pe-none"
+                        formControlName="stateCode" />
+                </c-col>
+            </c-row>
+
+            <c-row class="mb-3">
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    Distance <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="3">
+                    <input cFormControl type="text" placeholder="Enter distance" formControlName="distance" />
+                </c-col>
+
+                <label cLabel="col" class="text-end" cCol [sm]="3">
+                    Note <span class="text-danger">*</span>
+                </label>
+                <c-col [sm]="3">
+                    <input cFormControl type="text" placeholder="Enter note" formControlName="note" />
+                </c-col>
+            </c-row>
+        </form>
+    </c-modal-body>
+    <c-modal-footer class="justify-content-center">
+        <c-row>
+            <!-- <c-col [sm]="3"></c-col> -->
+            <c-col [sm]="12">
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-outline-dark me-2 px-3" type="reset">Reset</button>
+                    <button cButton class="btn btn-dark ms-2 px-3" type="submit"
+                        (click)="saveLorryDetails()">Save</button>
+                </div>
+            </c-col>
+        </c-row>
+    </c-modal-footer>
+</c-modal>

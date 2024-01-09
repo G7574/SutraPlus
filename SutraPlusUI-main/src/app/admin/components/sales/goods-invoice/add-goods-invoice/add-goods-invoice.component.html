@@ -1,0 +1,1740 @@
+<c-modal size="lg" id="eInvoiceModal" [visible]="eInvoiceModalVisible"
+  (visibleChange)="handleEInvoiceModal($event)">
+  <c-modal-header>
+    <h3 cModalTitle>E-Invoice</h3>
+    <button (click)="toggleEInvoiceModal()" cButtonClose class="fw-bold"></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="saveEInvoiceForm">
+      <div class="form-group row">
+        <label class="col-sm-4"> PIN: </label>
+        <div class="col-sm-8">
+          <input type="text" class="form-control" formControlName="pin" />
+        </div>
+      </div>
+      <div class="form-group row mt-1">
+        <label class="col-sm-4"> Legal Name: </label>
+        <div class="col-sm-8">
+          <input type="text" class="form-control" formControlName="legalName" />
+        </div>
+      </div>
+      <div class="form-group row mt-1">
+        <label class="col-sm-4"> Portal User Name: </label>
+        <div class="col-sm-8">
+          <input type="text" class="form-control" formControlName="portalUserName" />
+        </div>
+      </div>
+      <div class="form-group row mt-1">
+        <label class="col-sm-4"> Portal Password: </label>
+        <div class="col-sm-8">
+          <input type="password" class="form-control" formControlName="portalPw" />
+        </div>
+      </div>
+      <div class="form-group row mt-1">
+        <label class="col-sm-4"> Portal Email: </label>
+        <div class="col-sm-8">
+          <input type="email" class="form-control" formControlName="portalEmail" />
+        </div>
+      </div>
+      <div class="form-group row mt-1">
+        <label class="col-sm-4"> E-invoice Key: </label>
+        <div class="col-sm-8">
+          <input type="text" class="form-control" formControlName="einvoiceKey" />
+        </div>
+      </div>
+      <div class="form-group row mt-1">
+        <label class="col-sm-4"> E-invoice Skey: </label>
+        <div class="col-sm-8">
+          <input type="text" class="form-control" formControlName="einvoiceSkey" />
+        </div>
+      </div>
+      <div class="form-group row mt-1">
+        <label class="col-sm-4"> E-invoice User Name: </label>
+        <div class="col-sm-8">
+          <input type="text" class="form-control" formControlName="einvoiceUserName" />
+        </div>
+      </div>
+      <div class="form-group row mt-1">
+        <label class="col-sm-4"> E-invoice Password: </label>
+        <div class="col-sm-8">
+          <input type="password" class="form-control" formControlName="einvoicePassword" />
+        </div>
+      </div>
+      <div class="form-group row mt-1">
+        <label class="col-sm-4"> PAN: </label>
+        <div class="col-sm-8">
+          <input type="text" class="form-control" formControlName="pan" />
+        </div>
+      </div>
+      <div class="form-group row mt-1">
+        <label class="col-sm-4"> Address Line 2: </label>
+        <div class="col-sm-8">
+          <input type="text" class="form-control" formControlName="addressLine2" />
+        </div>
+      </div>
+      <div class="form-group row mt-1">
+        <label class="col-sm-4"> Cellphone: </label>
+        <div class="col-sm-8">
+          <input type="tel" class="form-control" formControlName="cellphone" />
+        </div>
+      </div>
+      <div class="form-group row mt-1">
+        <label class="col-sm-4"> E-Invoice Req: </label>
+        <div class="col-sm-8">
+          <input type="number" class="form-control" formControlName="eInvoiceReq" />
+        </div>
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button type="submit" mat-button class="btn btn-dark btn-sm px-3" (click)="saveEInvoice()">
+      Submit
+    </button>
+  </c-modal-footer>
+</c-modal>
+
+<!-- [disabled]="!saveEInvoiceForm.valid" -->
+
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+
+<c-row class="mb-3">
+  <c-col md="12">
+    <div class="bg-light d-flex flex-row justify-content-end align-items-center">
+      <button cButton class="px-0 text-dark fw-bold text-decoration-none" color="link"
+        (click)="back()">
+        <svg cIcon name="cilChevronLeft"></svg> Back
+      </button>
+    </div>
+  </c-col>
+</c-row>
+
+<c-row class="mb-3">
+  <c-col xs="12">
+    <c-card>
+      <c-card-header>
+        <div class="d-flex justify-content-between align-items-center">
+          <h3 class="mb-0 mt-1">
+            {{ invType }}
+            <span *ngIf="companySelected" style="font-size: 12px; font-weight: 500">
+              <span *ngIf="isEinVoice"> - (E Invoice Enabled)</span>
+              <span *ngIf="!isEinVoice"> - (E Invoice Disabled)</span> 
+            </span>
+          </h3>
+          <button class="btn btn-secondary" (click)="toggleEInvoiceModal()">
+            View E-Invoice Details
+          </button>
+        </div>
+      </c-card-header>
+
+      <c-card-body>
+        <form [formGroup]="getParty">
+          <c-row class="mb-3">
+            <c-col [sm]="4">
+              <label cLabel style="width: 100%">Party
+
+                <span *ngIf="partySelected" style="margin-left: 1%">
+                  <a (click)="editDemo()">
+                    <i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+                </span>
+              </label>
+              <ng-select #party (keyup)="getPartyList(party.searchTerm)" [items]="partyList"
+                 bindLabel="ledgerName" bindValue="ledgerId" formControlName="DrpParty" 
+                
+                placeholder="Select Party" >
+                <ng-template ng-option-tmp let-item="item" let-index="index"  
+                  let-search="searchTerm">
+                  <div class="item">
+                    <div (click)="onClickTest($event, item)">
+                      {{ item.ledgerName }}
+                    </div>
+                  </div>
+                </ng-template>
+              </ng-select>
+            </c-col>
+            <c-col [sm]="1" *ngIf="partySelected">
+              <label class="d-block" cLabel> &nbsp;</label>
+              <button type="button" class="btn btn-dark btn-sm px-3" (click)="editDemo()" cButton>
+                Edit
+              </button>
+            </c-col>
+            <c-col [sm]="3">
+              <label cLabel>Date</label>
+              <input  [max]="maxDate" [min]="minDate" formControlName="BillDate" cFormControl
+                type="date" />
+            </c-col>
+
+            <c-col [sm]="4">
+              <label cLabel>Invoice No.</label>
+              <input cFormControl type="text" id="invoiceNo" placeholder="Invoice No."
+                formControlName="invoiceNo" />
+            </c-col>
+          </c-row>
+
+          <c-row class="mb-3" *ngIf="partySelected">
+            <c-col [sm]="12">
+              <table style="width: 100%" id="tblPartyDetails">
+                <tbody>
+                  <tr>
+                    <td style="font-size: 12px !important">Voucher Type</td>
+                    <td>
+                      <input cFormControl style="
+                          border: unset;
+                          padding-top: 0% !important;
+                          padding-bottom: 0% !important;
+                          font-size: 12px;
+                          font-weight: bold !important;
+                        " type="text" class="pe-none" formControlName="voucherType" />
+                    </td>
+                    <td style="font-size: 12px !important">PAN</td>
+                    <td>
+                      <input cFormControl style="
+                          border: unset;
+                          padding-top: 0% !important;
+                          padding-bottom: 0% !important;
+                          font-size: 12px;
+                          font-weight: bold !important;
+                        " type="text" class="pe-none" formControlName="pan" />
+                    </td>
+                    <td style="font-size: 12px !important">GSTIN</td>
+                    <td>
+                      <input cFormControl style="
+                          border: unset;
+                          padding-top: 0% !important;
+                          padding-bottom: 0% !important;
+                          font-size: 12px;
+                          font-weight: bold !important;
+                        " type="text" formControlName="gst" />
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style="font-size: 12px !important">Dealer Type</td>
+                    <td>
+                      <input cFormControl style="
+                          border: unset;
+                          padding-top: 0% !important;
+                          padding-bottom: 0% !important;
+                          font-size: 12px;
+                          font-weight: bold !important;
+                        " type="text" class="pe-none" formControlName="dealerType" />
+                    </td>
+                    <td style="font-size: 12px !important">State</td>
+                    <td>
+                      <input cFormControl style="
+                          border: unset;
+                          padding-top: 0% !important;
+                          padding-bottom: 0% !important;
+                          font-size: 12px;
+                          font-weight: bold !important;
+                        " type="text" class="pe-none" formControlName="state" />
+                    </td>
+                    <td style="font-size: 12px !important">Address1</td>
+                    <td>
+                      <input cFormControl style="
+                          border: unset;
+                          padding-top: 0% !important;
+                          padding-bottom: 0% !important;
+                          font-size: 12px;
+                          font-weight: bold !important;
+                        " type="text" class="pe-none" formControlName="address1" />
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style="font-size: 12px !important">Address2</td>
+                    <td>
+                      <input cFormControl style="
+                          border: unset;
+                          padding-top: 0% !important;
+                          padding-bottom: 0% !important;
+                          font-size: 12px;
+                          font-weight: bold !important;
+                        " type="text" class="pe-none" formControlName="address2" />
+                    </td>
+                    <td style="font-size: 12px !important">Email</td>
+                    <td>
+                      <input cFormControl style="
+                          border: unset;
+                          padding-top: 0% !important;
+                          padding-bottom: 0% !important;
+                          font-size: 12px;
+                          font-weight: bold !important;
+                        " type="text" id="invoiceNo" formControlName="emailId" />
+                    </td>
+                    <td style="font-size: 12px !important">Phone No.</td>
+                    <td>
+                      <input cFormControl style="
+                          border: unset;
+                          padding-top: 0% !important;
+                          padding-bottom: 0% !important;
+                          font-size: 12px;
+                          font-weight: bold !important;
+                        " type="text" class="pe-none" formControlName="cellNo" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </c-col>
+          </c-row>
+        </form>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>
+<c-row class="mb-3">
+  <c-col xs="12">
+    <c-card>
+      <c-card-header>
+        <div class="d-flex justify-content-between align-item-center">
+          <h3 class="mb-0 mt-1">
+            Item Details <small>(maximum 10 items)</small>
+          </h3>
+        </div>
+      </c-card-header>
+      <c-card-body>
+        <c-row class="mb-3">
+          <c-col xs="12">
+            <c-card>
+              <c-card-body>
+                <div class="table-responsive">
+                  <table id="table" [striped]="true" [responsive]="true" cTable>
+                    <thead>
+                      <tr>
+                        <th scope="col" class="text-center">Sr.&nbsp;No.</th>
+                        <th scope="col" class="text-center">
+                          Select&nbsp;Item
+                        </th>
+                        <!-- not visible ginning & debit note-->
+                        <th scope="col" class="text-center" *ngIf="isShow">
+                          KG/Bag
+                        </th>
+                        <th scope="col" class="text-center" *ngIf="isShow">
+                          No.&nbsp;of&nbsp;Bags
+                        </th>
+                        <th scope="col" class="text-center" *ngIf="isDebitNote">
+                          Total&nbsp;Qty.
+                        </th>
+                        <th scope="col" class="text-center" *ngIf="isDebitNote">
+                          Rate
+                        </th>
+                        <th scope="col" class="text-center">Amount</th>
+
+                        <th scope="col" class="text-center" style="display: none">
+                          Taxable
+                        </th>
+
+                        <th scope="col" class="text-center" style="display: none">
+                          Sgst
+                        </th>
+                        <th scope="col" class="text-center" style="display: none">
+                          Cgst
+                        </th>
+                        <th scope="col" class="text-center" style="display: none">
+                          Igst
+                        </th>
+
+                        <th scope="col" class="text-center">Mark</th>
+                        <th scope="col" class="text-center">&nbsp;</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let dynamic of dynamicArray; let i = index">
+                        <td class="text-center">{{ i + 1 }}</td>
+                        <td class="">
+                          <ng-select #party (keyup)="getProductList(party.searchTerm)"
+                            [items]="productList" bindLabel="commodityName" bindValue="_Id"
+                            placeholder="Select Item" [(ngModel)]="dynamicArray[i].CommodityId" >
+                            <ng-template ng-option-tmp let-item="item" let-index="index"
+                              let-search="searchTerm">
+                              <div class="item">
+                                <div (click)="productItemClick($event, item, i)">
+                                  {{ item.commodityName }}
+                                </div>
+                              </div>
+                            </ng-template>
+                          </ng-select>
+                        </td>
+                        <td *ngIf="isShow" class="text-center">
+                          <input class="inputs text-end" cFormControl type="text"
+                            placeholder="KG/Bag" #kgBag
+                            (keyup)="LineItemTotal(kgBag.value, i, 'KgBag')" (keypress)="
+                              commonService.ValidateNumeric($event.keyCode)
+                            " [(ngModel)]="dynamicArray[i].WeightPerBag" />
+                        </td>
+                        <td *ngIf="isShow" class="text-center">
+                          <input class="inputs text-end" cFormControl type="text"
+                            placeholder="No. of Bags" #noOfBags (keyup)="
+                              LineItemTotal(noOfBags.value, i, 'NoofBags')
+                            " (keypress)="
+                              commonService.ValidateNumeric($event.keyCode)
+                            " [(ngModel)]="dynamicArray[i].NoOfBags" />
+                        </td>
+                        <td *ngIf="isDebitNote" class="text-center">
+                          <input class="inputs text-end" cFormControl type="text"
+                            placeholder="Total Qty" [value]="totalQty" #totalQaunt (keyup)="
+                              LineItemTotal(totalQaunt.value, i, 'TotalQty')
+                            " (keypress)="
+                              commonService.ValidateNumeric($event.keyCode)
+                            " [(ngModel)]="dynamicArray[i].TotalWeight" />
+                        </td>
+                        <td *ngIf="isDebitNote" class="text-center">
+                          <input class="inputs text-end" cFormControl type="text" placeholder="Rate"
+                            #rate (keyup)="LineItemTotal(rate.value, i, 'rate')" (keypress)="
+                              commonService.ValidateNumeric($event.keyCode)
+                            " [(ngModel)]="dynamicArray[i].Rate" />
+                        </td>
+                        <td class="text-center">
+                          <input class="inputs text-end" [ngClass]="{ 'pe-none': isDebitNote }"
+                            cFormControl type="text" #amount
+                            (keyup)="LineItemTotal(amount.value, i, 'Amount')" placeholder="Amount"
+                            (keypress)="
+                              commonService.ValidateNumeric($event.keyCode)
+                            " [value]="SeperateComma(dynamicArray[i].Amount)" />
+                        </td>
+
+                        <td class="text-center" style="display: none">
+                          <input class="inputs pe-none text-end" cFormControl type="text"
+                            placeholder="Taxable" [(ngModel)]="dynamicArray[i].Taxable" />
+                        </td>
+
+                        <td class="text-center" style="display: none">
+                          <input class="inputs text-end" cFormControl type="text"
+                            [(ngModel)]="dynamicArray[i].SgstAmount" />
+                        </td>
+                        <td class="text-center" style="display: none">
+                          <input class="inputs text-end" cFormControl type="text"
+                            [(ngModel)]="dynamicArray[i].CgstAmount" />
+                        </td>
+                        <td class="text-center" style="display: none">
+                          <input class="inputs text-end" cFormControl type="text"
+                            [(ngModel)]="dynamicArray[i].IgstAmount" />
+                        </td>
+                        <td class="text-center">
+                          <input class="inputs" cFormControl type="text" placeholder="Mark"
+                            [(ngModel)]="dynamicArray[i].Remark" />
+                        </td>
+                        <td class="text-center">
+                          <button type="button" class="btn btn-secondary btn-sm mt-1"
+                            (click)="deleteRow(i)" *ngIf="dynamicArray.length != 1"
+                            cTooltip="Remove Item" cTooltipPlacement="bottom">
+                            <i class="fa-solid fa-xmark"></i>
+                          </button>
+                        </td>
+                      </tr>
+                      <tr *ngIf="dynamicArray.length < 10">
+                        <td class="text-center">
+                          <button type="button" class="btn btn-secondary btn-sm" (click)="addRow(i)"
+                            cTooltip="Add Item" cTooltipPlacement="bottom">
+                            <i class="fa-solid fa-plus"></i>
+                          </button>
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr class="bg-secondary">
+                        <td class="text-center fw-semibold">Total</td>
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
+                        <td class="text-center">
+                          <input class="inputs pe-none text-end" cFormControl type="text"
+                            [(ngModel)]="totalNoOfBags" />
+                        </td>
+                        <td class="text-center">
+                          <input class="inputs pe-none text-end" cFormControl type="text"
+                            [(ngModel)]="totalQuantity" />
+                        </td>
+                        <td class="text-center" *ngIf="isDebitNote"></td>
+                        <td class="text-center" *ngIf="isDebitNote">
+                          <input class="inputs pe-none text-end" cFormControl type="text"
+                            [(ngModel)]="totalAmount" />
+                        </td>
+                        <td class="text-center" style="display: none"></td>
+                        <td class="text-center" style="display: none"></td>
+                        <td class="text-center" style="display: none"></td>
+                        <td class="text-center" style="display: none"></td>
+                        <td class="text-center"></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+                <c-col xs="3">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <!-- <p class="mb-0">Current Stock : <b>20</b></p> -->
+                    <p class="mb-0">
+                      GST Rate: <b>{{ newRate }}%</b>
+                    </p>
+                  </div>
+                </c-col>
+              </c-card-body>
+            </c-card>
+          </c-col>
+        </c-row>
+
+        <c-row class="mb-0">
+          <c-col xs="12">
+            <c-card>
+              <c-card-header>
+                <div class="d-flex justify-content-between align-item-center">
+                  <h3 class="mb-0 mt-2">Other Charges</h3>
+                  <button type="button" class="btn btn-dark btn-sm px-3" (click)="toggleLiveDemo()"
+                    cButton>
+                    Lorry Details
+                  </button>
+                </div>
+              </c-card-header>
+              <c-card-body>
+                <form [formGroup]="formGroup1">
+                  <div class="table-responsive">
+                    <table class="table border border-0 border-light" id="table1" [striped]="false"
+                      [responsive]="true" cTable>
+                      <thead></thead>
+                      <tbody>
+                        <tr *ngIf="isThirdParty" class="border border-0 border-light">
+                          <td width="52%" colspan="5" class="text-center"></td>
+                          <td width="12%" class="text-center">
+                            <input style="border: unset" cFormControl
+                              class="inputs pe-none text-end" placeholder="Amount" type="text"
+                              formControlName="otherChargesAny" />
+                          </td>
+                          <td width="12%" class="text-center">
+                            <input cFormControl class="inputs pe-none text-end"
+                              placeholder="Advance amount" type="text"
+                              formControlName="otherChargesAnyValue" />
+                          </td>
+                          <td width="13%" colspan="2"></td>
+                        </tr>
+                        <tr *ngIf="isnotThirdParty" class="border border-0 border-light">
+                          <td width="52%" colspan="5" class="text-center"></td>
+                          <td width="12%" class="text-center">
+                            <input cFormControl class="inputs pe-none text-end" placeholder="Amount"
+                              type="text" formControlName="otherChargesAny" />
+                          </td>
+                          <td width="12%" class="text-center">
+                            <input cFormControl class="inputs pe-none text-end"
+                              placeholder="Advance amount" type="text"
+                              formControlName="otherChargesAnyValue" />
+                          </td>
+                          <td width="13%" colspan="2"></td>
+                        </tr>
+                        <tr class="border border-0 border-light">
+                          <td width="52%" colspan="5" class="text-center"></td>
+                          <td width="12%" class="text-center">
+                            <ng-select #otherAcc1 (keyup)="getOtherAccList(otherAcc1.searchTerm)"
+                              [items]="otherAccList" 
+                              bindLabel="ledgerName" bindValue="ledgerName" formControlName="DrpExpenses1"
+                              placeholder="Select Other Account">
+                              <ng-template ng-option-tmp let-item="item" let-index="index"
+                                let-search="searchTerm">
+                                <div class="item">
+                                  <div (click)="onOtherAcc1(item)">
+                                    {{ item.ledgerName }}
+                                  </div>
+                                </div>
+                              </ng-template>
+                            </ng-select>
+                          </td>
+                          <td width="12%" class="text-center">
+                            <input cFormControl placeholder="Amount" type="text"
+                              formControlName="otherCharges1" class="inputs text-end" #otherCharges1
+                              (keyup)="LineItemTotal(0, 0, 'SaveLorryDetails')" (keypress)="
+                                commonService.ValidateNumeric($event.keyCode)
+                              " />
+                          </td>
+                          <td width="13%" colspan="2"></td>
+                        </tr>
+                        <tr class="border border-0">
+                          <td colspan="5" class="text-center"></td>
+                          <td>
+                            <ng-select #otherAcc2 (keyup)="getOtherAccList(otherAcc2.searchTerm)"
+                              [items]="otherAccList" 
+                              bindLabel="ledgerName" bindValue="ledgerName" formControlName="DrpExpenses2"
+                              placeholder="Select Other Account" >
+                              <ng-template ng-option-tmp let-item="item" let-index="index"
+                                let-search="searchTerm">
+                                <div class="item">
+                                  <div (click)="onOtherAcc2(item)">
+                                    {{ item.ledgerName }}
+                                  </div>
+                                </div>
+                              </ng-template>
+                            </ng-select>
+                          </td>
+                          <td class="text-center">
+                            <input cFormControl placeholder="Amount" type="text"
+                              class="inputs text-end" formControlName="otherCharges2" #otherCharges2
+                              (keyup)="LineItemTotal(0, 0, 'SaveLorryDetails')" (keypress)="
+                                commonService.ValidateNumeric($event.keyCode)
+                              " />
+                          </td>
+                          <td colspan="2"></td>
+                        </tr>
+                        <tr class="border border-0">
+                          <td colspan="5" class="text-center"></td>
+                          <td class="text-center">
+                            <ng-select #otherAcc3 (keyup)="getOtherAccList(otherAcc3.searchTerm)"
+                              [items]="otherAccList" 
+                              bindLabel="ledgerName" bindValue="ledgerName" formControlName="DrpExpenses3"
+                              placeholder="Select Other Account" >
+                              <ng-template ng-option-tmp let-item="item" let-index="index"
+                                let-search="searchTerm">
+                                <div class="item">
+                                  <div (click)="onOtherAcc3(item)">
+                                    {{ item.ledgerName }}
+                                  </div>
+                                </div>
+                              </ng-template>
+                            </ng-select>
+                          </td>
+                          <td class="text-center">
+                            <input cFormControl placeholder="Amount" type="text"
+                              class="inputs text-end" formControlName="otherCharges3" #otherCharges3
+                              (keyup)="LineItemTotal(0, 0, 'SaveLorryDetails')" (keypress)="
+                                commonService.ValidateNumeric($event.keyCode)
+                              " />
+                          </td>
+                          <td colspan="2"></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </form>
+              </c-card-body>
+            </c-card>
+          </c-col>
+        </c-row>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>
+
+
+<c-row class="mb-3">
+  <c-col xs="12">
+    <c-card>
+      <c-card-header>
+        <h3 class="mb-0 mt-1">Payment Details</h3>
+      </c-card-header>
+      <c-card-body>
+        <form [formGroup]="formGroup2">
+          <div class="table-responsive">
+            <table class="table border border-0 border-light" id="table1" [striped]="false"
+              [responsive]="true" cTable>
+              <thead></thead>
+              <tbody>
+                <tr class="border border-0 border-light">
+                  <td class="text-end">
+                    <!--label cLabel="col" class="text-end" cCol [sm]="6">
+                                            Discount (%)
+                                        </label-->
+                    <label *ngIf="
+                        igstShow == false &&
+                        sgstShow == true &&
+                        cgstShow == true
+                      " cLabel="col" class="text-end" cCol [sm]="6">
+                      SGST
+                    </label>
+                    <label *ngIf="
+                        igstShow == true &&
+                        sgstShow == false &&
+                        cgstShow == false
+                      " cLabel="col" class="text-end" cCol [sm]="12">
+                      IGST
+                    </label>
+                  </td>
+                  <td width="15%" class="text-center">
+                    <input *ngIf="
+                        igstShow == false &&
+                        sgstShow == true &&
+                        cgstShow == true
+                      " class="text-end" cFormControl type="text"
+                      [ngClass]="disableRates == true ? 'pe-none bg-gray' : ''"
+                      formControlName="totalsgstAmt"
+                      (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+
+                    <input *ngIf="
+                        igstShow == true &&
+                        sgstShow == false &&
+                        cgstShow == false
+                      " class="text-end" cFormControl type="text"
+                      [ngClass]="disableRates == true ? 'pe-none bg-gray' : ''"
+                      formControlName="totaligstAmt"
+                      (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                    <!--input cFormControl type="text"
+                                            formControlName="discount" #discAmt
+                                            (keyup)="onChangeDiscount(discAmt.value)"
+                                            (keypress)="commonService.ValidateNumeric($event.keyCode)" /-->
+                  </td>
+                  <td class="text-end">
+                    <label cLabel="col" class="text-end" cCol [sm]="6">
+                      Taxable Amount
+                    </label>
+                  </td>
+                  <td width="12%" class="text-center">
+                    <input cFormControl type="text" class="text-end" formControlName="taxableAmt"
+                      class="pe-none bg-gray text-end" [value]="SeperateComma(taxableAmt)" />
+                  </td>
+                  <td width="13%" colspan="2">
+                    <input [checked]="false" cFormCheckInput id="checkTwo" type="checkbox"
+                      formControlName="sezSale" />
+                    <label cFormCheckLabel for="checkTwo">SEZ Sale</label>
+                  </td>
+                </tr>
+                <tr class="border border-0 border-light">
+                  <td class="text-end">
+                    <!--label cLabel="col" class="text-end" cCol [sm]="6">
+                                            Round OFF
+                                        </label-->
+                    <label *ngIf="
+                        igstShow == false &&
+                        sgstShow == true &&
+                        cgstShow == true
+                      " cLabel="col" class="text-end" cCol [sm]="12">
+                      CGST
+                    </label>
+                  </td>
+                  <td width="15%" class="text-center">
+                    <input *ngIf="
+                        igstShow == false &&
+                        sgstShow == true &&
+                        cgstShow == true
+                      " cFormControl type="text" class="text-end"
+                      [ngClass]="disableRates == true ? 'pe-none bg-gray' : ''"
+                      formControlName="totalcgstAmt"
+                      (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                  </td>
+                  <td class="text-end">
+                    <label cLabel="col" class="text-end" cCol [sm]="6">
+                      Total GST Amount
+                    </label>
+                  </td>
+                  <td width="12%" class="text-center">
+                    <input class="text-end" cFormControl type="text" formControlName="totalGstAmt"
+                      class="pe-none text-end" />
+                  </td>
+                  <td width="13%" colspan="2"></td>
+                </tr>
+                <!--tr class="border border-0 border-light">
+                                    <td width="30%"></td>
+                                    <td width="15%" class="text-end">
+                                        <!--div class="container">
+                                            <div class="row">
+                                                <div class="col-4" class="myclass"
+                                                    *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
+                                                    <label cLabel="col" class="text-end" cCol [sm]="12">
+                                                        SGST (%)
+                                                    </label>
+                                                    <input cFormControl type="text"
+                                                        [ngClass]="disableRates==true ? 'pe-none bg-gray' : ''"
+                                                        formControlName="sgstRate"
+                                                        (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                                                </div>
+                                                <div class="col-4" class="myclass"
+                                                    *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
+                                                    <label cLabel="col" class="text-end" cCol [sm]="12">
+                                                        CGST (%)
+                                                    </label>
+                                                    <input cFormControl type="text"
+                                                        [ngClass]="disableRates==true ? 'pe-none bg-gray' : ''"
+                                                        formControlName="cgstRate"
+                                                        (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                                                </div>
+                                                <div class="col-4" class="myclass"
+                                                    *ngIf="igstShow == true && sgstShow == false && cgstShow == false">
+
+                                                    <label cLabel="col" class="text-end" cCol [sm]="12">
+                                                        IGST (%)
+                                                    </label>
+                                                    <input cFormControl type="text"
+                                                        [ngClass]="disableRates==true ? 'pe-none bg-gray' : ''"
+                                                        formControlName="igstRate"
+                                                        (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                                                </div>
+
+                                            </div>
+                                        </div--
+                                    </td>
+                                    <td class="text-end">
+                                        <label cLabel="col" class="text-end" cCol [sm]="6"
+                                            *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
+                                            Total GST(%)
+                                        </label>
+                                    </td>
+                                    <td width="12%" class="text-center"> <c-col class="align-items-start" [sm]="12"
+                                            *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
+                                            <input cFormControl type="text" class="text-end" formControlName="totalGst"
+                                                class="pe-none" />
+                                        </c-col>
+                                    </td>
+                                    <td width="13%" colspan="2"></td>
+                                </tr-->
+                <tr class="border border-0 border-light">
+                  <td class="text-end"></td>
+                  <td width="15%" class="text-center"></td>
+                  <td class="text-end">
+                    <label cLabel="col" class="text-end" cCol [sm]="6">
+                      Round OFF
+                    </label>
+                  </td>
+                  <td width="15%" class="text-center">
+                    <input cFormControl type="text" class="text-end" formControlName="roundOff" />
+                  </td>
+                  <td width="12%" colspan="2"></td>
+                </tr>
+                <tr class="border border-0 border-light">
+                  <td class="text-end"></td>
+                  <td width="15%" class="text-center"></td>
+                  <td class="text-end">
+                    <label cLabel="col" class="text-end fw-bold" cCol [sm]="6">
+                      Grand Total
+                    </label>
+                  </td>
+                  <td width="15%" class="text-center">
+                    <input cFormControl type="text" class="pe-none bg-gray text-end"
+                      formControlName="grandTotal" [(ngModel)]="grandTotalAmount" />
+                  </td>
+                  <td width="12%" colspan="2"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </form>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>
+
+<c-row class="mb-3">
+  <c-col xs="12">
+    <c-card>
+      <c-card-header>
+        <h3 class="mb-0 mt-1">Address Details</h3>
+      </c-card-header>
+      <c-card-body>
+        <form [formGroup]="formGroup3">
+          <c-row class="mb-3">
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              Address<span class="text-danger">*</span>
+            </label>
+            <c-col class="align-items-start" [sm]="8">
+              <textarea cFormControl cols="30" formControlName="address" class="pe-none" [ngClass]="{
+                  'is-invalid':
+                    submitted && formGroup3.controls['address'].errors
+                }"></textarea>
+              <div *ngIf="submitted && formGroup3.controls['address'].errors"
+                class="invalid-feedback fw-semibold">
+                <div *ngIf="formGroup3.controls['address'].errors['required']">
+                  Enter Address
+                </div>
+              </div>
+            </c-col>
+          </c-row>
+
+          <c-row class="mb-3">
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              From <span class="text-danger">*</span>
+            </label>
+            <c-col class="align-items-start" [sm]="3">
+              <input cFormControl type="text" formControlName="fromPlace" [ngClass]="{
+                  'is-invalid':
+                    submitted && formGroup3.controls['fromPlace'].errors
+                }" />
+              <div *ngIf="submitted && formGroup3.controls['fromPlace'].errors"
+                class="invalid-feedback fw-semibold">
+                <div *ngIf="formGroup3.controls['fromPlace'].errors['required']">
+                  Enter From place
+                </div>
+              </div>
+            </c-col>
+            <label cLabel="col" class="text-end" cCol [sm]="2">
+              To <span class="text-danger">*</span>
+            </label>
+            <c-col class="align-items-start" [sm]="3">
+              <input cFormControl type="text" formControlName="toPlace" [ngClass]="{
+                  'is-invalid':
+                    submitted && formGroup3.controls['toPlace'].errors
+                }" />
+              <div *ngIf="submitted && formGroup3.controls['toPlace'].errors"
+                class="invalid-feedback fw-semibold">
+                <div *ngIf="formGroup3.controls['toPlace'].errors['required']">
+                  Enter To place
+                </div>
+              </div>
+            </c-col>
+          </c-row>
+        </form>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>
+
+<c-row class="mb-3">
+  <c-col xs="12">
+    <c-card>
+      <c-card-body>
+        <c-row class="mb-0">
+          <c-col [sm]="2"></c-col>
+          <c-col [sm]="8">
+            <div class="d-flex justify-content-between">
+              <button class="btn btn-outline-dark me-2 px-3" type="reset">
+                Reset
+              </button>
+              <ng-container *ngIf="isEinVoice">
+                <button class="btn btn-outline-dark me-2 px-3" type="reset"
+                  (click)="toggleGetinvoiceResponseModal()">
+                  E-Invoice
+                </button>
+              </ng-container>
+              <button cButton class="btn btn-dark ms-2 px-3" type="submit" (click)="onSave()">
+                Save
+              </button>
+            </div>
+          </c-col>
+        </c-row>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>
+
+<c-modal size="sm" id="GetInvoiceResponse" [visible]="invoiceResponseModelVisible">
+  <c-modal-header>
+    <h3 cModalTitle>Get Invoice</h3>
+    <button (click)="toggleGetinvoiceResponseModal()" cButtonClose class="fw-bold"></button>
+  </c-modal-header>
+  <!-- <c-modal-body>
+    <c-row class="mb-3">
+      <label class="col-form-label col-sm-4">Invoice Number:</label>
+      <div class="col-sm-8">
+        <input type="text" class="form-control" [(ngModel)]="invoiceNoToGetReponse"
+          name="invoiceNoToGetReponse" placeholder="Enter Invoice No">
+      </div>
+    </c-row>
+  </c-modal-body> -->
+  <c-modal-body>
+    <c-row class="mb-3">
+      <label class="col-form-label col-sm-4">Invoice Number:</label>
+      <div class="col-sm-8">
+        <input type="text" class="form-control" [(ngModel)]="invoiceNoToGetReponse"
+          name="invoiceNoToGetReponse" placeholder="Enter Invoice No">
+      </div>
+    </c-row>
+
+    <c-row class="mb-3">
+      <label class="col-form-label col-sm-4">Status:</label>
+      <div class="col-sm-8">
+        <input type="text" class="form-control" [(ngModel)]="status" name="status"
+          placeholder="Status" disabled readonly>
+      </div>
+    </c-row>
+
+    <c-row class="mb-3">
+      <label class="col-form-label col-sm-4">IRN:</label>
+      <div class="col-sm-8">
+        <input type="text" class="form-control" [(ngModel)]="irn" name="irn" placeholder="Enter IRN"
+          disabled readonly>
+      </div>
+    </c-row>
+
+    <c-row class="mb-3">
+      <label class="col-form-label col-sm-4">Invoice Number (2):</label>
+      <div class="col-sm-8">
+        <input type="text" class="form-control" [(ngModel)]="invoiceNumber" name="invoiceNumber"
+          placeholder="Invoice Number" disabled readonly>
+      </div>
+    </c-row>
+
+    <c-row class="mb-3">
+      <label class="col-form-label col-sm-4">AckNo:</label>
+      <div class="col-sm-8">
+        <input type="text" class="form-control" [(ngModel)]="ackNo" name="ackNo" placeholder="AckNo"
+          disabled readonly>
+      </div>
+    </c-row>
+
+    <c-row class="mb-3">
+      <label class="col-form-label col-sm-4">Signed QR:</label>
+      <div class="col-sm-8">
+        <input type="text" class="form-control" [(ngModel)]="signedQR" name="signedQR"
+          placeholder="Signed QR" disabled readonly>
+      </div>
+    </c-row>
+  </c-modal-body>
+
+  <c-modal-footer class="justify-content-center">
+    <c-row>
+      <c-col [sm]="12">
+        <div class="d-flex justify-content-between">
+          <button cButton class="btn btn-dark ms-2 px-3" type="submit"
+            (click)="getInvoiceResponse()">
+            Get Invoice
+          </button>
+        </div>
+      </c-col>
+    </c-row>
+  </c-modal-footer>
+</c-modal>
+
+<c-modal size="xl" id="liveDemoModal" [visible]="visible"
+  (visibleChange)="handleLiveDemoChange($event)">
+  <c-modal-header>
+    <h3 cModalTitle>Lorry Details</h3>
+    <button (click)="toggleLiveDemo()" cButtonClose class="fw-bold"></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="formGroup4" id="formGroup4">
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          PO No.
+          <!--span class="text-danger">*</span-->
+        </label>
+        <c-col [sm]="3">
+          <input cFormControl type="text" placeholder="Enter po no." formControlName="poNo" />
+        </c-col>
+
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          E-Way Bill No.
+          <!--span class="text-danger">*</span-->
+        </label>
+        <c-col [sm]="3">
+          <input cFormControl type="text" placeholder="Enter e-way bill no."
+            formControlName="eWayBill" />
+        </c-col>
+      </c-row>
+
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Transporter
+        </label>
+        <c-col [sm]="3">
+          <c-input-group class="mb-3">
+            <input aria-label="dropdown button" cFormControl type="text"
+              placeholder="Enter transporter" formControlName="transporter" />
+            <c-dropdown alignment="end" *ngIf="transporterOptions && transporterOptions.length > 0">
+              <button cButton cDropdownToggle color="secondary" variant="outline">
+              </button>
+              <div cDropdownMenu class="dropdown-menu-scrollable">
+                <a cDropdownItem *ngFor="let option of transporterOptions"
+                  (click)="assignOptionToFormControl('transporter', option)">
+                  {{ option }}
+                </a>
+              </div>
+            </c-dropdown>
+          </c-input-group>
+        </c-col>
+
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Lorry No.
+        </label>
+        <c-col [sm]="3">
+          <c-input-group class="mb-3">
+            <input aria-label="dropdown button" cFormControl type="text"
+              placeholder="Enter lorry no." formControlName="lorryNo" />
+            <c-dropdown alignment="end" *ngIf="lorryNoOptions && lorryNoOptions.length > 0">
+              <button cButton cDropdownToggle color="secondary" variant="outline">
+              </button>
+              <div cDropdownMenu class="dropdown-menu-scrollable">
+                <a cDropdownItem *ngFor="let option of lorryNoOptions"
+                  (click)="assignOptionToFormControl('lorryNo', option)">
+                  {{ option }}
+                </a>
+              </div>
+            </c-dropdown>
+          </c-input-group>
+        </c-col>
+      </c-row>
+
+
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Owner
+        </label>
+
+        <c-col [sm]="3">
+
+          <c-input-group class="mb-3">
+            <input aria-label="dropdown button" cFormControl type="text" placeholder="Enter owner"
+              formControlName="owner" />
+            <c-dropdown alignment="end" *ngIf="ownerOptions && ownerOptions.length > 0">
+              <button cButton cDropdownToggle color="secondary" variant="outline">
+              </button>
+              <div cDropdownMenu class="dropdown-menu-scrollable">
+                <a cDropdownItem *ngFor="let option of ownerOptions"
+                  (click)="assignOptionToFormControl('owner', option)">
+                  {{ option }}
+                </a>
+              </div>
+            </c-dropdown>
+          </c-input-group>
+        </c-col>
+
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Driver
+        </label>
+        <c-col [sm]="3">
+          <c-input-group class="mb-3">
+            <input aria-label="dropdown button" cFormControl type="text" placeholder="Enter driver"
+              formControlName="driver" />
+            <c-dropdown alignment="end" *ngIf="driverOptions && driverOptions.length > 0">
+              <button cButton cDropdownToggle color="secondary" variant="outline">
+              </button>
+              <div cDropdownMenu class="dropdown-menu-scrollable">
+                <a cDropdownItem *ngFor="let option of driverOptions"
+                  (click)="assignOptionToFormControl('driver', option)">
+                  {{ option }}
+                </a>
+              </div>
+            </c-dropdown>
+          </c-input-group>
+        </c-col>
+      </c-row>
+
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          DL No.
+          <!--span class="text-danger">*</span-->
+        </label>
+        <c-col [sm]="3">
+          <input cFormControl type="text" placeholder="Enter dl no." formControlName="dlNo" />
+        </c-col>
+
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Check Post
+          <!--span class="text-danger">*</span-->
+        </label>
+        <c-col [sm]="3">
+          <input cFormControl type="text" placeholder="Enter check post"
+            formControlName="checkPost" />
+        </c-col>
+      </c-row>
+
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Frieght/Bag<!--span class="text-danger">*</span-->
+        </label>
+        <c-col [sm]="3">
+          <input cFormControl type="text" (keyup)="CalculateTotalFrieght()"
+            placeholder="Enter frieght/bag" formControlName="frieght_bag"
+            (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+        </c-col>
+
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Total Frieght
+          <!--span class="text-danger">*</span-->
+        </label>
+        <c-col [sm]="3">
+          <input cFormControl type="text" placeholder="Enter total frieght" #totalFr
+            formControlName="totalFrieght"
+            (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+        </c-col>
+      </c-row>
+
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Advance Paid
+          <!--span class="text-danger">*</span-->
+        </label>
+        <c-col [sm]="3">
+          <input cFormControl type="text" placeholder="Enter advance paid" #advancePaid
+            (keyup)="changeAdvPaid(advancePaid.value)" [(ngModel)]="advPaid"
+            formControlName="advancePaid"
+            (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+        </c-col>
+
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Balance Frieght<!--span class="text-danger">*</span-->
+        </label>
+        <c-col [sm]="3">
+          <input cFormControl type="text" class="pe-none" placeholder="Enter balance frieght"
+            [(ngModel)]="balanceFr" formControlName="balanceFrieght"
+            (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+        </c-col>
+      </c-row>
+
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Frieght Plus/Less<!--span class="text-danger">*</span-->
+        </label>
+        <c-col [sm]="3">
+          <select aria-label="Default select example" cSelect formControlName="frieght_Plus_Less"
+            (change)="selectFrieght()">
+            <option value="" selected>-- Select --</option>
+            <option value="Party Lorry Frieght">Party Lorry Frieght</option>
+            <option value="Own Lorry Frieght">Own Lorry Frieght</option>
+          </select>
+        </c-col>
+
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          TDS (%)<!--span class="text-danger">*</span-->
+        </label>
+        <c-col [sm]="3">
+          <input cFormControl type="text" placeholder="Enter tds" formControlName="tds"
+            (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+        </c-col>
+      </c-row>
+
+      <c-row class="my-2">
+        <c-col [sm]="12" class="bg-secondary">
+          <h3 class="text-center mt-1">Delivery Address Details</h3>
+        </c-col>
+      </c-row>
+
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Name <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="9">
+          <input cFormControl type="text" placeholder="Enter party name"
+            formControlName="partyName" />
+        </c-col>
+      </c-row>
+
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Address 1 <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="9">
+          <input cFormControl type="text" placeholder="Enter address line 1"
+            formControlName="address1" [ngClass]="{
+              'is-invalid':
+                lorrySubmitted && formGroup4.controls['address1'].errors
+            }" />
+          <div *ngIf="lorrySubmitted && formGroup4.controls['address1'].errors"
+            class="invalid-feedback fw-semibold">
+            <div *ngIf="formGroup4.controls['address1'].errors['required']">
+              Enter Address1
+            </div>
+          </div>
+        </c-col>
+      </c-row>
+
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Address 2 <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="9">
+          <input cFormControl type="text" placeholder="Enter address line 2"
+            formControlName="address2" [ngClass]="{
+              'is-invalid':
+                lorrySubmitted && formGroup4.controls['address1'].errors
+            }" />
+          <div *ngIf="lorrySubmitted && formGroup4.controls['address2'].errors"
+            class="invalid-feedback fw-semibold">
+            <div *ngIf="formGroup4.controls['address2'].errors['required']">
+              Enter Address2
+            </div>
+          </div>
+        </c-col>
+      </c-row>
+
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Place <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="3">
+          <input cFormControl type="text" placeholder="Enter place" formControlName="place"
+            [ngClass]="{
+              'is-invalid':
+                lorrySubmitted && formGroup4.controls['place'].errors
+            }" />
+          <div *ngIf="lorrySubmitted && formGroup4.controls['place'].errors"
+            class="invalid-feedback fw-semibold">
+            <div *ngIf="formGroup4.controls['place'].errors['required']">
+              Enter place
+            </div>
+          </div>
+        </c-col>
+
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Pin Code <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="3">
+          <input cFormControl type="text" placeholder="Enter pin code" formControlName="pinCode"
+            [ngClass]="{
+              'is-invalid':
+                lorrySubmitted && formGroup4.controls['pinCode'].errors
+            }" />
+          <div *ngIf="lorrySubmitted && formGroup4.controls['pinCode'].errors"
+            class="invalid-feedback fw-semibold">
+            <div *ngIf="formGroup4.controls['pinCode'].errors['required']">
+              Enter pin code
+            </div>
+            <div *ngIf="formGroup4.controls['pinCode'].errors['maxLength']">
+              Enter pin code
+            </div>
+            <div *ngIf="formGroup4.controls['pinCode'].errors['minLength']">
+              Enter pin code
+            </div>
+          </div>
+        </c-col>
+      </c-row>
+
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          State <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="3">
+          <select #fruits aria-label="Default select example" cSelect formControlName="state"
+            (change)="onStateChange($event)" [ngClass]="{
+              'is-invalid':
+                lorrySubmitted && formGroup4.controls['state'].errors
+            }">
+            <option value="" selected>-- Select --</option>
+            <option *ngFor="let item of stateList" [value]="item.Statename">
+              {{ item.Statename }}
+            </option>
+          </select>
+
+          <div *ngIf="lorrySubmitted && formGroup4.controls['state'].errors"
+            class="invalid-feedback fw-semibold">
+            <div *ngIf="formGroup4.controls['state'].errors['required']">
+              Enter state
+            </div>
+          </div>
+        </c-col>
+
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          State Code <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="3">
+          <input cFormControl type="text" placeholder="Enter state code" class="pe-none"
+            formControlName="stateCode" />
+        </c-col>
+      </c-row>
+
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Distance <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="3">
+          <input cFormControl type="text" placeholder="Enter distance" formControlName="distance"
+            [ngClass]="{
+              'is-invalid':
+                lorrySubmitted && formGroup4.controls['distance'].errors
+            }" />
+          <div *ngIf="lorrySubmitted && formGroup4.controls['distance'].errors"
+            class="invalid-feedback fw-semibold">
+            <div *ngIf="formGroup4.controls['distance'].errors['required']">
+              Enter distance
+            </div>
+          </div>
+        </c-col>
+
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Note <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="3">
+          <input cFormControl type="text" placeholder="Enter note" formControlName="note" [ngClass]="{
+              'is-invalid': lorrySubmitted && formGroup4.controls['note'].errors
+            }" />
+          <div *ngIf="lorrySubmitted && formGroup4.controls['note'].errors"
+            class="invalid-feedback fw-semibold">
+            <div *ngIf="formGroup4.controls['note'].errors['required']">
+              Enter note
+            </div>
+          </div>
+        </c-col>
+      </c-row>
+    </form>
+  </c-modal-body>
+  <c-modal-footer class="justify-content-center">
+    <c-row>
+      <!-- <c-col [sm]="3"></c-col> -->
+      <c-col [sm]="12">
+        <div class="d-flex justify-content-between">
+          <button class="btn btn-outline-dark me-2 px-3" type="reset">
+            Reset
+          </button>
+          <button cButton class="btn btn-dark ms-2 px-3" type="submit" (click)="saveLorryDetails()">
+            Save
+          </button>
+          <button class="btn btn-outline-dark ms-2 px-3" type="reset"
+            (click)="toggleDispatDetailModal()">
+            Dispatcher Details
+          </button>
+        </div>
+      </c-col>
+    </c-row>
+  </c-modal-footer>
+</c-modal>
+
+
+<c-modal size="xl" id="editDemoModal" [visible]="editVisible"
+  (visibleChange)="handleEditDemoChange($event)">
+  <c-modal-header>
+    <h3 cModalTitle>Update Customer Details for E invoiving/E Way Bill</h3>
+    <button (click)="editDemo()" cButtonClose class="fw-bold"></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="getParty">
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Party Name <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="6">
+          <input cFormControl class="pe-none" type="text" placeholder="Party Name"
+            formControlName="ledgerName" />
+
+          <input cFormControl class="pe-none" type="hidden" formControlName="ledgerId" />
+        </c-col>
+      </c-row>
+
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Address1 <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="6">
+          <input cFormControl type="text" placeholder="Address1" formControlName="address1"
+            [ngClass]="{
+              'is-invalid': submitted && getParty.controls['address1'].errors
+            }" />
+          <div *ngIf="submitted && getParty.controls['address1'].errors"
+            class="invalid-feedback fw-semibold">
+            <div *ngIf="getParty.controls['address1'].errors['required']">
+              Enter Address1
+            </div>
+          </div>
+        </c-col>
+      </c-row>
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Address2 <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="6">
+          <input cFormControl type="text" placeholder="Address2" formControlName="address2"
+            [ngClass]="{
+              'is-invalid': submitted && getParty.controls['address2'].errors
+            }" />
+
+          <div *ngIf="submitted && getParty.controls['address2'].errors"
+            class="invalid-feedback fw-semibold">
+            <div *ngIf="getParty.controls['address2'].errors['required']">
+              Enter Address2
+            </div>
+          </div>
+        </c-col>
+      </c-row>
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          PIN code <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="6">
+          <input cFormControl type="text" placeholder="Pincode" formControlName="pin" [ngClass]="{
+              'is-invalid': submitted && getParty.controls['pin'].errors
+            }" />
+
+          <div *ngIf="submitted && getParty.controls['pin'].errors"
+            class="invalid-feedback fw-semibold">
+            <div *ngIf="getParty.controls['pin'].errors['required']">
+              Enter pincode
+            </div>
+            <div *ngIf="getParty.controls['pin'].errors['maxLength']">
+              Enter valid pincod
+            </div>
+            <div *ngIf="getParty.controls['pin'].errors['minLength']">
+              Enter valid pincod
+            </div>
+          </div>
+        </c-col>
+      </c-row>
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          State code <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="6">
+          <input cFormControl type="text" placeholder="Statecode" formControlName="state" [ngClass]="{
+              'is-invalid': submitted && getParty.controls['state'].errors
+            }" />
+          <div *ngIf="submitted && getParty.controls['state'].errors"
+            class="invalid-feedback fw-semibold">
+            <div *ngIf="getParty.controls['state'].errors['required']">
+              Enter State
+            </div>
+          </div>
+        </c-col>
+      </c-row>
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          EmailId. <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="6">
+          <input cFormControl type="text" placeholder="Email." formControlName="emailId" [ngClass]="{
+              'is-invalid': submitted && partyControl['emailId'].errors
+            }" />
+          <div *ngIf="submitted && getParty.controls['emailId'].errors"
+            class="invalid-feedback fw-semibold">
+            <div *ngIf="getParty.controls['emailId'].errors['required']">
+              Enter email address
+            </div>
+            <div *ngIf="getParty.controls['emailId'].errors['pattern']">
+              Enter email address
+            </div>
+          </div>
+        </c-col>
+      </c-row>
+
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          10Digit Cell No. <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="6">
+          <input cFormControl type="text" placeholder="CellNo" formControlName="cellNo" [ngClass]="{
+              'is-invalid': submitted && getParty.controls['cellNo'].errors
+            }" />
+          <div *ngIf="submitted && getParty.controls['cellNo'].errors"
+            class="invalid-feedback fw-semibold">
+            <div *ngIf="getParty.controls['cellNo'].errors['required']">
+              Enter CellNo
+            </div>
+          </div>
+        </c-col>
+      </c-row>
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Legal name as in GST Site <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="6">
+          <input cFormControl type="text" placeholder="Legal name" formControlName="legalName"
+            [ngClass]="{
+              'is-invalid': submitted && getParty.controls['legalName'].errors
+            }" />
+          <div *ngIf="submitted && getParty.controls['legalName'].errors"
+            class="invalid-feedback fw-semibold">
+            <div *ngIf="getParty.controls['legalName'].errors['required']">
+              Enter Legal name
+            </div>
+          </div>
+        </c-col>
+      </c-row>
+
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          PAN. <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="6">
+          <input cFormControl type="text" placeholder="Enter dl no." formControlName="pan"
+            [ngClass]="{
+              'is-invalid': submitted && getParty.controls['pan'].errors
+            }" />
+          <div *ngIf="submitted && getParty.controls['pan'].errors"
+            class="invalid-feedback fw-semibold">
+            <div *ngIf="getParty.controls['pan'].errors['required']">
+              Enter pan
+            </div>
+          </div>
+        </c-col>
+      </c-row>
+    </form>
+  </c-modal-body>
+  <c-modal-footer class="justify-content-center">
+    <c-row>
+      <!-- <c-col [sm]="3"></c-col> -->
+      <c-col [sm]="12">
+        <div class="d-flex justify-content-between">
+          <button class="btn btn-outline-dark me-2 px-3" type="reset" style="display: none">
+            Reset
+          </button>
+          <button cButton class="btn btn-dark ms-2 px-3" type="submit"
+            (click)="updatePartyDetails()">
+            Save
+          </button>
+        </div>
+      </c-col>
+    </c-row>
+  </c-modal-footer>
+</c-modal>
+
+<c-modal size="xl" id="ModalCRDRDetails" [visible]="crdrvisible">
+  <c-modal-header style="margin-bottom: 0% !important">
+    <h3 cModalTitle>Credit Debit Information for this Invoice</h3>
+    <button (click)="toggleCrDrDetails()" cButtonClose class="fw-bold"></button>
+  </c-modal-header>
+  <c-modal-body>
+    <c-row>
+      <c-col [sm]="12" id="tblCRDRDetails">
+        <table>
+          <thead>
+            <th style="background: #b1c2d1">Date</th>
+            <th style="background: #b1c2d1">Particulars</th>
+            <th style="background: #b1c2d1; text-align: right">Credit</th>
+            <th style="background: #b1c2d1; text-align: right">Debit</th>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let CRDRDetailsData of CRDRDetails; let i = index">
+              <td>{{ CRDRDetailsData.Date }}</td>
+              <td>{{ CRDRDetailsData.LedgerName }}</td>
+              <td style="text-align: right">
+                {{ SeperateComma(CRDRDetailsData.Credit.toFixed(2)) }}
+              </td>
+              <td style="text-align: right">
+                {{ SeperateComma(CRDRDetailsData.Debit.toFixed(2)) }}
+              </td>
+            </tr>
+
+            <tr>
+              <td style="background: #b1c2d1"></td>
+              <td style="
+                  background: #b1c2d1;
+                  text-align: right;
+                  font-weight: bold;
+                ">
+                Total
+              </td>
+              <td style="
+                  background: #b1c2d1;
+                  text-align: right;
+                  font-weight: bold;
+                ">
+                {{ TotalCreditAmount }}
+              </td>
+              <td style="
+                  background: #b1c2d1;
+                  text-align: right;
+                  font-weight: bold;
+                ">
+                {{ TotalDebitAmount }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </c-col>
+    </c-row>
+  </c-modal-body>
+</c-modal>
+
+<c-modal size="lg" id="DispatcherDetails" [visible]="dispactDetailVisible">
+  <c-modal-header style="margin-bottom: 0% !important">
+    <h3 cModalTitle>Dispatcher</h3>
+    <button (click)="toggleDispatDetailModal()" cButtonClose class="fw-bold"></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form class="row">
+      <div class="col-md-6">
+        <c-row class="mb-3">
+          <label class="col-form-label col-sm-4">Dispatcher Name:</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" [(ngModel)]="dispatcherName"
+              name="dispatcherName" placeholder="Enter Dispatcher Name">
+          </div>
+        </c-row>
+
+        <c-row class="mb-3">
+          <label class="col-form-label col-sm-4">Dispatcher Address 1:</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" [(ngModel)]="dispatcherAddress1"
+              name="dispatcherAddress1" placeholder="Enter Dispatcher Address 1">
+          </div>
+        </c-row>
+
+        <c-row class="mb-3">
+          <label class="col-form-label col-sm-4">Dispatcher Address 2:</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" [(ngModel)]="dispatcherAddress2"
+              name="dispatcherAddress2" placeholder="Enter Dispatcher Address 2">
+          </div>
+        </c-row>
+      </div>
+
+      <div class="col-md-6">
+        <c-row class="mb-3">
+          <label class="col-form-label col-sm-4">Dispatcher Place:</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" [(ngModel)]="dispatcherPlace"
+              name="dispatcherPlace" placeholder="Enter Dispatcher Place">
+          </div>
+        </c-row>
+
+        <c-row class="mb-3">
+          <label class="col-form-label col-sm-4">Dispatcher PIN:</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" [(ngModel)]="dispatcherPIN" name="dispatcherPIN"
+              placeholder="Enter Dispatcher PIN">
+          </div>
+        </c-row>
+
+        <c-row class="mb-3">
+          <label class="col-form-label col-sm-4">Dispatcher Statecode:</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" [(ngModel)]="dispatcherStatecode"
+              name="dispatcherStatecode" placeholder="Enter Dispatcher Statecode">
+          </div>
+        </c-row>
+      </div>
+
+      <div class="col-md-6">
+        <c-row class="mb-3">
+          <label class="col-form-label col-sm-4">Country Code:</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" [(ngModel)]="countryCode" name="countryCode"
+              placeholder="Enter Country Code">
+          </div>
+        </c-row>
+
+        <c-row class="mb-3">
+          <label class="col-form-label col-sm-4">Ship Bill No:</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" [(ngModel)]="shipBillNo" name="shipBillNo"
+              placeholder="Enter Ship Bill No">
+          </div>
+        </c-row>
+
+        <c-row class="mb-3">
+          <label class="col-form-label col-sm-4">For Cur:</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" [(ngModel)]="forCur" name="forCur"
+              placeholder="Enter For Cur">
+          </div>
+        </c-row>
+      </div>
+
+      <div class="col-md-6">
+        <c-row class="mb-3">
+          <label class="col-form-label col-sm-4">Port Name:</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" [(ngModel)]="portName" name="portName"
+              placeholder="Enter Port Name">
+          </div>
+        </c-row>
+
+        <c-row class="mb-3">
+          <label class="col-form-label col-sm-4">Ref Claim:</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" [(ngModel)]="refClaim" name="refClaim"
+              placeholder="Enter Ref Claim">
+          </div>
+        </c-row>
+
+        <c-row class="mb-3">
+          <label class="col-form-label col-sm-4">Ship Bill Date:</label>
+          <div class="col-sm-8">
+            <input type="date" class="form-control" [(ngModel)]="shipBillDate" name="shipBillDate"
+              placeholder="Select Ship Bill Date">
+          </div>
+        </c-row>
+
+        <c-row class="mb-3">
+          <label class="col-form-label col-sm-4">Exp Duty:</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" [(ngModel)]="expDuty" name="expDuty"
+              placeholder="Enter Exp Duty">
+          </div>
+        </c-row>
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button class="btn btn-outline-dark me-2 px-3" type="reset">
+      Clear
+    </button>
+    <button cButton class="btn btn-dark ms-2 px-3" type="submit" (click)="saveDispatcherDetails()">
+      Save
+    </button>
+  </c-modal-footer>
+</c-modal>

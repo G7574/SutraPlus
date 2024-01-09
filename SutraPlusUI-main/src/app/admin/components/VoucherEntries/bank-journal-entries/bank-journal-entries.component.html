@@ -1,0 +1,206 @@
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+<c-row>
+  <c-col md="12">
+    <div class="bg-light d-flex flex-row justify-content-end align-items-center">
+      <button cButton class="px-0 text-dark fw-bold text-decoration-none" color="link"
+        (click)="back()">
+        <svg cIcon name="cilChevronLeft"></svg> Back
+      </button>
+    </div>
+  </c-col>
+</c-row>
+
+<c-row>
+  <c-col md="5">
+    <form [formGroup]="addParty" >
+      <c-card>
+        <c-card-header class="fw-bold party-details">Bank/Journal Entries</c-card-header>
+        <c-card-body class="p-3">
+
+          <c-row class="mb-2">
+          <c-col [sm]="6">
+            <label cLabel>Date <span class="text-danger">*</span></label>
+            <input formControlName="TransDate" [ngClass]="{ 'is-invalid': submitted && add['TransDate'].errors }"
+                   cFormControl
+                   type="date" />
+
+
+            <div *ngIf="submitted && add['TransDate'].errors"
+                class="invalid-feedback fw-semibold">
+                <div *ngIf="add['TransDate'].errors['required']">Date is required</div>
+              </div>
+
+          </c-col>
+
+          <c-col [sm]="6">
+            <label cLabel>Voucher Type <span class="text-danger">*</span></label>
+            <select  cSelect formControlName="voucherType" [ngClass]="{ 'is-invalid': submitted && add['voucherType'].errors }">
+                <option value="">-- Select --</option>
+                <option *ngFor="let item of VoucherTypeList" [value]="item.VoucherId">{{item.VoucherName}}</option>
+            </select>
+
+            <div *ngIf="submitted && add['voucherType'].errors" class="invalid-feedback fw-semibold">
+              
+              <div *ngIf="add['voucherType'].errors['required']">Select Voucher Type</div>
+              </div> 
+
+        </c-col>
+      </c-row>
+        <c-row class="mb-2">
+          <c-col [sm]="12">
+              <label cLabel>Select Credit Account</label>
+              <ng-select #party
+                          (keyup)="getPartyList(party.searchTerm)"
+                         [items]="partyList"
+                         
+                         bindLabel="ledgerName"
+                         bindValue="ledgerId"
+                         placeholder="Select Credit Account"
+                         (focus)="partyList = []">
+                <ng-template ng-option-tmp
+                             let-item="item"
+                             let-index="index"
+                             let-search="searchTerm">
+                  <div class="item">
+                    <div (click)="SelectCreditAccount(item.ledgerName,item.ledgerId)" >
+                      {{ item.ledgerName }}
+                    </div>
+                  </div>
+                </ng-template>
+              </ng-select>
+          </c-col>
+      </c-row>
+
+      <c-row class="mb-2">
+          <c-col [sm]="12">
+              <label cLabel>Vikri Bill No</label>
+              <input cFormControl
+                     type="text"                       
+                     placeholder="Vikri Bill No"
+                     formControlName="VikriBillNo" />
+            </c-col>
+          </c-row>
+
+          <c-row class="mb-2">
+            <c-col [sm]="12">
+              <label cLabel>Select Debit Account</label>
+              <ng-select #meena
+                         (keyup)="getPartyList(meena.searchTerm)"
+                         [items]="partyList"
+                         
+                         bindLabel="ledgerName"
+                         bindValue="ledgerId"
+                         placeholder="Select Credit Account"
+                         (focus)="partyList = []">
+                <ng-template ng-option-tmp
+                             let-item="item"
+                             let-index="index"
+                             let-search="searchTerm">
+                  <div class="item">
+                    <div (click) = "SelectDebitAccount(item.ledgerName,item.ledgerId)">
+                      {{ item.ledgerName }}
+                    </div>
+                  </div>
+                </ng-template>
+              </ng-select>
+          </c-col>
+      </c-row>
+
+          <c-row class="mb-2">
+          <c-col [sm]="12">
+              <label cLabel>Amount <span class="text-danger">*</span></label>
+              <input cFormControl [ngClass]="{ 'is-invalid': submitted && add['Amount'].errors }"
+                     type="text"  #search                     
+                     placeholder="Amount" 
+                     formControlName="Amount"  />
+
+                     <div *ngIf="submitted && add['Amount'].errors" class="invalid-feedback fw-semibold">
+                      <div *ngIf="add['Amount'].errors['required']">Please enter Amount</div>
+                      </div> 
+
+            </c-col>
+          </c-row> 
+
+          <c-row class="mb-2">
+            <c-col [sm]="12">
+              <label cLabel>Narration <span class="text-danger">*</span></label>
+              <textarea cFormControl  [ngClass]="{ 'is-invalid': submitted && add['Narration'].errors }"
+                     type="text"                       
+                     placeholder="Narration"
+                     formControlName="Narration"></textarea>
+              
+              <div *ngIf="add['Narration'].errors" class="invalid-feedback fw-semibold">
+                <div *ngIf="add['Narration'].errors['required']">Please enter Amount</div>
+              </div> 
+
+            </c-col>
+          </c-row>
+
+
+
+        </c-card-body>
+        
+        <c-card-body class="p-3">
+          
+          <hr>
+          <c-row class="mb-3">
+            <c-col [sm]="12" class="d-flex justify-content-between">
+              
+              <button cButton class="btn btn-dark ms-2 px-3" type="submit"
+                (click)="onSubmit()">Ok</button>
+
+
+                <button cButton class="btn btn-dark ms-2 px-3" type="submit"
+                (click)="OnSave()">Save</button>
+
+            </c-col>
+          </c-row>
+        </c-card-body>
+      </c-card>
+    </form>
+  </c-col>
+
+  <c-col md="7">
+    <c-card>
+        <div class="table-responsive">
+            <table id="table" [striped]="true" [responsive]="true" cTable>
+              <thead>
+                <tr>
+                  <th scope="col" class="text-left" style="width: 40%;">
+                    Account Name
+                  </th>
+                  <th scope="col" class="text-left" style="width: 15%;">Credit</th>
+                  <th scope="col" class="text-left" style="width: 15%;">Debit</th>
+                  <th scope="col" class="text-left" style="width: 15%;">Narration</th>
+                  <th scope="col" class="text-left" style="width: 15%;">Vikri Bill no</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of particularrow; let i = index">
+                  <td>{{ item.AccountName }}</td>
+                  <td>{{ item.CreditAmount }}</td>
+                  <td>{{ item.DebitAmount  }}</td>
+                  <td>{{ item.Narration }}</td>
+                  <td>{{ item.VikriBillno }}</td>
+                  
+                </tr>
+
+                <tr>
+                  <td></td>
+                  <td><b> {{ CreditTotals }} </b></td>
+                  <td><b> {{ DebitTotals }} </b></td>
+                  <td></td>
+                  <td></td>
+                  
+                </tr>
+
+
+              </tbody>
+          
+            </table>
+          </div>
+    </c-card>
+</c-col>
+
+
+</c-row>

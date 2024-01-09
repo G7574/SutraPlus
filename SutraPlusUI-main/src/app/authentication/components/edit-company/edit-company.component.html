@@ -1,0 +1,395 @@
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+<c-navbar class="sticky-top">
+    <c-container fluid>
+        <a cNavbarBrand href="https://coreui.io/angular/" target="_blank">
+            {{companyName}}
+        </a>
+        <form cForm class="d-flex" role="search">
+            <p class="mb-0 text-white">You have selected financial year : {{financialYear}}</p>
+        </form>
+    </c-container>
+</c-navbar>
+
+<div class="bg-light">
+    <c-container fluid="">
+        <c-row class="pt-3">
+            <c-col md="12">
+                <div class="bg-light d-flex flex-row justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold">Update Company</h5>
+                    <button cButton class="px-0 text-dark fw-bold text-decoration-none" color="link"
+                        (click)="backToCompany()">
+                        <svg cIcon name="cilChevronLeft"></svg> Back
+                    </button>
+                </div>
+            </c-col>
+        </c-row>
+    </c-container>
+</div>
+
+<div class="main-layout bg-light">
+    <c-container fluid="">
+        <c-row>
+            <c-col md="12">
+                <form [formGroup]="addCompany">
+                    <c-card class="my-3">
+                        <c-card-header class="fw-bold">Firm Details</c-card-header>
+                        <c-card-body class="p-3">
+                            <c-row>
+                                <c-col [sm]="12" class="text-center">
+                                    <img [src]="imageSource ? imageSource : '../assets/images/addCompanyLogo.svg'"
+                                        class="upload-logo mb-3" alt="">
+                                    <h6 class="mb-0">Upload company logo</h6>
+                                    <div class="p-image">
+                                        <!-- <a cTooltip="Tooltip text" [cTooltipVisible]="true" [routerLink]></a> -->
+                                        <label for="input-file" cTooltip="Upload logo" cTooltipPlacement="right"><i
+                                                class="fa-solid fa-pen-to-square upload-button"></i></label>
+                                        <input id="input-file" class="d-none" type="file" accept="image/*"
+                                            (change)="onSelectFile($event)" />
+                                    </div>
+                                </c-col>
+                            </c-row>
+
+                            <c-row class="mb-3">
+                                <label cLabel="col" class="text-end" cCol [sm]="2">
+                                    Kannada Name
+                                </label>
+                                <c-col [sm]="3">
+                                    <input cFormControl type="text" placeholder="Enter kannada name"
+                                        formControlName="kannadaName" />
+                                </c-col>
+
+                                <label cLabel="col" class="text-end" cCol [sm]="2">
+                                    Shree
+                                </label>
+                                <c-col [sm]="3">
+                                    <input cFormControl type="text" placeholder="Enter shree" formControlName="shree" />
+                                </c-col>
+                            </c-row>
+
+                            <c-row class="mb-3">
+                                <label cLabel="col" class="text-end" cCol [sm]="2">
+                                    Company Name <span class="text-danger">*</span>
+                                </label>
+                                <c-col [sm]="3">
+                                    <input cFormControl type="text" placeholder="Enter company name"
+                                        formControlName="companyName"
+                                        [ngClass]="{ 'is-invalid': submitted && addCmp['companyName'].errors }" />
+                                    <div *ngIf="submitted && addCmp['companyName'].errors"
+                                        class="invalid-feedback fw-semibold">
+                                        <div *ngIf="addCmp['companyName'].errors['required']">This is required</div>
+                                    </div>
+                                </c-col>
+
+                                <label cLabel="col" class="text-end" cCol [sm]="2">
+                                    Nature of Business
+                                </label>
+                                <c-col [sm]="3">
+                                    <input cFormControl type="text" placeholder="Enter nature of business"
+                                        formControlName="natureOfBusiness" />
+                                </c-col>
+                            </c-row>
+
+                            <c-row class="mb-3">
+                                <label cLabel="col" class="text-end" cCol [sm]="2">
+                                    Address <span class="text-danger">*</span>
+                                </label>
+                                <c-col [sm]="8">
+                                    <input cFormControl type="text" placeholder="Enter address"
+                                        formControlName="address"
+                                        [ngClass]="{ 'is-invalid': submitted && addCmp['address'].errors }" />
+                                    <div *ngIf="submitted && addCmp['address'].errors"
+                                        class="invalid-feedback fw-semibold">
+                                        <div *ngIf="addCmp['address'].errors['required']">This is required</div>
+                                    </div>
+                                </c-col>
+                            </c-row>
+
+                            <c-row class="mb-3">
+                                <label cLabel="col" class="text-end" cCol [sm]="2">
+                                    PAN <span class="text-danger">*</span>
+                                </label>
+                                <c-col [sm]="2">
+                                    <input cFormControl type="text" placeholder="Enter pan" formControlName="pan"
+                                        [ngClass]="{ 'is-invalid': submitted && addCmp['pan'].errors }" />
+                                    <div *ngIf="submitted && addCmp['pan'].errors" class="invalid-feedback fw-semibold">
+                                        <div *ngIf="addCmp['pan'].errors['required']">This is required</div>
+                                    </div>
+                                </c-col>
+
+                                <label cLabel="col" class="text-end" cCol [sm]="1">
+                                    TAN
+                                </label>
+                                <c-col [sm]="2">
+                                    <input cFormControl type="text" placeholder="Enter tan" formControlName="tan" />
+                                </c-col>
+
+                                <label cLabel="col" class="text-end" cCol [sm]="1">
+                                    APMC Code
+                                </label>
+                                <c-col [sm]="2">
+                                    <input cFormControl type="text" placeholder="Enter apmc code"
+                                        formControlName="apmcCode" />
+                                </c-col>
+                            </c-row>
+
+                            <c-row class="mb-3">
+                                <label cLabel="col" class="text-end" cCol [sm]="2">
+                                    Place
+                                </label>
+                                <c-col [sm]="2">
+                                    <input cFormControl type="text" placeholder="Enter place" formControlName="place" />
+                                </c-col>
+
+                                <label cLabel="col" class="text-end" cCol [sm]="1">
+                                    FLN
+                                </label>
+                                <c-col [sm]="2">
+                                    <input cFormControl type="text" placeholder="Enter fln" formControlName="fln" />
+                                </c-col>
+
+                                <label cLabel="col" class="text-end" cCol [sm]="1">
+                                    BIN
+                                </label>
+                                <c-col [sm]="2">
+                                    <input cFormControl type="text" placeholder="Enter bin" formControlName="bin" />
+                                </c-col>
+                            </c-row>
+
+                            <c-row class="mb-3">
+                                <label cLabel="col" class="text-end" cCol [sm]="2">
+                                    District <span class="text-danger">*</span>
+                                </label>
+                                <c-col [sm]="3">
+                                    <input cFormControl type="text" placeholder="Enter district"
+                                        formControlName="district"
+                                        [ngClass]="{ 'is-invalid': submitted && addCmp['district'].errors }" />
+                                    <div *ngIf="submitted && addCmp['district'].errors"
+                                        class="invalid-feedback fw-semibold">
+                                        <div *ngIf="addCmp['district'].errors['required']">This is required</div>
+                                    </div>
+                                </c-col>
+
+                                <label cLabel="col" class="text-end" cCol [sm]="2">
+                                    Email <span class="text-danger">*</span>
+                                </label>
+                                <c-col [sm]="3">
+                                    <input cFormControl type="email" placeholder="Enter email" formControlName="email"
+                                        [ngClass]="{ 'is-invalid': submitted && addCmp['email'].errors }" />
+                                    <div *ngIf="submitted && addCmp['email'].errors"
+                                        class="invalid-feedback fw-semibold">
+                                        <div *ngIf="addCmp['email'].errors['required']">This is required</div>
+                                        <div *ngIf="addCmp['email'].errors['pattern']">Email is invalid</div>
+                                    </div>
+                                </c-col>
+                            </c-row>
+
+                            <c-row class="mb-3">
+                                <label cLabel="col" class="text-end" cCol [sm]="2">
+                                    State <span class="text-danger">*</span>
+                                </label>
+                                <c-col [sm]="3">
+                                    <select aria-label="Default select example" cSelect formControlName="state"
+                                        [ngClass]="{ 'is-invalid': submitted && addCmp['state'].errors }">
+                                        <option value="" selected>-- Select --</option>
+                                        <option [value]="item.Statename" *ngFor="let item of stateList">
+                                            {{item.Statename}}</option>
+                                    </select>
+                                    <div *ngIf="submitted && addCmp['state'].errors"
+                                        class="invalid-feedback fw-semibold">
+                                        <div *ngIf="addCmp['state'].errors['required']">This is required</div>
+                                    </div>
+                                </c-col>
+
+                                <label cLabel="col" class="text-end" cCol [sm]="2">
+                                    Cell Phone
+                                </label>
+                                <c-col [sm]="3">
+                                    <input cFormControl type="text" placeholder="Enter cell phone"
+                                        formControlName="cellPhone" />
+                                </c-col>
+                            </c-row>
+
+                            <c-row class="mb-3">
+                                <label cLabel="col" class="text-end" cCol [sm]="2">
+                                    Contract No. <span class="text-danger">*</span>
+                                </label>
+                                <c-col [sm]="3">
+                                    <input cFormControl type="text" placeholder="Enter contact no."
+                                        formControlName="contactNo"
+                                        [ngClass]="{ 'is-invalid': submitted && addCmp['contactNo'].errors }" />
+                                    <div *ngIf="submitted && addCmp['contactNo'].errors"
+                                        class="invalid-feedback fw-semibold">
+                                        <div *ngIf="addCmp['contactNo'].errors['required']">This is required</div>
+                                    </div>
+                                </c-col>
+
+                                <label cLabel="col" class="text-end" cCol [sm]="2">
+                                    GSTIN <span class="text-danger">*</span>
+                                </label>
+                                <c-col [sm]="3">
+                                    <input cFormControl type="text" placeholder="Enter gstin" formControlName="gstin"
+                                        [ngClass]="{ 'is-invalid': submitted && addCmp['gstin'].errors }" />
+                                    <div *ngIf="submitted && addCmp['gstin'].errors"
+                                        class="invalid-feedback fw-semibold">
+                                        <div *ngIf="addCmp['gstin'].errors['required']">This is required</div>
+                                    </div>
+                                </c-col>
+                            </c-row>
+
+                            <c-row class="mb-3">
+                                <label cLabel="col" class="text-end" cCol [sm]="2">
+                                    Firm Code
+                                </label>
+                                <c-col [sm]="2">
+                                    <input cFormControl type="text" placeholder="Enter firm code"
+                                        formControlName="firmCode" />
+                                </c-col>
+
+                                <label cLabel="col" class="text-end" cCol [sm]="1">
+                                    Shop Code
+                                </label>
+                                <c-col [sm]="2">
+                                    <input cFormControl type="text" placeholder="Enter shop code"
+                                        formControlName="shopCode" />
+                                </c-col>
+
+                                <label cLabel="col" class="text-end" cCol [sm]="1">
+                                    IEC
+                                </label>
+                                <c-col [sm]="2">
+                                    <input cFormControl type="text" placeholder="Enter iec" formControlName="iec" />
+                                </c-col>
+                            </c-row>
+
+                        </c-card-body>
+                        <c-card-header class="fw-bold">Bank Details</c-card-header>
+                        <c-card-body class="p-3">
+                            <c-row class="mb-3">
+                                <label cLabel="col" class="text-end" cCol [sm]="2">
+                                    &nbsp;
+                                </label>
+                                <c-col [sm]="3">
+                                    <label cLabel="col" class="text-center" cCol [sm]="12">
+                                        Bank Name
+                                    </label>
+                                </c-col>
+
+                                <label cLabel="col" class="text-end d-none" cCol [sm]="1">
+                                    &nbsp;
+                                </label>
+                                <c-col [sm]="2">
+                                    <label cLabel="col" class="text-center" cCol [sm]="12">
+                                        IFSC Code
+                                    </label>
+                                </c-col>
+
+                                <label cLabel="col" class="text-end d-none" cCol [sm]="1">
+                                    &nbsp;
+                                </label>
+                                <c-col [sm]="3">
+                                    <label cLabel="col" class="text-center" cCol [sm]="12">
+                                        Account No.
+                                    </label>
+                                </c-col>
+                            </c-row>
+
+                            <c-row class="mb-3">
+                                <label cLabel="col" class="text-end" cCol [sm]="2">
+                                    Bank 1 <span class="text-danger">*</span>
+                                </label>
+                                <c-col [sm]="3">
+                                    <input cFormControl type="text" placeholder="Enter bank name"
+                                        formControlName="bankName1"
+                                        [ngClass]="{ 'is-invalid': submitted && addCmp['bankName1'].errors }" />
+                                    <div *ngIf="submitted && addCmp['bankName1'].errors"
+                                        class="invalid-feedback fw-semibold">
+                                        <div *ngIf="addCmp['bankName1'].errors['required']">This is required</div>
+                                    </div>
+                                </c-col>
+
+                                <c-col [sm]="2">
+                                    <input cFormControl type="text" placeholder="Enter ifsc code"
+                                        formControlName="ifsc1"
+                                        [ngClass]="{ 'is-invalid': submitted && addCmp['ifsc1'].errors }" />
+                                    <div *ngIf="submitted && addCmp['ifsc1'].errors"
+                                        class="invalid-feedback fw-semibold">
+                                        <div *ngIf="addCmp['ifsc1'].errors['required']">This is required</div>
+                                    </div>
+                                </c-col>
+
+                                <c-col [sm]="3">
+                                    <input cFormControl type="text" placeholder="Enter account no."
+                                        formControlName="accountNo1"
+                                        [ngClass]="{ 'is-invalid': submitted && addCmp['accountNo1'].errors }" />
+                                    <div *ngIf="submitted && addCmp['accountNo1'].errors"
+                                        class="invalid-feedback fw-semibold">
+                                        <div *ngIf="addCmp['accountNo1'].errors['required']">This is required</div>
+                                    </div>
+                                </c-col>
+                            </c-row>
+                            <c-row class="mb-3">
+                                <label cLabel="col" class="text-end" cCol [sm]="2">
+                                    Bank 2
+                                </label>
+                                <c-col [sm]="3">
+                                    <input cFormControl type="text" placeholder="Enter bank name"
+                                        formControlName="bankName2" />
+                                </c-col>
+
+                                <c-col [sm]="2">
+                                    <input cFormControl type="text" placeholder="Enter ifsc code"
+                                        formControlName="ifsc2" />
+                                </c-col>
+
+                                <c-col [sm]="3">
+                                    <input cFormControl type="text" placeholder="Enter account no."
+                                        formControlName="accountNo2" />
+                                </c-col>
+                            </c-row>
+                            <c-row class="mb-3">
+                                <label cLabel="col" class="text-end" cCol [sm]="2">
+                                    Bank 3
+                                </label>
+                                <c-col [sm]="3">
+                                    <input cFormControl type="text" placeholder="Enter bank name"
+                                        formControlName="bankName3" />
+                                </c-col>
+
+                                <c-col [sm]="2">
+                                    <input cFormControl type="text" placeholder="Enter ifsc code"
+                                        formControlName="ifsc3" />
+                                </c-col>
+
+                                <c-col [sm]="3">
+                                    <input cFormControl type="text" placeholder="Enter account no."
+                                        formControlName="accountNo3" />
+                                </c-col>
+                            </c-row>
+                            <hr>
+                            <c-row class="mb-3">
+                                <c-col [sm]="12" class="d-flex justify-content-between">
+                                    <button class="btn btn-outline-dark me-2 px-4" type="reset">Reset</button>
+                                    <button cButton class="btn btn-dark ms-2 px-4" type="submit"
+                                        (click)="onSubmit()">Save</button>
+                                </c-col>
+                            </c-row>
+                        </c-card-body>
+                    </c-card>
+                </form>
+            </c-col>
+        </c-row>
+    </c-container>
+</div>
+
+<c-footer>
+    <div>
+        <a>Sutra Plus</a>
+        <span> &copy; {{currentYear}}. Unnati Solutions. All Rights Reserved</span>
+    </div>
+    <div class="ms-auto">
+        Powered by
+        <a href="http://unnatisoftwares.com/" class="btn-link" target="_blank">
+            <span> Unnati Solutions</span>
+        </a>
+    </div>
+</c-footer>

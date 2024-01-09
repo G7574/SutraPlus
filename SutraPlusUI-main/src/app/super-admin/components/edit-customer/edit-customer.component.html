@@ -1,0 +1,243 @@
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+<c-row>
+    <c-col md="12">
+        <div class="bg-light d-flex flex-row justify-content-end align-items-center">
+            <button cButton class="px-0 text-dark fw-bold text-decoration-none" color="link" (click)="backToList()">
+                <svg cIcon name="cilChevronLeft"></svg> Back
+            </button>
+        </div>
+    </c-col>
+</c-row>
+
+<c-row>
+    <c-col md="12">
+        <form [formGroup]="editCustomer">
+            <c-card class="my-3">
+                <c-card-header class="fw-bold">Firm Details</c-card-header>
+                <c-card-body class="p-3">
+                    <c-row class="mb-3">
+                        <label cLabel="col" class="text-md-end" cCol [sm]="2">
+                            Firm Name
+                        </label>
+                        <c-col [sm]="10">
+                            <input class="disabled" cFormControl type="text" placeholder="Enter firm name"
+                                formControlName="firmName"
+                                [ngClass]="{ 'is-invalid': submitted && add['firmName'].errors }" />
+                            <div *ngIf="submitted && add['firmName'].errors" class="invalid-feedback fw-semibold">
+                                <div *ngIf="add['firmName'].errors['required']">Enter firm name</div>
+                            </div>
+                        </c-col>
+                    </c-row>
+
+                    <c-row class="mb-3">
+                        <label cLabel="col" class="text-end" cCol [sm]="2">
+                            Code
+                        </label>
+
+                        <c-col [sm]="4">
+                            <input class="disabled" [ngClass]="{ 'is-invalid': submitted && add['code'].errors }"
+                                cFormControl type="text" placeholder="Enter Code" formControlName="code" />
+                            <div *ngIf="submitted && add['code'].errors" class="invalid-feedback fw-semibold">
+                                <div *ngIf="add['code'].errors['required']">Enter Code.</div>
+                            </div>
+                        </c-col>
+
+                        <label cLabel="col" class="text-md-end" cCol [sm]="2">
+                            GSTIN
+                        </label>
+                        <c-col [sm]="4">
+                            <input class="disabled" [ngClass]="{ 'is-invalid': submitted && add['gstIn'].errors }"
+                                cFormControl type="text" placeholder="Enter gstin" formControlName="gstIn" />
+                            <div *ngIf="submitted && add['gstIn'].errors" class="invalid-feedback fw-semibold">
+                                <div *ngIf="add['gstIn'].errors['required']"> Enter GST No.</div>
+                                <div *ngIf="add['gstIn'].errors['pattern']">Enter valid GST No.</div>
+                            </div>
+                        </c-col>
+                    </c-row>
+
+                    <c-row class="mb-3">
+                        <label cLabel="col" class="text-md-end" cCol [sm]="2">
+                            Address
+                        </label>
+                        <c-col [sm]="10">
+                            <input cFormControl type="text" placeholder="Enter address" formControlName="address" />
+                        </c-col>
+                    </c-row>
+
+                    <c-row class="mb-3">
+                        <label cLabel="col" class="text-md-end" cCol [sm]="2">
+                            City
+                        </label>
+                        <c-col [sm]="4">
+                            <input class="disabled" cFormControl type="text" placeholder="Enter city"
+                                formControlName="city" [ngClass]="{ 'is-invalid': submitted && add['city'].errors }" />
+                            <div *ngIf="submitted && add['city'].errors" class="invalid-feedback fw-semibold">
+                                <div *ngIf="add['city'].errors['required']"> Enter city</div>
+                            </div>
+                        </c-col>
+
+                        <label cLabel="col" class="text-md-end" cCol [sm]="2">
+                            State
+                        </label>
+                        <c-col [sm]="4">
+                            <select class="disabled" aria-label="Default select example" cSelect formControlName="state"
+                                [ngClass]="{ 'is-invalid': submitted && add['state'].errors }">
+                                <option value="" selected>-- Select --</option>
+                                <option *ngFor="let item of stateList" [value]="item.Statename">{{item.Statename}}
+                                </option>
+                            </select>
+                            <div *ngIf="submitted && add['state'].errors" class="invalid-feedback fw-semibold">
+                                <div *ngIf="add['state'].errors['required']"> Enter state</div>
+                            </div>
+                        </c-col>
+
+                    </c-row>
+
+                    <c-row class="mb-3">
+
+                        <label cLabel="col" class="text-md-end" cCol [sm]="2">
+                            Zip Code
+                        </label>
+                        <c-col [sm]="4">
+                            <input class="disabled" maxlength="6" cFormControl type="text" placeholder="Enter zip code"
+                                formControlName="zipCode"
+                                [ngClass]="{ 'is-invalid': submitted && add['zipCode'].errors }" />
+                            <div *ngIf="submitted && add['zipCode'].errors" class="invalid-feedback fw-semibold">
+                                <div *ngIf="add['zipCode'].errors['required']"> Enter zip code</div>
+                                <div *ngIf="add['zipCode'].errors['pattern']">Enter valid zip code.</div>
+                            </div>
+                        </c-col>
+
+                        <label cLabel="col" class="text-md-end" cCol [sm]="2">
+                            Financial Year
+                        </label>
+                        <c-col [sm]="4">
+                            <ng-multiselect-dropdown class="multiselect" formControlName="financialYear"
+                                [placeholder]="'-- Select --'" [settings]="dropdownSettings" [data]="dropdownList"
+                                [ngClass]="{ 'is-invalid': submitted && add['financialYear'].errors }">
+                            </ng-multiselect-dropdown>
+                            <div *ngIf="submitted && add['financialYear'].errors" class="invalid-feedback fw-semibold">
+                                <div *ngIf="add['financialYear'].errors['required']"> Enter financial Year</div>
+                            </div>
+                        </c-col>
+                    </c-row>
+
+                </c-card-body>
+                <c-card-header class="fw-bold">Contact Person Details</c-card-header>
+                <c-card-body class="p-3">
+                    <c-row class="mb-3">
+                        <label cLabel="col" class="text-md-end" cCol [sm]="2">
+                            First Name <span class="text-danger">*</span>
+                        </label>
+                        <c-col [sm]="4">
+                            <input cFormControl type="text" placeholder="Enter first name" formControlName="firstName"
+                                [ngClass]="{ 'is-invalid': submitted && add['firstName'].errors }" />
+                            <div *ngIf="submitted && add['firstName'].errors" class="invalid-feedback fw-semibold">
+                                <div *ngIf="add['firstName'].errors['required']"> Enter first name</div>
+                            </div>
+                        </c-col>
+
+                        <label cLabel="col" class="text-md-end" cCol [sm]="2">
+                            Last Name <span class="text-danger">*</span>
+                        </label>
+                        <c-col [sm]="4">
+                            <input cFormControl type="text" placeholder="Enter last name" formControlName="lastName"
+                                [ngClass]="{ 'is-invalid': submitted && add['lastName'].errors }" />
+                            <div *ngIf="submitted && add['lastName'].errors" class="invalid-feedback fw-semibold">
+                                <div *ngIf="add['lastName'].errors['required']"> Enter last name</div>
+                            </div>
+                        </c-col>
+                    </c-row>
+
+                    <c-row class="mb-3">
+                        <label cLabel="col" class="text-md-end" cCol [sm]="2">
+                            Mobile No. <span class="text-danger">*</span>
+                        </label>
+                        <c-col [sm]="4">
+                            <input maxlength="10" cFormControl type="text" placeholder="Enter mobile no."
+                                formControlName="mobile"
+                                [ngClass]="{ 'is-invalid': submitted && add['mobile'].errors }" />
+                            <div *ngIf="submitted && add['mobile'].errors" class="invalid-feedback fw-semibold">
+                                <div *ngIf="add['mobile'].errors['required']"> Enter Mobile No.</div>
+                                <div *ngIf="add['mobile'].errors['pattern']">Enter valid Mobile No.</div>
+                            </div>
+                        </c-col>
+
+                        <label cLabel="col" class="text-md-end" cCol [sm]="2">
+                            Email
+                        </label>
+                        <c-col [sm]="4">
+                            <c-input-group class="mb-3">
+                                <input class="disabled" aria-describedby="basic-addon2" aria-label="Enter email"
+                                    cFormControl placeholder="Enter email" formControlName="email" />
+                                <span cInputGroupText id="basic-addon2" (click)="toggleLiveDemo()"
+                                    class=" cursor-pointer"><svg cIcon name="cil-pen"></svg></span>
+                            </c-input-group>
+                            <div *ngIf="submitted && add['email'].errors" class="invalid-feedback fw-semibold">
+                                <div *ngIf="add['email'].errors['required']"> Enter Email.</div>
+                                <div *ngIf="add['email'].errors['pattern']">Email is not valid</div>
+                            </div>
+                        </c-col>
+                    </c-row>
+
+                    <hr>
+
+                    <c-row class="mb-3">
+                        <c-col [sm]="12" class="d-flex justify-content-between">
+                            <button class="btn btn-outline-dark me-2 px-4" type="reset">Reset</button>
+                            <button cButton class="btn btn-dark ms-2 px-3" type="submit"
+                                (click)="update()">Update</button>
+                        </c-col>
+                    </c-row>
+
+                </c-card-body>
+            </c-card>
+        </form>
+    </c-col>
+</c-row>
+
+<c-modal id="liveDemoModal" alignment="center" backdrop="static" [visible]="visible"
+    (visibleChange)="handleLiveDemoChange($event)">
+    <c-modal-header>
+        <h5 cModalTitle>Change Email</h5>
+        <button (click)="toggleLiveDemo()" cButtonClose></button>
+    </c-modal-header>
+    <c-modal-body>
+        <form [formGroup]="changeForm1" *ngIf="isVisibleForm1 == true && isVisibleForm2 == false">
+            <c-row class="mb-3">
+                <label cLabel="col" class="text-start" cCol [sm]="12">
+                    Enter email you want to register
+                </label>
+                <c-col [sm]="12">
+                    <input cFormControl type="email" placeholder="Enter email" formControlName="changedEmail"
+                        [ngClass]="{ 'is-invalid': submitted && emailChange['changedEmail'].errors }" />
+                    <div *ngIf="submitted && emailChange['changedEmail'].errors" class="invalid-feedback fw-semibold">
+                        <div *ngIf="emailChange['changedEmail'].errors['required']">Email is required</div>
+                        <div *ngIf="emailChange['changedEmail'].errors['email']">Email is invalid</div>
+                    </div>
+                </c-col>
+            </c-row>
+            <c-row class="mb-3">
+                <c-col [sm]="12" class="text-end">
+                    <button cButton color="primary" class="px-4" (click)="sendOTP()">Send</button>
+                </c-col>
+            </c-row>
+        </form>
+        <form [formGroup]="changeForm2" *ngIf="isVisibleForm1 == false && isVisibleForm2 == true">
+            <c-row class="mb-3">
+                <label cLabel="col" class="text-start" cCol [sm]="12">
+                    Enter OTP
+                </label>
+                <c-col [sm]="12">
+                    <input cFormControl type="text" placeholder="Enter OTP" formControlName="otp"
+                        [ngClass]="{ 'is-invalid': submitted && otpChange['otp'].errors }" />
+                </c-col>
+            </c-row>
+            <c-row class="mb-3">
+                <c-col [sm]="12" class="text-end">
+                    <button cButton color="primary" class="px-4" (click)="verifyOTP()">Verify</button>
+                </c-col>
+            </c-row>
+        </form>
+    </c-modal-body>
+</c-modal>

@@ -1,0 +1,36 @@
+.multiselect-dropdown[_ngcontent-xwu-c210]   .dropdown-btn[_ngcontent-xwu-c210] {
+    display: inline-block;
+    border: 1px solid #adadad;
+    width: 100%;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-weight: 400;
+    line-height: 1.52857143;
+    text-align: left;
+    vertical-align: middle;
+    cursor: pointer;
+    background-image: none;
+    border-radius: 0.375rem !important;
+}
+
+
+.multiselect-dropdown[_ngcontent-nrc-c210],.dropdown-btn[_ngcontent-nrc-c210]   .dropdown-multiselect__caret[_ngcontent-nrc-c210] {
+    line-height: 16px;
+    display: none !important;
+    position: absolute;
+    box-sizing: border-box;
+    width: 40px;
+    height: 38px;
+    right: 1px;
+    top: 0;
+    padding: 4px 8px;
+    margin: 0;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    transition: transform .2s;
+}
+
+.dropdown-multiselect__caret{
+    display: none !important;
+}

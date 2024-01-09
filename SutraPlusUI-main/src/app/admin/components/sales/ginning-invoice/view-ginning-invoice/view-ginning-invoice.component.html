@@ -1,0 +1,326 @@
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+
+<c-row class="mb-3">
+    <c-col md="12">
+        <div class="bg-light d-flex flex-row justify-content-end align-items-center">
+            <button cButton class="px-0 text-dark fw-bold text-decoration-none" color="link" (click)="back()">
+                <svg cIcon name="cilChevronLeft"></svg> Back
+            </button>
+        </div>
+    </c-col>
+</c-row>
+
+<c-row class="mb-3">
+    <c-col xs="12">
+        <c-card>
+            <c-card-header>
+                <h6 class="mb-0 mt-1">Ginning Invoice - View</h6>
+            </c-card-header>
+            <c-card-body>
+                <c-row class="mb-3">
+                    <label cLabel="col" class="text-end" cCol [sm]="2">
+                        Party :
+                    </label>
+                    <c-col class="align-items-start" [sm]="6">
+                        <label cLabel="col" class="text-end fw-bold">
+                            {{invoiceData.ledgerName || '-'}}
+                        </label>
+                    </c-col>
+
+                    <label cLabel="col" class="text-end" cCol [sm]="2">
+                        Date :
+                    </label>
+                    <c-col class="align-items-start" [sm]="2">
+                        <label cLabel="col" class="text-end fw-bold">
+                            {{invoiceData.originalInvDate | date:"dd-MM-yyyy"}}
+                        </label>
+                    </c-col>
+
+                    <label cLabel="col" class="text-end" cCol [sm]="2">
+                        Dealer Type :
+                    </label>
+                    <c-col class="align-items-start" [sm]="2">
+                        <label cLabel="col" class="text-end fw-bold">
+                            {{invoiceData.dealerType || '-'}}
+                        </label>
+                    </c-col>
+
+                    <label cLabel="col" class="text-end" cCol [sm]="2">
+                        PAN :
+                    </label>
+                    <c-col class="align-items-start" [sm]="2">
+                        <label cLabel="col" class="text-end fw-bold">
+                            {{invoiceData.pan || '-'}}
+                        </label>
+                    </c-col>
+
+                    <label cLabel="col" class="text-end" cCol [sm]="2">
+                        GST :
+                    </label>
+                    <c-col class="align-items-start" [sm]="2">
+                        <label cLabel="col" class="text-end fw-bold">
+                            {{invoiceData.gst || '-'}}
+                        </label>
+                    </c-col>
+
+                    <label cLabel="col" class="text-end" cCol [sm]="2">
+                        Voucher Type :
+                    </label>
+                    <c-col class="align-items-start" [sm]="2">
+                        <label cLabel="col" class="text-end fw-bold">
+                            {{invoiceData.voucherName || '-'}}
+                        </label>
+                    </c-col>
+
+                    <label cLabel="col" class="text-end" cCol [sm]="2">
+                        Invoice No. :
+                    </label>
+                    <c-col class="align-items-start" [sm]="2">
+                        <label cLabel="col" class="text-end fw-bold">
+                            {{invoiceData.vochNo || '-'}}
+                        </label>
+                    </c-col>
+
+                    <label cLabel="col" class="text-end" cCol [sm]="2">
+                        State :
+                    </label>
+                    <c-col class="align-items-start" [sm]="2">
+                        <label cLabel="col" class="text-end fw-bold">
+                            {{invoiceData.state || '-'}}
+                        </label>
+                    </c-col>
+                </c-row>
+
+                <c-row class="mb-1 mt-4 bg-gray">
+                    <label cLabel="col" class="text-start fw-bold" cCol [sm]="12">
+                        Items Details
+                    </label>
+                </c-row>
+
+                <c-row>
+                    <div class="table-responsive">
+                        <table id="table" [bordered]="true" [striped]="true" [responsive]="true" [small]="true" cTable
+                            class="mb-1">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="text-center">Sr.&nbsp;No.</th>
+                                    <th scope="col" class="text-center">Item&nbsp;Name</th>
+                                    <th scope="col" class="text-center">KG/Bag</th>
+                                    <th scope="col" class="text-center">No.&nbsp;of&nbsp;Bags</th>
+                                    <th scope="col" class="text-center">Total&nbsp;Qty.</th>
+                                    <th scope="col" class="text-center">Rate</th>
+                                    <th scope="col" class="text-center">Amount</th>
+                                    <!-- <th scope="col" class="text-center">Remarks</th> -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of itemList; let i = index;">
+                                    <td class="text-center">{{i+1}}</td>
+                                    <td class="text-center">{{item.CommodityName || '-'}}</td>
+                                    <td class="text-center">{{item.WeightPerBag || '-'}}</td>
+                                    <td class="text-center">{{item.NoOfBags || '-'}}</td>
+                                    <td class="text-center">{{item.TotalWeight || '-'}}</td>
+                                    <td class="text-center">{{(item.Rate).toFixed(2) || '-'}}</td>
+                                    <td class="text-end">{{item.Amount | number: '1.2-2' || '-'}}</td>
+                                    <!-- <td class="text-center"></td> -->
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="bg-secondary">
+                                    <td class="text-center fw-semibold">
+                                        Total
+                                    </td>
+                                    <td class="text-center"></td>
+                                    <td class="text-center"></td>
+                                    <td class="text-center">
+                                        {{totalBags}}
+                                    </td>
+                                    <td class="text-center">
+                                        {{totalQuant}}
+                                    </td>
+                                    <td class="text-center"></td>
+                                    <td class="text-end">{{totalAmount | number: '1.2-2'}}</td>
+                                    <!-- <td class="text-center"></td> -->
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <c-col xs="3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <!-- <p class="mb-0">Current Stock : <b>20</b></p> -->
+                            <p class="mb-0">GST Rate: <b>{{ GSTRate }}%</b></p>
+                        </div>
+                    </c-col>
+                </c-row>
+
+                <c-row class="mt-4 bg-gray">
+                    <label cLabel="col" class="text-start fw-bold" cCol [sm]="12">
+                        Other Charges
+                    </label>
+                </c-row>
+
+                <c-row class="mb-3">
+                    <label cLabel="col" class="text-start" cCol [sm]="4">
+                        {{invoiceData.isLessOrPlus}} :
+                    </label>
+                    <c-col class="align-items-start" [sm]="8">
+                        <label cLabel="col" class="text-start fw-bold">
+                            {{(invoiceData.advance).toFixed(2) || '-'}}
+                        </label>
+                    </c-col>
+
+                    <label cLabel="col" class="text-start" cCol [sm]="4">
+                        {{invoiceData.expenseName1}} :
+                    </label>
+                    <c-col class="align-items-start" [sm]="8">
+                        <label cLabel="col" class="text-start fw-bold">
+                            {{(invoiceData.expenseAmount1).toFixed(2) || '-'}}
+                        </label>
+                    </c-col>
+
+                    <label cLabel="col" class="text-start" cCol [sm]="4">
+                        {{invoiceData.expenseName2}} :
+                    </label>
+                    <c-col class="align-items-start" [sm]="8">
+                        <label cLabel="col" class="text-start fw-bold">
+                            {{(invoiceData.expenseAmount2).toFixed(2) || '-'}}
+                        </label>
+                    </c-col>
+
+                    <label cLabel="col" class="text-start" cCol [sm]="4">
+                        {{invoiceData.expenseName3}} :
+                    </label>
+                    <c-col class="align-items-start" [sm]="8">
+                        <label cLabel="col" class="text-start fw-bold">
+                            {{(invoiceData.expenseAmount3).toFixed(2) || '-'}}
+                        </label>
+                    </c-col>
+                </c-row>
+
+                <c-row class="mt-4 bg-gray">
+                    <label cLabel="col" class="text-start fw-bold" cCol [sm]="12">
+                        Payment Details
+                    </label>
+                </c-row>
+
+                <c-row class="mb-3">
+                    <label cLabel="col" class="text-end" cCol [sm]="2">
+                        Taxable Amount :
+                    </label>
+                    <c-col class="align-items-start" [sm]="2">
+                        <label cLabel="col" class="text-end fw-bold">
+                            {{(invoiceData.taxableValue).toFixed(2) || '-'}}
+                        </label>
+                    </c-col>
+
+                    <label cLabel="col" class="text-end" cCol [sm]="2">
+                        Discount :
+                    </label>
+                    <c-col class="align-items-start" [sm]="2">
+                        <label cLabel="col" class="text-end fw-bold">
+                            {{invoiceData.discount || 0.00}}%
+                        </label>
+                    </c-col>
+
+                    <label cLabel="col" class="text-end" cCol [sm]="2">
+                        SEZ Sale :
+                    </label>
+                    <c-col class="align-items-start" [sm]="2">
+                        <label cLabel="col" class="text-end fw-bold">
+                            {{invoiceData.isSEZ == 1 ? 'Yes' : 'No'}}
+                        </label>
+                    </c-col>
+
+                    <label cLabel="col" class="text-end" cCol [sm]="2">
+                        SGST :
+                    </label>
+                    <c-col class="align-items-start" [sm]="2">
+                        <label cLabel="col" class="text-end fw-bold">
+                            {{(invoiceData.sgstValue).toFixed(2) || '-'}}%
+                        </label>
+                    </c-col>
+
+                    <label cLabel="col" class="text-end" cCol [sm]="2">
+                        CGST :
+                    </label>
+                    <c-col class="align-items-start" [sm]="2">
+                        <label cLabel="col" class="text-end fw-bold">
+                            {{(invoiceData.csgstValue).toFixed(2) || '-'}}%
+                        </label>
+                    </c-col>
+
+                    <label cLabel="col" class="text-end" cCol [sm]="2">
+                        IGST :
+                    </label>
+                    <c-col class="align-items-start" [sm]="2">
+                        <label cLabel="col" class="text-end fw-bold">
+                            {{(invoiceData.igstValue).toFixed(2) || '-'}}%
+                        </label>
+                    </c-col>
+
+                    <label cLabel="col" class="text-end" cCol [sm]="2">
+                        Totol GST :
+                    </label>
+                    <c-col class="align-items-start" [sm]="2">
+                        <label cLabel="col" class="text-end fw-bold">
+                            {{(invoiceData.sgstValue + invoiceData.csgstValue).toFixed(2) || '-'}}%
+                        </label>
+                    </c-col>
+
+                    <label cLabel="col" class="text-end" cCol [sm]="2">
+                        Round OFF :
+                    </label>
+                    <c-col class="align-items-start" [sm]="2">
+                        <label cLabel="col" class="text-end fw-bold">
+                            {{(invoiceData.roundOff).toFixed(2) || '-'}}
+                        </label>
+                    </c-col>
+
+                    <label cLabel="col" class="text-end" cCol [sm]="2">
+                        Grand Total :
+                    </label>
+                    <c-col class="align-items-start" [sm]="2">
+                        <label cLabel="col" class="text-end fw-bold">
+                            {{(invoiceData.totalAmount).toFixed(2) || '-'}}
+                        </label>
+                    </c-col>
+                </c-row>
+
+                <c-row class="mt-4 bg-gray">
+                    <label cLabel="col" class="text-start fw-bold" cCol [sm]="12">
+                        Address Details
+                    </label>
+                </c-row>
+
+                <c-row class="mb-0">
+                    <label cLabel="col" class="text-end" cCol [sm]="2">
+                        Address :
+                    </label>
+                    <c-col class="align-items-start" [sm]="10">
+                        <label cLabel="col" class="text-start fw-bold">
+                            {{(invoiceData.deliveryAddress1 + ' ' + invoiceData.deliveryAddress2) || '-'}}
+                        </label>
+                    </c-col>
+
+                    <label cLabel="col" class="text-end" cCol [sm]="2">
+                        From :
+                    </label>
+                    <c-col class="align-items-start" [sm]="2">
+                        <label cLabel="col" class="text-end fw-bold">
+                            {{invoiceData.fromPlace || '-'}}
+                        </label>
+                    </c-col>
+
+                    <label cLabel="col" class="text-end" cCol [sm]="2">
+                        To :
+                    </label>
+                    <c-col class="align-items-start" [sm]="2">
+                        <label cLabel="col" class="text-end fw-bold">
+                            {{invoiceData.toPlace || '-'}}
+                        </label>
+                    </c-col>
+                </c-row>
+            </c-card-body>
+        </c-card>
+    </c-col>
+</c-row>

@@ -1,0 +1,77 @@
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+<c-navbar style="height: 55px">
+  <c-container fluid>
+    <a cNavbarBrand href="https://coreui.io/angular/" target="_blank">
+      {{ yearList[0]?.Name ? yearList[0]?.Name : " " }}
+    </a>
+  </c-container>
+</c-navbar>
+
+<div class="bg-light startup-page-screen d-flex flex-row align-items-center">
+  <c-container>
+    <c-row
+      class="justify-content-center"
+      *ngIf="errorShow1 == true && errorShow2 == false"
+    >
+      <c-col md="8">
+        <c-card>
+          <c-card-body class="p-4">
+            <div class="row g-4">
+              <h3 class="text-center mb-4">Select Your Financial Year</h3>
+              <div
+                class="col-md-6 col-lg-4 text-center"
+                *ngFor="let item of yearList"
+              >
+                <button
+                  type="button"
+                  class="btn btn-custom w-100"
+                  [ngStyle]="{
+                    'background-color': item.ThemeCode,
+                    border: item.ThemeCode,
+                    color: 'white'
+                  }"
+                  (click)="goToLogin(item)"
+                >
+                  {{ item.Description }}
+                </button>
+              </div>
+            </div>
+          </c-card-body>
+        </c-card>
+      </c-col>
+    </c-row>
+    <c-row
+      class="justify-content-center"
+      *ngIf="errorShow1 == false && errorShow2 == true"
+    >
+      <c-col md="6">
+        <div class="clearfix text-center">
+          <h1 class="display-3 me-4">404</h1>
+          <h1 class="display-3 me-4">
+            Customer Code not found. Please provide correct URL.
+          </h1>
+          <!-- <h4 class="pt-3">Oops! You're lost.</h4>
+                    <p class="text-medium-emphasis float-start">
+                        The customer you are looking for was not found.
+                        Customer Code not found. Please provide correct URL.
+                     </p> -->
+        </div>
+      </c-col>
+    </c-row>
+  </c-container>
+</div>
+
+<c-footer>
+  <div>
+    <a>Sutra Plus</a>
+    <span>
+      &copy; {{ currentYear }}. Unnati Solutions. All Rights Reserved</span
+    >
+  </div>
+  <div class="ms-auto">
+    Powered by
+    <a href="http://unnatisoftwares.com/" target="_blank">
+      <span> Unnati Solutions</span>
+    </a>
+  </div>
+</c-footer>

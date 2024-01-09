@@ -1,0 +1,81 @@
+<div class="row text-center">
+  <div class="col-md-6 text-center">
+    <div class="square">
+      <h2>TCS</h2>
+
+      <div class="form-check radio-center">
+        <input
+          type="radio"
+          id="option1"
+          class="form-check-input"
+          name="tcsOption"
+          [(ngModel)]="selectedTCSOption"
+          [value]="'TcsInInvoice'"
+        />
+        <label class="form-check-label" for="option1">TCS in Invoice</label>
+      </div>
+      <div class="form-check radio-center">
+        <input
+          type="radio"
+          id="option2"
+          class="form-check-input"
+          name="tcsOption"
+          [(ngModel)]="selectedTCSOption"
+          [value]="'TcsInReceipt'"
+        />
+        <label class="form-check-label" for="option2">TCS in Receipt</label>
+      </div>
+
+      <button type="button" class="btn btn-dark mt-2" (click)="saveTCSOption()">
+        Save
+      </button>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="square">
+      <h2>TDS</h2>
+
+      <div class="form-check">
+        <input
+          type="radio"
+          id="option3"
+          class="form-check-input"
+          name="square2"
+          [checked]="false"
+        />
+        <label class="form-check-label no-margin float-start" for="option3"
+          >Yes Auto deduct TDS on Commission</label
+        >
+      </div>
+      <div class="form-check">
+        <input
+          type="radio"
+          id="option4"
+          class="form-check-input radio-center"
+          name="square2"
+          [checked]="false"
+        />
+        <label class="form-check-label no-margin float-start" for="option4"
+          >No</label
+        >
+      </div>
+      <div class="form-check">
+        <input
+          type="checkbox"
+          id="option194Q"
+          class="form-check-input"
+          name="square2"
+          [(ngModel)]="option194Q"
+        />
+        <label class="form-check-label no-margin float-start" for="option194Q"
+          >Enable 194Q TDS Deduction</label
+        >
+      </div>
+
+      <button type="button" class="btn btn-dark mt-2" (click)="saveTDSOption()">
+        Save
+      </button>
+    </div>
+  </div>
+</div>

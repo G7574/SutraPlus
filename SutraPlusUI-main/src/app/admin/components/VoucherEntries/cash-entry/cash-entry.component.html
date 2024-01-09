@@ -1,0 +1,129 @@
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+<c-row>
+  <c-col md="12">
+    <div class="bg-light d-flex flex-row justify-content-end align-items-center">
+      <button cButton class="px-0 text-dark fw-bold text-decoration-none" color="link"
+        (click)="back()">
+        <svg cIcon name="cilChevronLeft"></svg> Back
+      </button>
+    </div>
+  </c-col>
+</c-row>
+
+<c-row>
+  <c-col md="12">
+    <form [formGroup]="addParty" >
+      <c-card>
+        <c-card-header class="fw-bold party-details">Cash Entry</c-card-header>
+        <c-card-body class="p-3">
+
+          <c-row class="mb-2">
+          <c-col [sm]="4">
+            <label cLabel>Date <span class="text-danger">*</span></label>
+            <input formControlName="TransDate" [ngClass]="{ 'is-invalid': submitted && add['TransDate'].errors }"
+                   cFormControl
+                   type="date" />
+
+
+            <div *ngIf="submitted && add['TransDate'].errors"
+                class="invalid-feedback fw-semibold">
+                <div *ngIf="add['TransDate'].errors['required']">Date is required</div>
+              </div>
+
+          </c-col>
+
+          <c-col [sm]="4">
+            <label cLabel>Receipt/Payment <span class="text-danger">*</span></label>
+            <select  cSelect formControlName="ReceiptPayment" [ngClass]="{ 'is-invalid': submitted && add['ReceiptPayment'].errors }">
+                <option value="">-- Select --</option>
+                <option value="19">Receipt</option>
+                <option value="22">Payment</option>
+            </select>
+
+            <div *ngIf="submitted && add['ReceiptPayment'].errors" class="invalid-feedback fw-semibold">
+              
+              <div *ngIf="add['ReceiptPayment'].errors['required']">Select Receipt/Payment</div>
+              </div> 
+
+        </c-col>
+
+        <c-col [sm]="4">
+            <label cLabel>Vikri Bill No</label>
+            <input cFormControl
+                   type="text"                       
+                   placeholder="Vikri Bill No"
+                   formControlName="VikriBillNo" />
+          </c-col>
+      </c-row>
+
+          <c-row class="mb-2">
+            <c-col [sm]="4">
+              <label cLabel>Select Account</label>
+              <ng-select #meena
+                         (keyup)="getPartyList(meena.searchTerm)"
+                         [items]="partyList"
+                         
+                         bindLabel="ledgerName"
+                         bindValue="ledgerId"
+                         placeholder="Select Account"
+                         (focus)="partyList = []">
+                <ng-template ng-option-tmp
+                             let-item="item"
+                             let-index="index"
+                             let-search="searchTerm">
+                  <div class="item">
+                    <div (click)="SelectCreditAccount(item.ledgerName,item.ledgerId)">
+                      {{ item.ledgerName }}
+                    </div>
+                  </div>
+                </ng-template>
+              </ng-select>
+          </c-col>
+
+          <c-col [sm]="4">
+            <label cLabel>Narration <span class="text-danger">*</span></label>
+            <input cFormControl  [ngClass]="{ 'is-invalid': submitted && add['Narration'].errors }"
+                   type="text"                       
+                   placeholder="Narration"
+                   formControlName="Narration" />
+            
+            <div *ngIf="add['Narration'].errors" class="invalid-feedback fw-semibold">
+              <div *ngIf="add['Narration'].errors['required']">Please enter Amount</div>
+            </div> 
+
+          </c-col>
+
+          <c-col [sm]="4">
+            <label cLabel>Amount <span class="text-danger">*</span></label>
+            <input cFormControl [ngClass]="{ 'is-invalid': submitted && add['Amount'].errors }"
+                   type="text"  #search                     
+                   placeholder="Amount" 
+                   formControlName="Amount"  />
+
+                   <div *ngIf="submitted && add['Amount'].errors" class="invalid-feedback fw-semibold">
+                    <div *ngIf="add['Amount'].errors['required']">Please enter Amount</div>
+                    </div> 
+          </c-col>
+
+          
+      </c-row>
+
+        </c-card-body>
+        
+        <c-card-body class="p-3">
+          
+          <hr>
+          <c-row class="mb-3">
+            <c-col [sm]="12" class="d-flex justify-content-between">                
+                <button cButton class="btn btn-dark ms-2 px-3" type="submit">Reset</button>
+                <button (click)="OnSave()" cButton class="btn btn-dark ms-2 px-3" type="submit">Save</button>
+            </c-col>
+          </c-row>
+        </c-card-body>
+      </c-card>
+    </form>
+  </c-col>
+
+
+
+</c-row>
