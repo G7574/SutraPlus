@@ -53,8 +53,8 @@ export class ItemWiseReportComponent {
 
 
   ParametersSubmitted(event: any) {
-    var parameterValue = 12345;
-    event.args.Parameters.filter(function (p: any) { return p.Key == "parameter4"; })[0].Value = parameterValue;
+    event.args.Parameters.filter(function (p: any) { return p.Key == "StartDate"; })[0].Value = new Date();
+    event.args.Parameters.filter(function (p: any) { return p.Key == "EndDate"; })[0].Value = new Date();
 }
 
 // Pass a parameter value with a reportUrl

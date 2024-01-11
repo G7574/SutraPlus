@@ -185,6 +185,7 @@ namespace SutraPlusReportApi.PredefinedReports
             this.XrLine1 = new DevExpress.XtraReports.UI.XRLine();
             this.HideWeight = new DevExpress.XtraReports.UI.FormattingRule();
             this.GroupHeader6 = new DevExpress.XtraReports.UI.GroupHeaderBand();
+           
             ((System.ComponentModel.ISupportInitialize)this.XrTable1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)this.XrTable2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)this.XrTable4).BeginInit();
@@ -192,13 +193,16 @@ namespace SutraPlusReportApi.PredefinedReports
             ((System.ComponentModel.ISupportInitialize)this.XrTable7).BeginInit();
             ((System.ComponentModel.ISupportInitialize)this).BeginInit();
             var dateRangeParam = new Parameter();            dateRangeParam.Name = "dateRange";            dateRangeParam.Description = "Date Range:";            dateRangeParam.Type = typeof(System.DateTime);
-
+                       
             // Create a RangeParametersSettings instance and set up its properties.
             var dateRangeSettings = new RangeParametersSettings();
 
             // Specify the start date and end date parameters.
-            dateRangeSettings.StartParameter.Name = "dateRangeStart";            dateRangeSettings.StartParameter.ExpressionBindings.Add(                new BasicExpressionBinding("Value", new System.DateTime(2022, 4, 1).ToString())            );            dateRangeSettings.EndParameter.Name = "dateRangeEnd";            dateRangeSettings.EndParameter.ExpressionBindings.Add(                new BasicExpressionBinding("Value", new System.DateTime(2022, 5, 1).ToString())            );
-            this.Report.FilterString = "GetDate([TranctDate]) Between(?dateRangeStart,?dateRangeEnd)";
+
+
+            //dateRangeSettings.StartParameter.Name = "StartDate";            //dateRangeSettings.StartParameter.Value = new System.DateTime(2022, 4, 1).ToString();            //dateRangeSettings.EndParameter.Name = "EndDate";            //dateRangeSettings.EndParameter.Value = new System.DateTime(2022, 5, 1).ToString();            this.Report.FilterString = "GetDate([TranctDate]) Between(?StartDate,?EndDate)";
+
+
             //
             //Detail
             //
@@ -572,10 +576,10 @@ namespace SutraPlusReportApi.PredefinedReports
             //XrPageInfo2
             //
             this.XrPageInfo2.Format = "Page {0} of {1}";
-            this.XrPageInfo2.LocationFloat = new DevExpress.Utils.PointFloat(1031.25F, 89.08335F);
+            this.XrPageInfo2.LocationFloat = new DevExpress.Utils.PointFloat(900.25F, 89.08335F);
             this.XrPageInfo2.Name = "XrPageInfo2";
             this.XrPageInfo2.Padding = new DevExpress.XtraPrinting.PaddingInfo(2, 2, 0, 0, 100.0F);
-            this.XrPageInfo2.SizeF = new System.Drawing.SizeF(72.95819F, 14.37502F);
+            this.XrPageInfo2.SizeF = new System.Drawing.SizeF(150F, 34.37502F);
             this.XrPageInfo2.TextAlignment = DevExpress.XtraPrinting.TextAlignment.TopRight;
             //
             //ReportFooter
@@ -1114,5 +1118,6 @@ namespace SutraPlusReportApi.PredefinedReports
         internal DevExpress.XtraReports.UI.XRTableCell XrTableCell10;
         internal DevExpress.XtraReports.UI.XRTableCell XrTableCell9;
         internal DevExpress.XtraReports.UI.GroupHeaderBand GroupHeader6;
+
     }
 }

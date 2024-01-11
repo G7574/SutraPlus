@@ -1,8 +1,11 @@
-﻿using DevExpress.XtraReports.UI;
+﻿using DevExpress.XtraReports.Expressions;
+using DevExpress.XtraReports;
+using DevExpress.XtraReports.UI;
 using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
+
 
 namespace SutraPlusReportApi.PredefinedReports
 {
@@ -10,7 +13,7 @@ namespace SutraPlusReportApi.PredefinedReports
     {
         public XtraReport1()
         {
-            InitializeComponent();
+            InitializeComponent();  
         }
     }
 }

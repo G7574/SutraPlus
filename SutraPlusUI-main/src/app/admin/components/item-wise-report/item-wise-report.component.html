@@ -13,8 +13,8 @@
   <dxrv-search-settings [useAsyncSearch]="false"></dxrv-search-settings>
   <!-- <dxrv-callbacks (BeforeRender)="CustomizePredefinedRanges($event)">
                 </dxrv-callbacks> -->
+                <!-- (BeforeRender)="CustomizePredefinedRanges($event)" -->
 
-  <dxrv-callbacks (CustomizeMenuActions)="CustomizeMenuActions($event)"
-    (ParametersSubmitted)="ParametersSubmitted($event)" (BeforeRender)="CustomizePredefinedRanges($event)">
+  <dxrv-callbacks (CustomizeMenuActions)="CustomizeMenuActions($event)" (ParametersInitialized)="ParametersSubmitted($event)">
   </dxrv-callbacks>
 </dx-report-viewer>

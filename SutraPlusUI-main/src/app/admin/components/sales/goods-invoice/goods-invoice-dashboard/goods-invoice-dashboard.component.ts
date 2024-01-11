@@ -134,6 +134,37 @@ export class GoodsInvoiceDashboardComponent implements OnInit {
           queryParams: { InvoiceType: 'DeemedExport' },
         });
         break;
+      case 'BuiltyPurchase':
+        this.router.navigate(['/admin/Invoice'], {
+          queryParams: { InvoiceType: 'BuiltyPurchase' },
+        });
+        break;
+      case 'OtherGSTBills':
+        this.router.navigate(['/admin/Invoice'], {
+          queryParams: { InvoiceType: 'OtherGSTBills' },
+        });
+        break;
+      case 'VerifyBills':
+        this.router.navigate(['/admin/Invoice'], {
+          queryParams: { InvoiceType: 'VerifyBills' },
+        });
+        break;
+      case 'DeemedPurchase':
+        this.router.navigate(['/admin/Invoice'], {
+          queryParams: { InvoiceType: 'DeemedPurchase' },
+        });
+        break;
+      case 'CreditNote':
+        this.router.navigate(['/admin/Invoice'], {
+          queryParams: { InvoiceType: 'CreditNote' },
+        });
+        break;
+        case 'SalesReturn':
+          this.router.navigate(['/admin/Invoice'], {
+            queryParams: { InvoiceType: 'SalesReturn' },
+          });
+          break;
+
       default:
         break;
     }
@@ -149,7 +180,7 @@ export class GoodsInvoiceDashboardComponent implements OnInit {
     });
 
 
-    this.router.navigateByUrl('/admin/Invoice?InvoiceType='+ String(InvoiceName) +'&InvoiceNo=' + String(data['vochNo']) + '&VochType=' + String(data['vochType']));
+    this.router.navigateByUrl('/admin/Invoice?InvoiceType=' + String(InvoiceName) + '&InvoiceNo=' + String(data['vochNo']) + '&VochType=' + String(data['vochType']));
     //sessionStorage.setItem('invoiceDataAll', JSON.stringify(data));
     //this.router.navigate(['/admin/Invoice?InvoiceType=GoodsInvoice&InvoiceNo=' + data.vochNo]);
     //this.openViewInvoiceModal();

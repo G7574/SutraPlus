@@ -2572,6 +2572,116 @@ namespace SutraPlus_DAL.Repository
                                      });
                             break;
 
+                        case "BuiltyPurchase":
+                            query = (from bls in _tenantDBContext.BillSummaries
+                                     join cpn in _tenantDBContext.Companies on bls.CompanyId equals cpn.CompanyId
+                                     join inv in _tenantDBContext.Inventory on cpn.CompanyId equals inv.CompanyId
+                                     join VochType in _tenantDBContext.VoucherTypes on inv.VochType equals VochType.VoucherId
+                                     join led in _tenantDBContext.Ledgers on bls.LedgerId equals led.LedgerId
+                                     join comdty in _tenantDBContext.Commodities on inv.CommodityId equals comdty.CommodityId
+                                     where bls.VochType == inv.VochType && bls.VochNo == inv.VochNo && bls.VochType == VochType.VoucherId && inv.LedgerId == led.LedgerId
+                                     && bls.CompanyId == companyId && bls.VochType >= 2 && bls.VochType <= 4 && bls.IsActive == true
+                                     select new BillSummary
+                                     {
+                                         LedgerId = led.LedgerId,
+                                         LedgerName = led.LedgerName,
+                                         Place = led.Place,
+                                         TranctDate = bls.TranctDate,
+                                         DisplayinvNo = bls.DisplayinvNo,
+                                         BillAmount = bls.BillAmount,
+                                         VochNo = bls.VochNo,
+                                         VochType = bls.VochType
+                                     });
+                            break;
+
+                        case "SalesReturn":
+                            query = (from bls in _tenantDBContext.BillSummaries
+                                     join cpn in _tenantDBContext.Companies on bls.CompanyId equals cpn.CompanyId
+                                     join inv in _tenantDBContext.Inventory on cpn.CompanyId equals inv.CompanyId
+                                     join VochType in _tenantDBContext.VoucherTypes on inv.VochType equals VochType.VoucherId
+                                     join led in _tenantDBContext.Ledgers on bls.LedgerId equals led.LedgerId
+                                     join comdty in _tenantDBContext.Commodities on inv.CommodityId equals comdty.CommodityId
+                                     where bls.VochType == inv.VochType && bls.VochNo == inv.VochNo && bls.VochType == VochType.VoucherId && inv.LedgerId == led.LedgerId
+                                     && bls.CompanyId == companyId && bls.VochType == 6  && bls.IsActive == true
+                                     select new BillSummary
+                                     {
+                                         LedgerId = led.LedgerId,
+                                         LedgerName = led.LedgerName,
+                                         Place = led.Place,
+                                         TranctDate = bls.TranctDate,
+                                         DisplayinvNo = bls.DisplayinvNo,
+                                         BillAmount = bls.BillAmount,
+                                         VochNo = bls.VochNo,
+                                         VochType = bls.VochType
+                                     });
+                            break;
+                        case "DeemedPurchase":
+                            query = (from bls in _tenantDBContext.BillSummaries
+                                     join cpn in _tenantDBContext.Companies on bls.CompanyId equals cpn.CompanyId
+                                     join inv in _tenantDBContext.Inventory on cpn.CompanyId equals inv.CompanyId
+                                     join VochType in _tenantDBContext.VoucherTypes on inv.VochType equals VochType.VoucherId
+                                     join led in _tenantDBContext.Ledgers on bls.LedgerId equals led.LedgerId
+                                     join comdty in _tenantDBContext.Commodities on inv.CommodityId equals comdty.CommodityId
+                                     where bls.VochType == inv.VochType && bls.VochNo == inv.VochNo && bls.VochType == VochType.VoucherId && inv.LedgerId == led.LedgerId
+                                     && bls.CompanyId == companyId && bls.VochType == 5 && bls.IsActive == true
+                                     select new BillSummary
+                                     {
+                                         LedgerId = led.LedgerId,
+                                         LedgerName = led.LedgerName,
+                                         Place = led.Place,
+                                         TranctDate = bls.TranctDate,
+                                         DisplayinvNo = bls.DisplayinvNo,
+                                         BillAmount = bls.BillAmount,
+                                         VochNo = bls.VochNo,
+                                         VochType = bls.VochType
+                                     });
+                            break;
+
+                        case "CreditNote":
+                            query = (from bls in _tenantDBContext.BillSummaries
+                                     join cpn in _tenantDBContext.Companies on bls.CompanyId equals cpn.CompanyId
+                                     join inv in _tenantDBContext.Inventory on cpn.CompanyId equals inv.CompanyId
+                                     join VochType in _tenantDBContext.VoucherTypes on inv.VochType equals VochType.VoucherId
+                                     join led in _tenantDBContext.Ledgers on bls.LedgerId equals led.LedgerId
+                                     join comdty in _tenantDBContext.Commodities on inv.CommodityId equals comdty.CommodityId
+                                     where bls.VochType == inv.VochType && bls.VochNo == inv.VochNo && bls.VochType == VochType.VoucherId && inv.LedgerId == led.LedgerId
+                                     && bls.CompanyId == companyId && bls.VochType == 8 && bls.IsActive == true
+                                     select new BillSummary
+                                     {
+                                         LedgerId = led.LedgerId,
+                                         LedgerName = led.LedgerName,
+                                         Place = led.Place,
+                                         TranctDate = bls.TranctDate,
+                                         DisplayinvNo = bls.DisplayinvNo,
+                                         BillAmount = bls.BillAmount,
+                                         VochNo = bls.VochNo,
+                                         VochType = bls.VochType
+                                     });
+                            break;
+
+
+                        case "OtherGSTBills":
+                            query = (from bls in _tenantDBContext.BillSummaries
+                                     join cpn in _tenantDBContext.Companies on bls.CompanyId equals cpn.CompanyId
+                                     join inv in _tenantDBContext.Inventory on cpn.CompanyId equals inv.CompanyId
+                                     join VochType in _tenantDBContext.VoucherTypes on inv.VochType equals VochType.VoucherId
+                                     join led in _tenantDBContext.Ledgers on bls.LedgerId equals led.LedgerId
+                                     join comdty in _tenantDBContext.Commodities on inv.CommodityId equals comdty.CommodityId
+                                     where bls.VochType == inv.VochType && bls.VochNo == inv.VochNo && bls.VochType == VochType.VoucherId && inv.LedgerId == led.LedgerId
+                                     && bls.CompanyId == companyId && bls.VochType >= 2 && bls.VochType <= 4 && bls.IsActive == true && bls.TotalWeight == 0
+                                     select new BillSummary
+                                     {
+                                         LedgerId = led.LedgerId,
+                                         LedgerName = led.LedgerName,
+                                         Place = led.Place,
+                                         TranctDate = bls.TranctDate,
+                                         DisplayinvNo = bls.DisplayinvNo,
+                                         BillAmount = bls.BillAmount,
+                                         VochNo = bls.VochNo,
+                                         VochType = bls.VochType
+                                     });
+                            break;
+
                         case "GinningInvoice":
                             query = (from bls in _tenantDBContext.BillSummaries
                                      join cpn in _tenantDBContext.Companies on bls.CompanyId equals cpn.CompanyId
@@ -2593,6 +2703,8 @@ namespace SutraPlus_DAL.Repository
                                          VochType = bls.VochType
                                      });
                             break;
+
+
 
                         case "ExportInvoice":
                             query = (from bls in _tenantDBContext.BillSummaries
