@@ -65,7 +65,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { CreateDcComponent } from './components/sales/create-dc/create-dc/create-dc.component';
 import { ImportEInvoiceComponent } from './components/sales/import-e-invoice/import-e-invoice.component';
 import { ItemWiseReportComponent } from './components/item-wise-report/item-wise-report.component';
-import { DxReportViewerModule } from 'devexpress-reporting-angular';
+import { DxReportDesignerModule, DxReportViewerModule } from 'devexpress-reporting-angular';
 
 @NgModule({
   declarations: [
@@ -135,7 +135,9 @@ import { DxReportViewerModule } from 'devexpress-reporting-angular';
     MatDialogModule,
     MatTableModule,
     MatFormFieldModule,
-    DxReportViewerModule,
+    DxReportViewerModule, 
+
+
 
   ],
   providers: [DatePipe, ExportAsService],

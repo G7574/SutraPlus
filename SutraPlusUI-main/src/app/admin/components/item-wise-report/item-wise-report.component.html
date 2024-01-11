@@ -1,15 +1,20 @@
 <!-- <p>item-wise-report works!</p> -->
 
-            <!-- 
+<!--
             <dx-report-designer [reportUrl]="reportName" height="700px" >
                 <dxrd-request-options [getDesignerModelAction]="getDesignerModelAction" [host]="host"></dxrd-request-options>
             </dx-report-designer> -->
-            <dx-report-viewer [reportUrl]="reportName" height="800px" cssClass='myViewer'>
-                <dxrv-request-options [invokeAction]="invokeAction" [host]="host"></dxrv-request-options>
-                <dxrv-tabpanel-settings  position="Left"></dxrv-tabpanel-settings>
-                <dxrv-export-settings [useSameTab]="false" [useAsynchronousExport]="false"></dxrv-export-settings>
-                <dxrv-search-settings [useAsyncSearch]="false"></dxrv-search-settings>
-                <dxrv-callbacks 
-                (CustomizeMenuActions)="CustomizeMenuActions($event)">
-                </dxrv-callbacks>
-            </dx-report-viewer>
+
+<dx-report-viewer [reportUrl]="reportName" height="800px" cssClass="myViewer">
+  <dxrv-request-options [invokeAction]="invokeAction" [host]="host"></dxrv-request-options>
+
+  <dxrv-tabpanel-settings position="Left"></dxrv-tabpanel-settings>
+  <dxrv-export-settings [useSameTab]="false" [useAsynchronousExport]="false"></dxrv-export-settings>
+  <dxrv-search-settings [useAsyncSearch]="false"></dxrv-search-settings>
+  <!-- <dxrv-callbacks (BeforeRender)="CustomizePredefinedRanges($event)">
+                </dxrv-callbacks> -->
+
+  <dxrv-callbacks (CustomizeMenuActions)="CustomizeMenuActions($event)"
+    (ParametersSubmitted)="ParametersSubmitted($event)" (BeforeRender)="CustomizePredefinedRanges($event)">
+  </dxrv-callbacks>
+</dx-report-viewer>

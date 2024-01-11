@@ -1,4 +1,9 @@
-﻿namespace SutraPlusReportApi.PredefinedReports
+﻿using DevExpress.XtraReports.Expressions;
+using DevExpress.XtraReports.Parameters;
+using System;
+using System.Linq;
+
+namespace SutraPlusReportApi.PredefinedReports
 {
     partial class XtraReport1
     {
@@ -186,6 +191,14 @@
             ((System.ComponentModel.ISupportInitialize)this.XrTable5).BeginInit();
             ((System.ComponentModel.ISupportInitialize)this.XrTable7).BeginInit();
             ((System.ComponentModel.ISupportInitialize)this).BeginInit();
+            var dateRangeParam = new Parameter();            dateRangeParam.Name = "dateRange";            dateRangeParam.Description = "Date Range:";            dateRangeParam.Type = typeof(System.DateTime);
+
+            // Create a RangeParametersSettings instance and set up its properties.
+            var dateRangeSettings = new RangeParametersSettings();
+
+            // Specify the start date and end date parameters.
+            dateRangeSettings.StartParameter.Name = "dateRangeStart";            dateRangeSettings.StartParameter.ExpressionBindings.Add(                new BasicExpressionBinding("Value", new System.DateTime(2022, 4, 1).ToString())            );            dateRangeSettings.EndParameter.Name = "dateRangeEnd";            dateRangeSettings.EndParameter.ExpressionBindings.Add(                new BasicExpressionBinding("Value", new System.DateTime(2022, 5, 1).ToString())            );
+            this.Report.FilterString = "GetDate([TranctDate]) Between(?dateRangeStart,?dateRangeEnd)";
             //
             //Detail
             //
@@ -211,9 +224,12 @@
             //
             //XrTableCell1
             //
+            //here date is adding
+           
             this.XrTableCell1.DataBindings.AddRange(new DevExpress.XtraReports.UI.XRBinding[] { new DevExpress.XtraReports.UI.XRBinding("Text", null, "Company.TranctDate", "{0:dd-MM-yyyy}") });
             this.XrTableCell1.Name = "XrTableCell1";
             this.XrTableCell1.Weight = 0.77870399797875722D;
+
             //
             //XrTableCell11
             //
@@ -1012,6 +1028,7 @@
             ((System.ComponentModel.ISupportInitialize)this.XrTable5).EndInit();
             ((System.ComponentModel.ISupportInitialize)this.XrTable7).EndInit();
             ((System.ComponentModel.ISupportInitialize)this).EndInit();
+              
 
         }
         internal DevExpress.XtraReports.UI.DetailBand Detail;

@@ -11,8 +11,8 @@ namespace SutraPlusReportApi.PredefinedReports
         public static Dictionary<string, Func<XtraReport>> Reports = new Dictionary<string, Func<XtraReport>>()
         {
             //["TestReport"] = () => new TestReport()
-            ["TestReport"] = () => new XtraReport1()
-        };
+            ["ItemWise"] = () => new XtraReport1()
+        }; 
         public static Dictionary<string, Func<XtraReport>> Reports1 = new Dictionary<string, Func<XtraReport>>()
         {
             //["TestReport"] = () => new TestReport()
