@@ -38,9 +38,23 @@ export class DefaultHeaderComponent extends HeaderComponent {
     this.userName = this.userDetails?.result?.UserEmailId;
   }
 
-  logOut(): void {        
-    //let custCode = sessionStorage.getItem('globalCustomerCode');
-    //sessionStorage.clear();
-    //this.router.navigate(['/landing-page/']); 
+  changePassword(): void {
+    this.router.navigate(['profile/change-password']);
   }
+
+  logOut(): void {
+
+    sessionStorage.removeItem('userDetails');
+    sessionStorage.removeItem('financialYear');
+    sessionStorage.removeItem('companyName')
+
+  //  sessionStorage.clear();
+
+    this.router.navigate(['/login']).then(
+      () => console.log('Navigation to login succeeded'),
+      (error) => console.error('Navigation to login failed:', error),
+    );
+
+  }
+
 }

@@ -130,5 +130,21 @@ namespace SutraPlus_BAL.Service
                 throw ex;
             }
         }
+        public bool User_ChangePassword(JObject Data)
+        {
+            try
+            {
+                var data = JsonConvert.DeserializeObject<dynamic>(Data["UserDetails"].ToString());
+                var userEmailId = Convert.ToString(data["Email"]);
+                var newPassword = Convert.ToString(data["NewPassword"]);
+                var oldPassword = Convert.ToString(data["oldPassword"]);
+                return _securityRepository.User_ChangePassword(userEmailId, newPassword, oldPassword);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                throw ex;
+            }
+        }
     }
 }

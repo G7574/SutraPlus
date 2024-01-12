@@ -16,6 +16,9 @@ export class AuthenticationServiceService {
   login(UserDetails: any): Observable<any> {
     return this.dataService.postAnonymous('UserSecurity/Login', UserDetails);
   }
+  ChangePassword(UserDetails: any): Observable<any> {
+    return this.dataService.postAnonymous('UserSecurity/ChangePasswordforUser', UserDetails);
+  }
 
   getYearList(customerId: any): Observable<any> {
     return this.dataService.getAnonymous('Customer/Get/' + customerId);

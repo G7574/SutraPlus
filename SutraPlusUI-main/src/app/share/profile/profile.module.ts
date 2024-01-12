@@ -5,6 +5,7 @@ import { ProfileRoutingModule } from './profile-routing.module';
 import { ProfileComponent } from './profile.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -15,7 +16,10 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
   ],
   imports: [
     CommonModule,
-    ProfileRoutingModule
+    ProfileRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
+
   ]
 })
 export class ProfileModule { }

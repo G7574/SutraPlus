@@ -132,12 +132,48 @@ namespace SutraPlus_DAL.Repository
                 var entity = _tenantDBContext.Users.Where(u => u.UserName == userEmail).FirstOrDefault();
                 if (entity != null)
                 {
+                    if(entity.Password == password)
                     entity.Password = password;
                     _tenantDBContext.SaveChanges();
                     _tenantDBContext.Update(entity);
                     _logger.LogDebug("Admin Change Password Succeed");
                 }
                 return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                throw ex;
+            }
+
+        }
+        public bool User_ChangePassword(string userEmail, string password,string oldPassword)
+        {
+            try
+            {
+                var entity = _tenantDBContext.Users.Where(u => u.UserName == userEmail).FirstOrDefault();
+                if (entity != null)
+                {
+                    if (entity.Password == oldPassword)
+                    {
+                        entity.Password = password;
+                        _tenantDBContext.SaveChanges();
+                        _tenantDBContext.Update(entity);
+                        _logger.LogDebug("Admin Change Password Succeed");
+                        return true;
+
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+
+                }
+
             }
             catch (Exception ex)
             {

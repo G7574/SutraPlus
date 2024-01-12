@@ -73,12 +73,16 @@ export class LoginComponent implements OnInit {
           Password: this.loginForm.get('password')?.value,
         },
       };
+
+
       this.spinner.show();
       this.authenticationService.login(UserDetails).subscribe({
         next: (res: any) => {
           this.spinner.hide();
           if (!res.HasErrors && res !== null) {
             if (res?.result?.IsSuccess == true) {
+              sessionStorage.setItem('userPassword', this.loginForm.get('password')?.value);
+              sessionStorage.setItem('Email', this.loginForm.get('username')?.value);
               sessionStorage.setItem('userDetails', JSON.stringify(res));
               this.router.navigate(['/companies']);
             } else {

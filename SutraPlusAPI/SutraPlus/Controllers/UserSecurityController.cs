@@ -184,5 +184,21 @@ namespace SutraPlus.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost("ChangePasswordforUser")]
+        [AllowAnonymous]
+        public async Task<ActionResult> ChangePasswordforUser([FromBody] JObject Data)
+        {
+            try
+            {
+                var result = _securityService.User_ChangePassword(Data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
