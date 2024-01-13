@@ -1,1 +1,147 @@
-<p>user-profile works!</p>
+<!-- update-profile.component.html -->
+<form (ngSubmit)="updateProfile()" #profileForm="ngForm" class="profile-form">
+  <div class="form-group">
+    <label for="firstName">First Name:</label>
+    <input type="text" id="firstName" name="firstName" class="form-control" [(ngModel)]="user.firstName" required>
+    <div *ngIf="profileForm.controls['firstName'].invalid && profileForm.controls['firstName'].touched" class="error">
+      Please enter a valid first name.
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="lastName">Last Name:</label>
+    <input type="text" id="lastName" name="lastName" class="form-control" [(ngModel)]="user.lastName" required>
+    <div *ngIf="profileForm.controls['lastName'].invalid && profileForm.controls['lastName'].touched" class="error">
+      Please enter a valid last name.
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="mobileNumber">Mobile Number:</label>
+    <input type="tel" id="mobileNumber" name="mobileNumber" class="form-control" [(ngModel)]="user.mobileNumber" required pattern="[0-9]{10}">
+    <div *ngIf="profileForm.controls['mobileNumber'].invalid && profileForm.controls['mobileNumber'].touched" class="error">
+      Please enter a valid 10-digit mobile number.
+    </div>
+  </div>
+
+  <div class="image-container" [ngClass]="{'fixed-size': user.photoUrl}">
+    <div class="image-preview-container">
+      <div *ngIf="photoPath" class="image-preview">
+        <img [src]="photoPath" alt="Preview">
+      </div>
+      <div *ngIf="!photoPath" class="empty-preview">
+        Empty Preview
+      </div>
+    </div>
+
+    <div class="choose-image-container">
+      <input type="file" id="photo" name="photo" (change)="onPhotoChange($event)" accept="image/*" class="choose-image" required>
+      <label for="photo" class="btn btn-dark">Choose Image</label>
+    </div>
+  </div>
+
+  <button type="submit" [disabled]="profileForm.invalid"  class="btn btn-dark">Update Profile</button>
+</form>
+
+<style>
+  /* Add this style to your component's CSS file or style section */
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .image-container {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 20px;
+  }
+
+  .image-preview-container {
+    width: 250px;
+    height: 250px;
+    margin-right: 20px;
+    border: 1px solid black;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Hide any overflow */
+  }
+
+  .image-preview {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+  }
+
+  .image-preview img {
+    max-width: 100%; /* Ensure the image doesn't exceed the container's width */
+    max-height: 100%; /* Ensure the image doesn't exceed the container's height */
+}
+  .empty-preview {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+    color: #888;
+  }
+
+  /* selected image size */
+  .fixed-size {
+    width: 500px; /* Fixed width */
+    height: 150px; /* Fixed height */
+  }
+
+  .choose-image-container {
+    width: 150px;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .choose-image {
+    display: none;
+  }
+
+  .choose-image-label {
+    cursor: pointer;
+    background-color: #007BFF;
+    color: #fff;
+    padding: 8px;
+    border-radius: 5px;
+    text-align: center;
+  }
+
+  .submit-btn {
+    padding: 10px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .submit-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  .error {
+    color: red;
+  }
+
+  /* Adjust the styles for mobile view if needed */
+  @media (max-width: 768px) {
+    .image-container {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .choose-image-container {
+      align-items: flex-start;
+      margin-top: 10px; /* Add space between the image and the choose image button in mobile view */
+    }
+  }
+</style>

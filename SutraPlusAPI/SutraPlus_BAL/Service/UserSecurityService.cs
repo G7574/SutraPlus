@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -41,6 +42,43 @@ namespace SutraPlus_BAL.Service
                 var userEmailId = Convert.ToString(login["UserEmailId"]);
                 var password = Convert.ToString(login["Password"]);
                 return _securityRepository.Authenticate(userEmailId, password);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                throw ex;
+            }
+        }
+        public JObject GetUser(JObject Data)
+        {
+            try
+            {
+                var login = JsonConvert.DeserializeObject<dynamic>(Data["UserDetails"].ToString());
+                var userEmailId = Convert.ToString(login["UserEmailId"]);
+                return _securityRepository.GetUser(userEmailId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                throw ex;
+            }
+        }
+        public bool UpdateUser(JObject Data)
+        {
+            try
+            {
+                var data = JsonConvert.DeserializeObject<dynamic>(Data["UserDetails"].ToString());
+                var userEmailId = Convert.ToString(data["UserEmailId"]);
+                var FirstName = Convert.ToString(data["firstName"]);
+                var LastName = Convert.ToString(data["lastName"]);
+                var Mobile = Convert.ToString(data["mobileNumber"]);
+                var profileImage = Convert.ToString(data["profileImage"]);
+
+                byte[] bytes = Convert.FromBase64String(profileImage);
+                string fileName = $"{DateTime.Now:yyyyMMddHHmmssfff}_{Guid.NewGuid()}.jpg";
+                IFormFile file = new FormFile(new MemoryStream(bytes), 0, bytes.Length, "name", fileName);
+
+                return _securityRepository.UpdateUser(userEmailId, FirstName,LastName,Mobile, file);
             }
             catch (Exception ex)
             {
@@ -97,6 +135,7 @@ namespace SutraPlus_BAL.Service
                 throw ex;
             }
         }
+
         public Boolean ValidateOTP(JObject Data)
         {
             try

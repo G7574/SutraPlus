@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -19,7 +21,7 @@ namespace SutraPlus_DAL.Repository
     {
         public IConfiguration _configuration;
         private readonly Microsoft.Extensions.Logging.ILogger _logger;
-        private MasterDBContext _masterDBContext;
+        private MasterDBContext _masterDBContext; 
 
         private readonly CommonRepository _commonRepository;
 
@@ -54,6 +56,31 @@ namespace SutraPlus_DAL.Repository
                 throw ex;
             }
         }
+        public JObject GetUser(string userEmail)
+        {
+            var response = new JObject();
+            try
+            {
+                _logger.LogDebug("User Authenticate (Login)");
+                var result = _tenantDBContext.Users.Where(a => a.UserName == userEmail && a.IsActive == true).FirstOrDefault();
+                if (result != null)
+                {
+                    response.Add("FirstName", result.FirstName);
+                    response.Add("LastName", result.LastName);
+                    response.Add("IsSuccess", true);
+                    response.Add("PhoneNo", result.PhoneNo);
+                    response.Add("ProfileImage", result.ProfileImage);
+                    return response;
+                }
+                response.Add("IsSuccess", false);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                throw ex;
+            }
+        }
 
         public bool UpdatePassword(string userEmail, string password)
         {
@@ -72,6 +99,50 @@ namespace SutraPlus_DAL.Repository
                 _logger.LogError(ex.StackTrace);
                 throw ex;
             }
+        }
+
+        public bool UpdateUser(string userEmail, string firstname,string lastname,string mobile, IFormFile profileImage)
+        {
+            try
+            {
+                User user;
+                user = _tenantDBContext.Users.Where(u => u.UserName == userEmail).First();  
+                
+                user.FirstName = firstname;
+                user.LastName = lastname;
+                user.PhoneNo = mobile; 
+
+                if (profileImage != null && profileImage.Length > 0)
+                {
+                    var directoryPath = "userProfileImages";
+
+                    if (!Directory.Exists(directoryPath))
+                    {
+                        Directory.CreateDirectory(directoryPath);
+                    }
+
+                    var path = Path.Combine(directoryPath, profileImage.FileName);
+                    using (FileStream stream = new FileStream(path, FileMode.Create))
+                    {
+                        profileImage.CopyToAsync(stream);
+                        stream.Close();
+                    }
+
+                    user.ProfileImage = "userProfileImages/" + profileImage.FileName;
+                }
+
+                _tenantDBContext.SaveChanges();
+                _tenantDBContext.Update(user);
+                _logger.LogDebug("User Update Done");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                //throw ex;
+                return false;
+            }
+             
         }
         public JObject Forgot(string Email)
         {

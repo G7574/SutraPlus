@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SutraPlus_DAL.Models
 {
@@ -15,6 +17,9 @@ namespace SutraPlus_DAL.Models
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? PhoneNo { get; set; }
+        public string? ProfileImage { get; set; }
         public bool? IsActive { get; set; }
+        [NotMapped]
+        public IFormFile photo { get; set; }
     }
 }

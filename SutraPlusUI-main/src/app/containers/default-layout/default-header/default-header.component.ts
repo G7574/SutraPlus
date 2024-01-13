@@ -57,4 +57,8 @@ export class DefaultHeaderComponent extends HeaderComponent {
 
   }
 
+  navigateToProfile(): void{
+    this.router.navigate(['profile/user-profile']);
+  }
+
 }

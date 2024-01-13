@@ -144,6 +144,7 @@ namespace SutraPlus.Controllers
                 return BadRequest(ex.Message);
             }
         }
+ 
         /// <summary>
         /// Validate OTP & update email id of customer
         /// </summary>
@@ -200,5 +201,40 @@ namespace SutraPlus.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
+        [HttpPost("GetUserData")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUser([FromBody] JObject Data)
+        {
+            try
+            {
+                var result = _securityService.GetUser(Data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("UpdateUserData")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdateUserData([FromBody] JObject Data)
+        {
+            try
+            {
+                var result = _securityService.UpdateUser(Data);
+                  
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

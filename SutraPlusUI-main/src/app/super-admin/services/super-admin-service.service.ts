@@ -19,6 +19,14 @@ export class SuperAdminServiceService {
     return this.dataService.getAnonymous('SuperAdminSecurity/GetEmailConfig');
   }
 
+  getUser(data: any) {
+    return this.dataService.postAnonymous('UserSecurity/GetUserData',data);
+  }
+
+  updateUser(data: any) {
+    return this.dataService.postAnonymous('UserSecurity/UpdateUserData',data);
+  }
+
   saveEmailConfig(emailConfig: any) {
     return this.dataService.postAnonymous('SuperAdminSecurity/SaveEmailConfig', emailConfig);
   }
