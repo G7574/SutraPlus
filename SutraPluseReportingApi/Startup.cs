@@ -46,12 +46,24 @@ namespace SutraPlusReportApi
             });
             services.AddDbContext<ReportDbContext>(options => options.UseSqlite(Configuration.GetConnectionString("ReportsDataConnectionString")));
 
-            services.AddCors(options => {
-                options.AddPolicy("AllowCorsPolicy", builder => {
-                    // Allow all ports on local host.
-                    builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost");
-                    builder.WithHeaders("Content-Type");
-                });
+            //services.AddCors(options => {
+            //    options.AddPolicy("AllowCorsPolicy", builder => {
+            //        // Allow all ports on local host.
+            //        builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost");
+            //        builder.WithHeaders("Content-Type");
+            //    });
+            //});
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowCorsPolicy",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                        builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "http://103.50.212.163:8081/");
+                        builder.WithHeaders("Content-Type");
+                    });
             });
         }
 

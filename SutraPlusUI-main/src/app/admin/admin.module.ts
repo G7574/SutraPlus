@@ -66,6 +66,7 @@ import { CreateDcComponent } from './components/sales/create-dc/create-dc/create
 import { ImportEInvoiceComponent } from './components/sales/import-e-invoice/import-e-invoice.component';
 import { ItemWiseReportComponent } from './components/item-wise-report/item-wise-report.component';
 import { DxReportDesignerModule, DxReportViewerModule } from 'devexpress-reporting-angular';
+import { MonthWiseReportComponent } from './components/month-wise-report/month-wise-report.component';
 
 @NgModule({
   declarations: [
@@ -102,6 +103,7 @@ import { DxReportDesignerModule, DxReportViewerModule } from 'devexpress-reporti
     CreateDcComponent,
     ImportEInvoiceComponent,
     ItemWiseReportComponent,
+    MonthWiseReportComponent,
   ],
   imports: [
     CommonModule,

@@ -21,7 +21,7 @@
   <perfect-scrollbar [config]="perfectScrollbarConfig">
     <!--  [perfectScrollbar]="perfectScrollbarConfig"-->
     <c-sidebar-nav *ngIf="navItems.length > 0; else noNavItems" [navItems]="navItems"
-      dropdownMode="close"></c-sidebar-nav>
+      dropdownMode="none"></c-sidebar-nav>
 
     <ng-template #noNavItems>
       <p>No navigation items available.</p>

@@ -152,6 +152,7 @@
             ((System.ComponentModel.ISupportInitialize)this.XrTable1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)this.XrTable4).BeginInit();
             ((System.ComponentModel.ISupportInitialize)this).BeginInit();
+            //this.Report.FilterString = "(GetMonth([TranctDate]) Between ?StartDate and ?EndDate or GetMonth([TranctDate]) = ?StartDate or GetMonth([TranctDate]) = ?EndDate) and (VochType Between ?vochtype1 and ?vochtype2 or VochType = ?vochtype1 or VochType = ?vochtype2) and CompanyId = ?companyidrecord";
             //
             //Detail
             //
@@ -274,6 +275,10 @@
             //MsSqlConnectionParameters1.DatabaseName = "K2223";
             //MsSqlConnectionParameters1.ServerName = ".\\SQLEXPRESS";
             //this.SqlDataSource1.ConnectionParameters = MsSqlConnectionParameters1;
+
+            //this.Report.FilterString = "(GetMonth([TranctDate]) Between ?StartDate and ?EndDate or GetMonth([TranctDate]) = ?StartDate or GetMonth([TranctDate]) = ?EndDate) and (VochType Between ?vochtype1 and ?vochtype2 or VochType = ?vochtype1 or VochType = ?vochtype2) and CompanyId = ?companyidrecord";
+
+
 
             this.SqlDataSource1.ConnectionName = ".\\SQLEXPRESS_K2122_Connection 2";
             MsSqlConnectionParameters1.AuthorizationType = DevExpress.DataAccess.ConnectionParameters.MsSqlAuthorizationType.SqlServer;

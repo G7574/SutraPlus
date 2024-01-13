@@ -59,8 +59,6 @@
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.113" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="PredefinedReports\MonthView.cs">
-      <SubType>XtraReport</SubType>
-    </Compile>
+    <Compile Update="PredefinedReports\MonthView.cs" />
   </ItemGroup>
 </Project>
