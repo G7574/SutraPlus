@@ -23,6 +23,10 @@ export class SuperAdminServiceService {
     return this.dataService.postAnonymous('UserSecurity/GetUserData',data);
   }
 
+  getUserProfilePicture(data: any) {
+    return this.dataService.postAnonymous('UserSecurity/GetUserProfilePicture',data);
+  }
+
   updateUser(data: any) {
     return this.dataService.postAnonymous('UserSecurity/UpdateUserData',data);
   }

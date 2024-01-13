@@ -77,8 +77,17 @@ export class UserProfileComponent {
     this.superAdminService.updateUser(userData).subscribe(
       (response) => {
         console.log('User data Updated successfully:', this.user);
-        this.toastrService.success('User Data Updated Successfully');
         this.spinner.hide();
+        // window.location.reload();
+        this.toastrService.success('User Data Updated Successfully', 'Success', {
+timeOut:1000
+        }).onHidden.subscribe(() => {
+          // Perform your action here
+          window.location.reload();
+        });
+        // this.toastrService.success('User Data Updated Successfully');
+
+
       },
       (error) => {
         console.error('Error updating user data:', error);

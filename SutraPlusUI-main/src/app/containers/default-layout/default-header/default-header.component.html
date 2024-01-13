@@ -26,6 +26,7 @@
       </c-nav-item>
     </c-header-nav>
     <c-header-nav class="ms-3">
+
       <ng-container *ngTemplateOutlet="userDropdown"></ng-container>
 
       <button type="button" style="border: none; background: none;"
@@ -53,7 +54,7 @@
   <c-dropdown alignment="end" variant="nav-item">
     <button cButton color="" [caret]="false" cDropdownToggle class="py-0">
       <c-avatar cTextColor="primary" shape="rounded-1" size="md"
-        src="assets/images/default-image.jpg" status="">
+        [src]="profilePicture" status="">
       </c-avatar>
     </button>
     <ul cDropdownMenu class="py-0 pr-5 w-auto">
@@ -80,3 +81,11 @@
     </ul>
   </c-dropdown>
 </ng-template>
+
+
+<style>
+  .user-avatar {
+  width: 50px; /* Set the desired width */
+  height: 50px; /* Set the desired height */
+}
+</style>

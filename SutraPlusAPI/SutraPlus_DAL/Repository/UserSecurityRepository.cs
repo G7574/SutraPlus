@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -144,6 +145,29 @@ namespace SutraPlus_DAL.Repository
             }
              
         }
+        
+        public JObject getUserProfilePicture(string email)
+        {
+            var response = new JObject();
+            try
+            {
+                _logger.LogDebug("User Authenticate (Login)");
+                var result = _tenantDBContext.Users.Where(a => a.UserName == email && a.IsActive == true).FirstOrDefault();
+                if (result != null)
+                { 
+                    response.Add("ProfileImage", result.ProfileImage);
+                    return response;
+                }
+                response.Add("IsSuccess", false);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                throw ex;
+            }
+        }
+
         public JObject Forgot(string Email)
         {
             var response = new JObject();

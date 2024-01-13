@@ -86,6 +86,21 @@ namespace SutraPlus_BAL.Service
                 throw ex;
             }
         }
+        public JObject GetUserProfilePicture(JObject Data)
+        {
+            try
+            {
+                var data = JsonConvert.DeserializeObject<dynamic>(Data["UserDetails"].ToString());
+                var userEmailId = Convert.ToString(data["UserEmailId"]); 
+                   
+                return _securityRepository.getUserProfilePicture(userEmailId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                throw ex;
+            }
+        }
 
         public bool UpdatePassword(JObject Data)
         {

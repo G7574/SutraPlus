@@ -3,6 +3,9 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { ClassToggleService, HeaderComponent } from '@coreui/angular';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { SuperAdminServiceService } from 'src/app/super-admin/services/super-admin-service.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-default-header',
@@ -21,9 +24,13 @@ export class DefaultHeaderComponent extends HeaderComponent {
   userDetails: any;
   userName!: string
 
+  profilePicture : string = "";
+
   constructor(
     private classToggler: ClassToggleService,
-    private router: Router
+    private router: Router,
+    private superAdminService: SuperAdminServiceService,
+    private spinner: NgxSpinnerService
     ) {
     super();
   }
@@ -36,6 +43,30 @@ export class DefaultHeaderComponent extends HeaderComponent {
     this.userDetails = sessionStorage.getItem('userDetails')
     this.userDetails = JSON.parse(this.userDetails);
     this.userName = this.userDetails?.result?.UserEmailId;
+    this.getUserProfilePicture()
+  }
+
+  getUserProfilePicture(): void{
+    this.spinner.show();
+    const email = sessionStorage.getItem('Email');
+    let model ={
+      UserEmailId :email
+    }
+    const userData = {
+      UserDetails:model
+    };
+    this.superAdminService.getUserProfilePicture(userData).subscribe(
+      (response) => {
+        this.profilePicture = environment.api + response?.ProfileImage
+        this.spinner.hide();
+        console.log(this.profilePicture);
+      },
+      (error) => {
+        console.error('Error retrieving user data:', error);
+        this.spinner.hide();
+      }
+    );
+
   }
 
   changePassword(): void {

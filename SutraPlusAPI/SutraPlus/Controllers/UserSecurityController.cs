@@ -236,5 +236,22 @@ namespace SutraPlus.Controllers
             }
         }
 
+        [HttpPost("GetUserProfilePicture")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUserProfilePicture([FromBody] JObject Data)
+        {
+            try
+            {
+                var result = _securityService.GetUserProfilePicture(Data);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }
