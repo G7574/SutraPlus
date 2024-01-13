@@ -56,8 +56,8 @@ export const navItems: INavData[] = [
       },
       {
         name: 'Verify Bills',
-        url: '/admin/InvoiceList',
-        linkProps: { queryParams: { InvoiceName: 'VerifyBills' } },
+        // url: '/admin/InvoiceList',
+        // linkProps: { queryParams: { InvoiceName: 'VerifyBills' } },
       },
       {
         name: 'Sales Return',
@@ -216,7 +216,11 @@ export const navItems: INavData[] = [
         url: 'admin/ItemWise',
         linkProps: { queryParams: { ReportName: 'Item Wise' } },
       },
-
+      // {
+      //   name: 'Month Wise',
+      //   url: 'admin/MonthWise',
+      //   linkProps: { queryParams: { ReportName: 'Month Wise' } },
+      // },
       {
         name: 'Payment List',
         url: 'admin/reports',

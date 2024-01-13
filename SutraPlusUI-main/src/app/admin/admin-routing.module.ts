@@ -41,6 +41,7 @@ import { OptionSettingsComponent } from './components/option-settings/option-set
 import { CreateDcComponent } from './components/sales/create-dc/create-dc/create-dc.component';
 import { ImportEInvoiceComponent } from './components/sales/import-e-invoice/import-e-invoice.component';
 import { ItemWiseReportComponent } from './components/item-wise-report/item-wise-report.component';
+import { MonthWiseReportComponent } from './components/month-wise-report/month-wise-report.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent },
@@ -74,6 +75,7 @@ const routes: Routes = [
   //{ path: 'add-export-invoice', component: AddExportInvoiceComponent },
   { path: 'reports', component: ReportsMainComponent },
   { path: 'ItemWise', component: ItemWiseReportComponent },
+  { path: 'MonthWise', component: MonthWiseReportComponent },
   { path: 'BankJournal', component: BankJournalEntriesComponent },
   { path: 'akada-entry', component: AkadaEntryComponent },
   { path: 'BankJournal', component: BankJournalEntriesComponent },

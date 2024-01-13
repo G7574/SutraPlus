@@ -39,45 +39,153 @@ namespace PassParameterExample.Services
         {
             try
             {
+                string[] parts = url.Split("&");
+                string reportName = parts[0];
+                DateTime StartDate = new DateTime();
+                if (parts.Length > 1)
+                    if (parts[1].Split("=")[1] != "")
+                        StartDate = parts.Length > 1 ? Convert.ToDateTime(parts[1].Split("=")[1]) : DateTime.UtcNow;
+                DateTime EndDate = new DateTime();
+                if (parts.Length > 2)
+                    if (parts[2].Split("=")[1] != "")
+                        EndDate = parts.Length > 2 ? Convert.ToDateTime(parts[2].Split("=")[1]) : DateTime.UtcNow;
+
+                int companyid = 0;
+                if (parts.Length > 3)
+                    if (parts[3].Split("=")[1] != "")
+                        companyid = parts.Length > 3 ? Convert.ToInt32(parts[3].Split("=")[1]) : 0;
+
+                int vochtype1 = 0;
+                if (parts.Length > 4)
+                    if (parts[4].Split("=")[1] != "")
+                        vochtype1 = parts.Length > 4 ? Convert.ToInt32(parts[4].Split("=")[1]) : 0;
+
+                int vochtype2 = 0;
+                if (parts.Length > 5)
+                    if (parts[5].Split("=")[1] != "")
+                        vochtype2 = parts.Length > 5 ? Convert.ToInt32(parts[5].Split("=")[1]) : 0;
+
 
                 using var ms = new MemoryStream();
-                using XtraReport report = ReportsFactory.Reports["ItemWise"]();
-         
+                XtraReport report = new XtraReport();
+                if (parts[0] == "ItemWise")
+                     report = ReportsFactory.Reports["ItemWise"]();
+                else if(parts[0] == "MonthView")
+                    report = ReportsFactory.Reports1["MonthView"]();
+
+
+
                 if (report.Parameters["StartDate"] == null)
                 {
                     var dateParameter = new Parameter()
                     {
                         Name = "StartDate",
                         Description = "From Date",
-                        Value = DateTime.UtcNow,
-                        Type = typeof(System.DateTime),
+                        Value = StartDate,
                     };
                     report.Parameters.Add(dateParameter);
-
                 }
                 else
                 {
-                    report.Parameters["StartDate"].Value = DateTime.UtcNow;
+                    report.Parameters["StartDate"].Value = StartDate;
                 }
-                
+
                 if (report.Parameters["EndDate"] == null)
                 {
-
                     var dateParameter = new Parameter()
                     {
                         Name = "EndDate",
                         Description = "To Date",
-                        Type = typeof(System.DateTime),
-                        Value = DateTime.UtcNow,
+                        Value = EndDate,
                     };
                     report.Parameters.Add(dateParameter);
-
                 }
                 else
                 {
-                    report.Parameters["EndDate"].Value = DateTime.UtcNow;
+                    report.Parameters["EndDate"].Value = EndDate;
                 }
-                //report.RequestParameters = false;
+
+                if (report.Parameters["companyidrecord"] == null)
+                {
+                    var dateParameter = new Parameter()
+                    {
+                        Name = "companyidrecord",
+                        Description = "CompanyId",
+                        Value = companyid,
+                    };
+                    report.Parameters.Add(dateParameter);
+                }
+                else
+                {
+                    report.Parameters["companyidrecord"].Value = companyid;
+                }
+
+                if (report.Parameters["vochtype1"] == null)
+                {
+                    var dateParameter = new Parameter()
+                    {
+                        Name = "vochtype1",
+                        Description = "VochType1",
+                        Value = vochtype1,
+                    };
+                    report.Parameters.Add(dateParameter);
+                }
+                else
+                {
+                    report.Parameters["vochtype1"].Value = vochtype1;
+                }
+
+                if (report.Parameters["vochtype2"] == null)
+                {
+                    var dateParameter = new Parameter()
+                    {
+                        Name = "vochtype2",
+                        Description = "VochType1",
+                        Value = vochtype2,
+                    };
+                    report.Parameters.Add(dateParameter);
+                }
+                else
+                {
+                    report.Parameters["vochtype2"].Value = vochtype2;
+                }
+
+                //string Querystring = "";
+                //if (StartDate != new DateTime() && EndDate != new DateTime())
+                //{
+                //    Querystring += "GetDate([TranctDate]) Between(" + StartDate + "," + EndDate + ")";
+                //}
+
+                //if (vochtype1 != 0 && vochtype2 != 0)
+                //{
+                //    Querystring += "and VochType Between(" + vochtype1 + "," + vochtype2 + ")";
+                //}
+                //else if (vochtype1 != 0)
+                //{
+                //    Querystring = "and VochType = " + vochtype1;
+                //}
+                //if (companyid != 0)
+                //{
+                //    Querystring += "and CompanyId=" + companyid;
+                //}
+
+
+                //if (report.Parameters["Query"] == null)
+                //{
+                //    var dateParameter = new Parameter()
+                //    {
+                //        Name = "Query",
+                //        Description = "Query",
+                //        Value = Querystring,
+                //    };
+                //    report.Parameters.Add(dateParameter);
+                //}
+                //else
+                //{
+                //    report.Parameters["Query"].Value = Querystring;
+                //}
+
+                report.RequestParameters = false;
 
                 report.CreateDocument();
 
@@ -85,7 +193,7 @@ namespace PassParameterExample.Services
 
                 return ms.ToArray();
 
-               
+
             }
             catch (Exception ex)
             {

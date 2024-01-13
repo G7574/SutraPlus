@@ -7,14 +7,12 @@ import { predefinedDateRanges } from 'devexpress-reporting/dx-webdocumentviewer'
 import { fetchSetup } from '@devexpress/analytics-core/analytics-utils';
 import * as $ from 'jquery';
 
-
 @Component({
-  selector: 'app-item-wise-report',
-  templateUrl: './item-wise-report.component.html',
-  styleUrls: ['./item-wise-report.component.scss']
+  selector: 'app-month-wise-report',
+  templateUrl: './month-wise-report.component.html',
+  styleUrls: ['./month-wise-report.component.scss']
 })
-export class ItemWiseReportComponent implements OnInit {
-
+export class MonthWiseReportComponent implements OnInit {
   ngOnInit(): void {
     // Additional initialization logic can be added here
   }
@@ -23,14 +21,14 @@ export class ItemWiseReportComponent implements OnInit {
   // If you use the ASP.NET Core backend:
   getDesignerModelAction = "/DXXRD/GetDesignerModel";
   // The report name.
-  reportName = "ItemWise";
+  reportName = "MonthView";
   // The backend application URL.
   host = environment.Reportingapi;
   yearSelection!: FormGroup
   currentYear!: number
 
   @ViewChild(DxReportViewerComponent, { static: false }) viewer: DxReportViewerComponent;
-  reportUrl: string = "ItemWise";
+  reportUrl: string = "MonthView";
   // The built-in controller in the back-end ASP.NET Core Reporting application.
   invokeAction: string = '/DXXRDV';
   
@@ -89,5 +87,6 @@ setParameterVDN() {
   let globalCompanyId = sessionStorage.getItem('companyID');
   this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15");
 }
+
 
 }

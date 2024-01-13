@@ -200,7 +200,8 @@ namespace SutraPlusReportApi.PredefinedReports
             // Specify the start date and end date parameters.
 
 
-            //dateRangeSettings.StartParameter.Name = "StartDate";            //dateRangeSettings.StartParameter.Value = new System.DateTime(2022, 4, 1).ToString();            //dateRangeSettings.EndParameter.Name = "EndDate";            //dateRangeSettings.EndParameter.Value = new System.DateTime(2022, 5, 1).ToString();            this.Report.FilterString = "GetDate([TranctDate]) Between(?StartDate,?EndDate)";
+            //dateRangeSettings.StartParameter.Name = "StartDate";            //dateRangeSettings.StartParameter.Value = new System.DateTime(2022, 4, 1).ToString();            //dateRangeSettings.EndParameter.Name = "EndDate";            //dateRangeSettings.EndParameter.Value = new System.DateTime(2022, 5, 1).ToString();            this.Report.FilterString = "(GetDate([TranctDate]) Between(?StartDate,?EndDate) or GetDate([TranctDate]) = ?StartDate or GetDate([TranctDate]) = ?EndDate) and (VochType Between(?vochtype1,?vochtype2) or (VochType = ?vochtype1) or (VochType = ?vochtype2) ) and CompanyId=?companyidrecord";
+            //this.Report.FilterString = "Query";
 
 
             //
