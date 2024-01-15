@@ -14,16 +14,30 @@ import * as $ from 'jquery';
   styleUrls: ['./item-wise-report.component.scss']
 })
 export class ItemWiseReportComponent implements OnInit {
-
+  startDate: any;
+  endDate: any;
   ngOnInit(): void {
+    const currentDate = new Date();
+    this.startDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1));
+    this.endDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0));
+    $("#startDate").val(this.startDate);
+    $("#endDate").val(this.endDate);
     // Additional initialization logic can be added here
+  }
+
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+    // return `2022-04-01`;
   }
 
   title = 'DXReportDesignerSample';
   // If you use the ASP.NET Core backend:
   getDesignerModelAction = "/DXXRD/GetDesignerModel";
   // The report name.
-  reportName = "ItemWise";
+  reportName = "ItemWise" + "&StartDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1)) + "&EndDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth()+ 1, 0)) + "&companyidrecord=" + sessionStorage.getItem('companyID') + "&vochtype1=0&vochtype1=99";
   // The backend application URL.
   host = environment.Reportingapi;
   yearSelection!: FormGroup
@@ -31,7 +45,7 @@ export class ItemWiseReportComponent implements OnInit {
 
   @ViewChild(DxReportViewerComponent, { static: false }) viewer: DxReportViewerComponent;
   reportUrl: string = "ItemWise";
-  // The built-in controller in the back-end ASP.NET Core Reporting application.
+  // The built-in controller in the back-end ASP.NET Core Reporting application.  
   invokeAction: string = '/DXXRDV';
   
 

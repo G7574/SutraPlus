@@ -216,11 +216,6 @@ export const navItems: INavData[] = [
         url: 'admin/ItemWise',
         linkProps: { queryParams: { ReportName: 'Item Wise' } },
       },
-      // {
-      //   name: 'Month Wise',
-      //   url: 'admin/MonthWise',
-      //   linkProps: { queryParams: { ReportName: 'Month Wise' } },
-      // },
       {
         name: 'Payment List',
         url: 'admin/reports',
@@ -245,6 +240,22 @@ export const navItems: INavData[] = [
         name: 'Trial Balance',
         url: 'admin/reports',
         linkProps: { queryParams: { ReportName: 'TrialBalance' } },
+      },
+    ],
+  },
+  {
+    name: 'Yearly Reports',
+    title: true,
+  },
+  {
+    name: 'Reports',
+    url: '/base',
+    iconComponent: { name: 'cil-spreadsheet' },
+    children: [
+      {
+        name: 'Month Wise',
+        url: 'admin/MonthWise',
+        linkProps: { queryParams: { ReportName: 'Month Wise' } },
       },
     ],
   },

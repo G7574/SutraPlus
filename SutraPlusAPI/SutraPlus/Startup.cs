@@ -137,9 +137,12 @@ namespace SutraPlus
             }
             app.UseSwagger();
 
+            if (!Directory.Exists("userProfileImages"))
+                Directory.CreateDirectory("userProfileImages");
+
             app.UseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new PhysicalFileProvider(
+                  FileProvider = new PhysicalFileProvider(
                 Path.Combine(Directory.GetCurrentDirectory(), "userProfileImages")),
                 RequestPath = "/userProfileImages"
             });

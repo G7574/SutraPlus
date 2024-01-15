@@ -73,19 +73,17 @@ export class DefaultHeaderComponent extends HeaderComponent {
     this.router.navigate(['profile/change-password']);
   }
 
-  logOut(): void {
-
+  logout(): void {
+    // Perform logout actions (e.g., clear session storage)
     sessionStorage.removeItem('userDetails');
     sessionStorage.removeItem('financialYear');
-    sessionStorage.removeItem('companyName')
+    sessionStorage.removeItem('companyName');
 
-  //  sessionStorage.clear();
-
+    // Navigate to the login page
     this.router.navigate(['/login']).then(
       () => console.log('Navigation to login succeeded'),
       (error) => console.error('Navigation to login failed:', error),
     );
-
   }
 
   navigateToProfile(): void{
