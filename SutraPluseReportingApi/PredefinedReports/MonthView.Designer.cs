@@ -1,4 +1,8 @@
-﻿namespace SutraPlusReportApi.PredefinedReports
+﻿using DevExpress.XtraReports;
+using DevExpress.XtraReports.Expressions;
+using DevExpress.XtraReports.Parameters;
+
+namespace SutraPlusReportApi.PredefinedReports
 {
     partial class MonthView
     {
@@ -73,6 +77,8 @@
             DevExpress.DataAccess.Sql.TableInfo TableInfo4 = new DevExpress.DataAccess.Sql.TableInfo();
             DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo29 = new DevExpress.DataAccess.Sql.ColumnInfo();
             DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo30 = new DevExpress.DataAccess.Sql.ColumnInfo();
+            DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo31 = new DevExpress.DataAccess.Sql.ColumnInfo();
+            DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo32 = new DevExpress.DataAccess.Sql.ColumnInfo();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MonthView));
             DevExpress.XtraReports.UI.XRSummary XrSummary8 = new DevExpress.XtraReports.UI.XRSummary();
             DevExpress.XtraReports.UI.XRSummary XrSummary9 = new DevExpress.XtraReports.UI.XRSummary();
@@ -144,7 +150,7 @@
             this.XrTableCell14 = new DevExpress.XtraReports.UI.XRTableCell();
             this.XrTableCell15 = new DevExpress.XtraReports.UI.XRTableCell();
             this.XrTableCell16 = new DevExpress.XtraReports.UI.XRTableCell();
-            this.XrTableCell23 = new DevExpress.XtraReports.UI.XRTableCell();
+            this.XrTableCell23 = new DevExpress.XtraReports.UI.XRTableCell();   
             this.XrTableCell24 = new DevExpress.XtraReports.UI.XRTableCell();
             this.XrTableCell25 = new DevExpress.XtraReports.UI.XRTableCell();
             ((System.ComponentModel.ISupportInitialize)this.XrTable3).BeginInit();
@@ -152,7 +158,11 @@
             ((System.ComponentModel.ISupportInitialize)this.XrTable1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)this.XrTable4).BeginInit();
             ((System.ComponentModel.ISupportInitialize)this).BeginInit();
-            //this.Report.FilterString = "(GetDate([TranctDate]) Between(?StartDate,?EndDate) or GetDate([TranctDate]) = ?StartDate or GetDate([TranctDate]) = ?EndDate) and (VochType Between(?vochtype1,?vochtype2) or (VochType = ?vochtype1) or (VochType = ?vochtype2) ) and CompanyId=?companyidrecord";
+
+            this.Report.FilterString = "(GetDate([TranctDate]) Between(?StartDate,?EndDate) or GetDate([TranctDate]) = ?StartDate or GetDate([TranctDate]) = ?EndDate) and (VochType Between(?vochtype1,?vochtype2) or (VochType = ?vochtype1) or (VochType = ?vochtype2) ) and CompanyId=?companyidrecord";
+
+            //this.FilterString = $"GetDate([TranctDate]) >= ?StartDate AND GetDate([TranctDate]) <= ?EndDate"; 
+             
             //
             //Detail
             //
@@ -317,6 +327,7 @@
             RelationInfo3.ParentTable = "Ledger";
             RelationColumnInfo4.NestedKeyColumn = "VoucherId";
             RelationColumnInfo4.ParentKeyColumn = "VochType";
+           
             RelationInfo4.KeyColumns.AddRange(new DevExpress.DataAccess.Sql.RelationColumnInfo[] { RelationColumnInfo4 });
             RelationInfo4.NestedTable = "VoucherTypes";
             RelationInfo4.ParentTable = "BillSummary";
@@ -355,11 +366,15 @@
             ColumnInfo26.Name = "TotalBags";
             ColumnInfo27.Name = "monthNo";
             ColumnInfo28.Name = "TotalAmount";
-            TableInfo3.SelectedColumns.AddRange(new DevExpress.DataAccess.Sql.ColumnInfo[] { ColumnInfo13, ColumnInfo14, ColumnInfo15, ColumnInfo16, ColumnInfo17, ColumnInfo18, ColumnInfo19, ColumnInfo20, ColumnInfo21, ColumnInfo22, ColumnInfo23, ColumnInfo24, ColumnInfo25, ColumnInfo26, ColumnInfo27, ColumnInfo28 });
+            ColumnInfo31.Name = "CompanyID";
+            ColumnInfo32.Name = "VochType";
+            TableInfo3.SelectedColumns.AddRange(new DevExpress.DataAccess.Sql.ColumnInfo[] { ColumnInfo13, ColumnInfo14, ColumnInfo15, ColumnInfo16, ColumnInfo17, ColumnInfo18, ColumnInfo19, ColumnInfo20, 
+                ColumnInfo21, ColumnInfo22, ColumnInfo23, ColumnInfo24, ColumnInfo25, ColumnInfo26, ColumnInfo27, ColumnInfo28,ColumnInfo31,ColumnInfo32 });
             TableInfo4.Name = "VoucherTypes";
             ColumnInfo29.Name = "VoucherId";
             ColumnInfo30.Name = "VoucherName";
-            TableInfo4.SelectedColumns.AddRange(new DevExpress.DataAccess.Sql.ColumnInfo[] { ColumnInfo29, ColumnInfo30 });
+         
+            TableInfo4.SelectedColumns.AddRange(new DevExpress.DataAccess.Sql.ColumnInfo[] { ColumnInfo29, ColumnInfo30});
             TableQuery1.Tables.AddRange(new DevExpress.DataAccess.Sql.TableInfo[] { TableInfo1, TableInfo2, TableInfo3, TableInfo4 });
             this.SqlDataSource1.Queries.AddRange(new DevExpress.DataAccess.Sql.SqlQuery[] { TableQuery1 });
             this.SqlDataSource1.ResultSchemaSerializable = resources.GetString("SqlDataSource1.ResultSchemaSerializable");
@@ -584,9 +599,9 @@
             //
             //XrTableCell1
             //
-            this.XrTableCell1.DataBindings.AddRange(new DevExpress.XtraReports.UI.XRBinding[] { new DevExpress.XtraReports.UI.XRBinding("Text", null, "Company.TranctDate", "{0:MMMM, yyyy}") });
+            this.XrTableCell1.DataBindings.AddRange(new DevExpress.XtraReports.UI.XRBinding[] { new DevExpress.XtraReports.UI.XRBinding("Text", null, "Company.TranctDate", "{0:MMMM-yyyy}") });
             this.XrTableCell1.Name = "XrTableCell1";
-            this.XrTableCell1.StylePriority.UseTextAlignment = false;
+            this.XrTableCell1.StylePriority.UseTextAlignment = false;   
             this.XrTableCell1.TextAlignment = DevExpress.XtraPrinting.TextAlignment.TopRight;
             this.XrTableCell1.Weight = 0.761632156501984D;
             //
