@@ -1,4 +1,7 @@
-﻿namespace SutraPlusReportApi.PredefinedReports
+﻿using DevExpress.CodeParser;
+using DevExpress.XtraReports.Parameters;
+
+namespace SutraPlusReportApi.PredefinedReports
 {
     public partial class PartyCaseWise
     {
@@ -71,6 +74,9 @@
             DevExpress.DataAccess.Sql.TableInfo TableInfo4 = new DevExpress.DataAccess.Sql.TableInfo();
             DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo33 = new DevExpress.DataAccess.Sql.ColumnInfo();
             DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo34 = new DevExpress.DataAccess.Sql.ColumnInfo();
+            DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo35= new DevExpress.DataAccess.Sql.ColumnInfo();
+            DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo36 = new DevExpress.DataAccess.Sql.ColumnInfo();
+
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PartyCaseWise));
             DevExpress.XtraReports.UI.XRSummary XrSummary1 = new DevExpress.XtraReports.UI.XRSummary();
             DevExpress.XtraReports.UI.XRSummary XrSummary2 = new DevExpress.XtraReports.UI.XRSummary();
@@ -118,7 +124,21 @@
             ((System.ComponentModel.ISupportInitialize)this.XrTable3).BeginInit();
             ((System.ComponentModel.ISupportInitialize)this.XrTable2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)this).BeginInit();
-            //
+
+
+            var dateRangeParam = new Parameter();
+            dateRangeParam.Name = "dateRange";
+            dateRangeParam.Description = "Date Range:";
+            dateRangeParam.Type = typeof(System.DateTime);
+            var dateRangeSettings = new RangeParametersSettings();
+
+            //this.Report.FilterString = "(GetDate([TranctDate]) Between(?StartDate,?EndDate) or GetDate([TranctDate]) = ?StartDate or GetDate([TranctDate]) = ?EndDate)";
+
+            //this.Report.FilterString = "(GetDate([TranctDate]) Between(?StartDate, ?EndDate) or GetDate([TranctDate]) = ?StartDate or GetDate([TranctDate]) = ?EndDate) and CompanyId=?companyidrecord";
+
+
+            this.Report.FilterString = "(GetDate([TranctDate]) Between(?StartDate,?EndDate) or GetDate([TranctDate]) = ?StartDate or GetDate([TranctDate]) = ?EndDate) and (VochType Between(?vochtype1,?vochtype2) or (VochType = ?vochtype1) or (VochType = ?vochtype2) ) and CompanyId=?companyidrecord";
+
             //Detail
             //
             this.Detail.HeightF = 0.0F;
@@ -188,7 +208,8 @@
             ColumnInfo9.Name = "ThirdLineForReport";
             ColumnInfo10.Name = "SecondLineForReport";
             ColumnInfo11.Name = "PAN";
-            TableInfo1.SelectedColumns.AddRange(new DevExpress.DataAccess.Sql.ColumnInfo[] { ColumnInfo1, ColumnInfo2, ColumnInfo3, ColumnInfo4, ColumnInfo5, ColumnInfo6, ColumnInfo7, ColumnInfo8, ColumnInfo9, ColumnInfo10, ColumnInfo11 });
+            
+            TableInfo1.SelectedColumns.AddRange(new DevExpress.DataAccess.Sql.ColumnInfo[] { ColumnInfo1, ColumnInfo2, ColumnInfo3, ColumnInfo4, ColumnInfo5, ColumnInfo6, ColumnInfo7, ColumnInfo8, ColumnInfo9, ColumnInfo10, ColumnInfo11,ColumnInfo13 });
             TableInfo2.Name = "Ledger";
             ColumnInfo12.Name = "LedgerName";
             ColumnInfo13.Alias = "Ledger_GSTIN";
@@ -215,14 +236,20 @@
             ColumnInfo30.Name = "VochType";
             ColumnInfo31.Name = "CessValue";
             ColumnInfo32.Name = "DalaliValue";
-            TableInfo3.SelectedColumns.AddRange(new DevExpress.DataAccess.Sql.ColumnInfo[] { ColumnInfo15, ColumnInfo16, ColumnInfo17, ColumnInfo18, ColumnInfo19, ColumnInfo20, ColumnInfo21, ColumnInfo22, ColumnInfo23, ColumnInfo24, ColumnInfo25, ColumnInfo26, ColumnInfo27, ColumnInfo28, ColumnInfo29, ColumnInfo30, ColumnInfo31, ColumnInfo32 });
+            ColumnInfo35.Name = "CompanyID";
+
+            TableInfo3.SelectedColumns.AddRange(new DevExpress.DataAccess.Sql.ColumnInfo[] { ColumnInfo15, ColumnInfo16, ColumnInfo17, ColumnInfo18, ColumnInfo19, ColumnInfo20, ColumnInfo21, ColumnInfo22, ColumnInfo23, ColumnInfo24, ColumnInfo25, ColumnInfo26, ColumnInfo27, ColumnInfo28, ColumnInfo29, ColumnInfo30, ColumnInfo31, ColumnInfo32, ColumnInfo35 });
             TableInfo4.Name = "VoucherTypes";
             ColumnInfo33.Name = "VoucherId";
             ColumnInfo34.Name = "VoucherName";
+            
             TableInfo4.SelectedColumns.AddRange(new DevExpress.DataAccess.Sql.ColumnInfo[] { ColumnInfo33, ColumnInfo34 });
             TableQuery1.Tables.AddRange(new DevExpress.DataAccess.Sql.TableInfo[] { TableInfo1, TableInfo2, TableInfo3, TableInfo4 });
             this.SqlDataSource1.Queries.AddRange(new DevExpress.DataAccess.Sql.SqlQuery[] { TableQuery1 });
             this.SqlDataSource1.ResultSchemaSerializable = resources.GetString("SqlDataSource1.ResultSchemaSerializable");
+
+
+
             //
             //PageHeader
             //

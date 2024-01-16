@@ -1,4 +1,6 @@
-﻿namespace SutraPlusReportApi.PredefinedReports
+﻿using DevExpress.XtraReports.Parameters;
+
+namespace SutraPlusReportApi.PredefinedReports
 {
 
     public partial class PartyWiseCommHamali
@@ -75,6 +77,7 @@
             DevExpress.DataAccess.Sql.TableInfo TableInfo4 = new DevExpress.DataAccess.Sql.TableInfo();
             DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo35 = new DevExpress.DataAccess.Sql.ColumnInfo();
             DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo36 = new DevExpress.DataAccess.Sql.ColumnInfo();
+            DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo37 = new DevExpress.DataAccess.Sql.ColumnInfo();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PartyWiseCommHamali));
             DevExpress.XtraReports.UI.XRSummary XrSummary1 = new DevExpress.XtraReports.UI.XRSummary();
             DevExpress.XtraReports.UI.XRSummary XrSummary2 = new DevExpress.XtraReports.UI.XRSummary();
@@ -118,6 +121,18 @@
             ((System.ComponentModel.ISupportInitialize)this.XrTable3).BeginInit();
             ((System.ComponentModel.ISupportInitialize)this.XrTable2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)this).BeginInit();
+
+            var dateRangeParam = new Parameter();
+            dateRangeParam.Name = "dateRange";
+            dateRangeParam.Description = "Date Range:";
+            dateRangeParam.Type = typeof(System.DateTime);
+            var dateRangeSettings = new RangeParametersSettings();
+
+
+            //this.Report.FilterString = "(GetDate([TranctDate]) Between(?StartDate,?EndDate) or GetDate([TranctDate]) = ?StartDate or GetDate([TranctDate]) = ?EndDate)";
+
+            this.Report.FilterString = "(GetDate([TranctDate]) Between(?StartDate,?EndDate) or GetDate([TranctDate]) = ?StartDate or GetDate([TranctDate]) = ?EndDate) and (VochType Between(?vochtype1,?vochtype2) or (VochType = ?vochtype1) or (VochType = ?vochtype2) ) and CompanyId=?companyidrecord";
+
             //
             //Detail
             //
@@ -217,7 +232,8 @@
             ColumnInfo32.Name = "DalaliValue";
             ColumnInfo33.Name = "HamaliValue";
             ColumnInfo34.Name = "monthNo";
-            TableInfo3.SelectedColumns.AddRange(new DevExpress.DataAccess.Sql.ColumnInfo[] { ColumnInfo15, ColumnInfo16, ColumnInfo17, ColumnInfo18, ColumnInfo19, ColumnInfo20, ColumnInfo21, ColumnInfo22, ColumnInfo23, ColumnInfo24, ColumnInfo25, ColumnInfo26, ColumnInfo27, ColumnInfo28, ColumnInfo29, ColumnInfo30, ColumnInfo31, ColumnInfo32, ColumnInfo33, ColumnInfo34 });
+            ColumnInfo37.Name = "CompanyID";
+            TableInfo3.SelectedColumns.AddRange(new DevExpress.DataAccess.Sql.ColumnInfo[] { ColumnInfo15, ColumnInfo16, ColumnInfo17, ColumnInfo18, ColumnInfo19, ColumnInfo20, ColumnInfo21, ColumnInfo22, ColumnInfo23, ColumnInfo24, ColumnInfo25, ColumnInfo26, ColumnInfo27, ColumnInfo28, ColumnInfo29, ColumnInfo30, ColumnInfo31, ColumnInfo32, ColumnInfo33, ColumnInfo34, ColumnInfo37 });
             TableInfo4.Name = "VoucherTypes";
             ColumnInfo35.Name = "VoucherId";
             ColumnInfo36.Name = "VoucherName";
