@@ -97,7 +97,7 @@
 
 <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
 
-<c-row class="mb-3">
+<!-- <c-row class="mb-3">
   <c-col md="12">
     <div class="bg-light d-flex flex-row justify-content-end align-items-center">
       <button cButton class="px-0 text-dark fw-bold text-decoration-none" color="link"
@@ -106,27 +106,32 @@
       </button>
     </div>
   </c-col>
-</c-row>
+</c-row> -->
 
 <c-row class="mb-3">
-  <c-col xs="12">
-    <c-card>
-      <c-card-header>
+  <!-- <div style="text-align: right;margin-bottom: 5px;">
+    <button class="btn btn-secondary" (click)="toggleEInvoiceModal()" style="float: right; width: 20%;">
+      View E-Invoice Details
+    </button>
+  </div> -->
+  <!-- <c-col xs="12">
+    <c-card> -->
+      <!-- <c-card-header>
         <div class="d-flex justify-content-between align-items-center">
           <h3 class="mb-0 mt-1">
             {{ invType }}
             <span *ngIf="companySelected" style="font-size: 12px; font-weight: 500">
               <span *ngIf="isEinVoice"> - (E Invoice Enabled)</span>
-              <span *ngIf="!isEinVoice"> - (E Invoice Disabled)</span> 
+              <span *ngIf="!isEinVoice"> - (E Invoice Disabled)</span>
             </span>
           </h3>
           <button class="btn btn-secondary" (click)="toggleEInvoiceModal()">
             View E-Invoice Details
           </button>
         </div>
-      </c-card-header>
+      </c-card-header> -->
 
-      <c-card-body>
+      <!-- <c-card-body>
         <form [formGroup]="getParty">
           <c-row class="mb-3">
             <c-col [sm]="4">
@@ -138,10 +143,10 @@
                 </span>
               </label>
               <ng-select #party (keyup)="getPartyList(party.searchTerm)" [items]="partyList"
-                 bindLabel="ledgerName" bindValue="ledgerId" formControlName="DrpParty" 
-                
+                 bindLabel="ledgerName" bindValue="ledgerId" formControlName="DrpParty"
+
                 placeholder="Select Party" >
-                <ng-template ng-option-tmp let-item="item" let-index="index"  
+                <ng-template ng-option-tmp let-item="item" let-index="index"
                   let-search="searchTerm">
                   <div class="item">
                     <div (click)="onClickTest($event, item)">
@@ -277,547 +282,837 @@
             </c-col>
           </c-row>
         </form>
-      </c-card-body>
-    </c-card>
-  </c-col>
+      </c-card-body> -->
+    <!-- </c-card>
+  </c-col> -->
 </c-row>
-<c-row class="mb-3">
+
+<c-row class="mb-3" (click)="toggleExpand()">
+  <!-- <div style="text-align: right;margin-bottom: 5px;">
+    <button class="btn btn-secondary" (click)="toggleEInvoiceModal()" style="float: right; width: 20%;">
+      View E-Invoice Details
+    </button>
+  </div> -->
   <c-col xs="12">
     <c-card>
-      <c-card-header>
-        <div class="d-flex justify-content-between align-item-center">
-          <h3 class="mb-0 mt-1">
-            Item Details <small>(maximum 10 items)</small>
-          </h3>
-        </div>
-      </c-card-header>
+      <!--  -->
       <c-card-body>
-        <c-row class="mb-3">
-          <c-col xs="12">
-            <c-card>
-              <c-card-body>
-                <div class="table-responsive">
-                  <table id="table" [striped]="true" [responsive]="true" cTable>
-                    <thead>
-                      <tr>
-                        <th scope="col" class="text-center">Sr.&nbsp;No.</th>
-                        <th scope="col" class="text-center">
-                          Select&nbsp;Item
-                        </th>
-                        <!-- not visible ginning & debit note-->
-                        <th scope="col" class="text-center" *ngIf="isShow">
-                          KG/Bag
-                        </th>
-                        <th scope="col" class="text-center" *ngIf="isShow">
-                          No.&nbsp;of&nbsp;Bags
-                        </th>
-                        <th scope="col" class="text-center" *ngIf="isDebitNote">
-                          Total&nbsp;Qty.
-                        </th>
-                        <th scope="col" class="text-center" *ngIf="isDebitNote">
-                          Rate
-                        </th>
-                        <th scope="col" class="text-center">Amount</th>
 
-                        <th scope="col" class="text-center" style="display: none">
-                          Taxable
-                        </th>
+        <!-- <div style="text-align: right;margin-bottom: 5px;">
+          <button class="btn btn-secondary" (click)="toggleEInvoiceModal()" style="float: right; width: 20%;">
+            View E-Invoice Details
+          </button>
+        </div> -->
 
-                        <th scope="col" class="text-center" style="display: none">
-                          Sgst
-                        </th>
-                        <th scope="col" class="text-center" style="display: none">
-                          Cgst
-                        </th>
-                        <th scope="col" class="text-center" style="display: none">
-                          Igst
-                        </th>
+        <form [formGroup]="getParty">
+          <c-row class="mb-4">
 
-                        <th scope="col" class="text-center">Mark</th>
-                        <th scope="col" class="text-center">&nbsp;</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let dynamic of dynamicArray; let i = index">
-                        <td class="text-center">{{ i + 1 }}</td>
-                        <td class="">
-                          <ng-select #party (keyup)="getProductList(party.searchTerm)"
-                            [items]="productList" bindLabel="commodityName" bindValue="_Id"
-                            placeholder="Select Item" [(ngModel)]="dynamicArray[i].CommodityId" >
-                            <ng-template ng-option-tmp let-item="item" let-index="index"
-                              let-search="searchTerm">
-                              <div class="item">
-                                <div (click)="productItemClick($event, item, i)">
-                                  {{ item.commodityName }}
-                                </div>
-                              </div>
-                            </ng-template>
-                          </ng-select>
-                        </td>
-                        <td *ngIf="isShow" class="text-center">
-                          <input class="inputs text-end" cFormControl type="text"
-                            placeholder="KG/Bag" #kgBag
-                            (keyup)="LineItemTotal(kgBag.value, i, 'KgBag')" (keypress)="
-                              commonService.ValidateNumeric($event.keyCode)
-                            " [(ngModel)]="dynamicArray[i].WeightPerBag" />
-                        </td>
-                        <td *ngIf="isShow" class="text-center">
-                          <input class="inputs text-end" cFormControl type="text"
-                            placeholder="No. of Bags" #noOfBags (keyup)="
-                              LineItemTotal(noOfBags.value, i, 'NoofBags')
-                            " (keypress)="
-                              commonService.ValidateNumeric($event.keyCode)
-                            " [(ngModel)]="dynamicArray[i].NoOfBags" />
-                        </td>
-                        <td *ngIf="isDebitNote" class="text-center">
-                          <input class="inputs text-end" cFormControl type="text"
-                            placeholder="Total Qty" [value]="totalQty" #totalQaunt (keyup)="
-                              LineItemTotal(totalQaunt.value, i, 'TotalQty')
-                            " (keypress)="
-                              commonService.ValidateNumeric($event.keyCode)
-                            " [(ngModel)]="dynamicArray[i].TotalWeight" />
-                        </td>
-                        <td *ngIf="isDebitNote" class="text-center">
-                          <input class="inputs text-end" cFormControl type="text" placeholder="Rate"
-                            #rate (keyup)="LineItemTotal(rate.value, i, 'rate')" (keypress)="
-                              commonService.ValidateNumeric($event.keyCode)
-                            " [(ngModel)]="dynamicArray[i].Rate" />
-                        </td>
-                        <td class="text-center">
-                          <input class="inputs text-end" [ngClass]="{ 'pe-none': isDebitNote }"
-                            cFormControl type="text" #amount
-                            (keyup)="LineItemTotal(amount.value, i, 'Amount')" placeholder="Amount"
-                            (keypress)="
-                              commonService.ValidateNumeric($event.keyCode)
-                            " [value]="SeperateComma(dynamicArray[i].Amount)" />
-                        </td>
-
-                        <td class="text-center" style="display: none">
-                          <input class="inputs pe-none text-end" cFormControl type="text"
-                            placeholder="Taxable" [(ngModel)]="dynamicArray[i].Taxable" />
-                        </td>
-
-                        <td class="text-center" style="display: none">
-                          <input class="inputs text-end" cFormControl type="text"
-                            [(ngModel)]="dynamicArray[i].SgstAmount" />
-                        </td>
-                        <td class="text-center" style="display: none">
-                          <input class="inputs text-end" cFormControl type="text"
-                            [(ngModel)]="dynamicArray[i].CgstAmount" />
-                        </td>
-                        <td class="text-center" style="display: none">
-                          <input class="inputs text-end" cFormControl type="text"
-                            [(ngModel)]="dynamicArray[i].IgstAmount" />
-                        </td>
-                        <td class="text-center">
-                          <input class="inputs" cFormControl type="text" placeholder="Mark"
-                            [(ngModel)]="dynamicArray[i].Remark" />
-                        </td>
-                        <td class="text-center">
-                          <button type="button" class="btn btn-secondary btn-sm mt-1"
-                            (click)="deleteRow(i)" *ngIf="dynamicArray.length != 1"
-                            cTooltip="Remove Item" cTooltipPlacement="bottom">
-                            <i class="fa-solid fa-xmark"></i>
-                          </button>
-                        </td>
-                      </tr>
-                      <tr *ngIf="dynamicArray.length < 10">
-                        <td class="text-center">
-                          <button type="button" class="btn btn-secondary btn-sm" (click)="addRow(i)"
-                            cTooltip="Add Item" cTooltipPlacement="bottom">
-                            <i class="fa-solid fa-plus"></i>
-                          </button>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                      </tr>
-                    </tbody>
-                    <tfoot>
-                      <tr class="bg-secondary">
-                        <td class="text-center fw-semibold">Total</td>
-                        <td class="text-center"></td>
-                        <td class="text-center"></td>
-                        <td class="text-center">
-                          <input class="inputs pe-none text-end" cFormControl type="text"
-                            [(ngModel)]="totalNoOfBags" />
-                        </td>
-                        <td class="text-center">
-                          <input class="inputs pe-none text-end" cFormControl type="text"
-                            [(ngModel)]="totalQuantity" />
-                        </td>
-                        <td class="text-center" *ngIf="isDebitNote"></td>
-                        <td class="text-center" *ngIf="isDebitNote">
-                          <input class="inputs pe-none text-end" cFormControl type="text"
-                            [(ngModel)]="totalAmount" />
-                        </td>
-                        <td class="text-center" style="display: none"></td>
-                        <td class="text-center" style="display: none"></td>
-                        <td class="text-center" style="display: none"></td>
-                        <td class="text-center" style="display: none"></td>
-                        <td class="text-center"></td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
-                <c-col xs="3">
-                  <div class="d-flex justify-content-between align-items-center">
-                    <!-- <p class="mb-0">Current Stock : <b>20</b></p> -->
-                    <p class="mb-0">
-                      GST Rate: <b>{{ newRate }}%</b>
-                    </p>
+            <c-col [sm]="4">
+              <label cLabel style="width: 100%">Party
+                <span *ngIf="partySelected" style="margin-left: 1%">
+                  <a (click)="editDemo()">
+                    <i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+                </span>
+              </label>
+              <ng-select #party (keyup)="getPartyList(party.searchTerm)" [items]="partyList"
+                         bindLabel="ledgerName" bindValue="ledgerId" formControlName="DrpParty"
+                         placeholder="Select Party">
+                <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                  <div class="item">
+                    <div (click)="onClickTest($event, item)">
+                      {{ item.ledgerName }}
+                    </div>
                   </div>
-                </c-col>
-              </c-card-body>
-            </c-card>
-          </c-col>
-        </c-row>
+                </ng-template>
+              </ng-select>
+            </c-col>
+
+            <c-col [sm]="1" *ngIf="partySelected">
+              <label class="d-block" cLabel> &nbsp;</label>
+              <button type="button" class="btn btn-dark btn-sm px-3" (click)="editDemo()" cButton>
+                Edit
+              </button>
+            </c-col>
+
+            <c-col [sm]="3">
+              <label cLabel>Date</label>
+              <input [max]="maxDate" [min]="minDate" formControlName="BillDate" cFormControl type="date" />
+            </c-col>
+
+            <c-col [sm]="3">
+              <label cLabel>Invoice No.</label>
+              <input cFormControl type="text" id="invoiceNo" placeholder="Invoice No." formControlName="invoiceNo" />
+            </c-col>
+
+            <c-col [sm]="2">
+
+              <label cLabel style="visibility: collapse;">Ree.</label>
+              <button class="btn btn-secondary" (click)="toggleEInvoiceModal()" style="float: right;">
+                View E-Invoice Details
+              </button>
+            </c-col>
+
+          </c-row>
+
+          <c-row class="mb-3" *ngIf="partySelected">
+            <c-col [sm]="12">
+              <table style="width: 100%" id="tblPartyDetails">
+                <tbody>
+                  <tr>
+                    <td style="font-size: 12px !important">Voucher Type</td>
+                    <td>
+                      <input cFormControl style="
+                          border: unset;
+                          padding-top: 0% !important;
+                          padding-bottom: 0% !important;
+                          font-size: 12px;
+                          font-weight: bold !important;
+                        " type="text" class="pe-none" formControlName="voucherType" />
+                    </td>
+                    <td style="font-size: 12px !important">PAN</td>
+                    <td>
+                      <input cFormControl style="
+                          border: unset;
+                          padding-top: 0% !important;
+                          padding-bottom: 0% !important;
+                          font-size: 12px;
+                          font-weight: bold !important;
+                        " type="text" class="pe-none" formControlName="pan" />
+                    </td>
+                    <td style="font-size: 12px !important">GSTIN</td>
+                    <td>
+                      <input cFormControl style="
+                          border: unset;
+                          padding-top: 0% !important;
+                          padding-bottom: 0% !important;
+                          font-size: 12px;
+                          font-weight: bold !important;
+                        " type="text" formControlName="gst" />
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style="font-size: 12px !important">Dealer Type</td>
+                    <td>
+                      <input cFormControl style="
+                          border: unset;
+                          padding-top: 0% !important;
+                          padding-bottom: 0% !important;
+                          font-size: 12px;
+                          font-weight: bold !important;
+                        " type="text" class="pe-none" formControlName="dealerType" />
+                    </td>
+                    <td style="font-size: 12px !important">State</td>
+                    <td>
+                      <input cFormControl style="
+                          border: unset;
+                          padding-top: 0% !important;
+                          padding-bottom: 0% !important;
+                          font-size: 12px;
+                          font-weight: bold !important;
+                        " type="text" class="pe-none" formControlName="state" />
+                    </td>
+                    <td style="font-size: 12px !important">Address1</td>
+                    <td>
+                      <input cFormControl style="
+                          border: unset;
+                          padding-top: 0% !important;
+                          padding-bottom: 0% !important;
+                          font-size: 12px;
+                          font-weight: bold !important;
+                        " type="text" class="pe-none" formControlName="address1" />
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style="font-size: 12px !important">Address2</td>
+                    <td>
+                      <input cFormControl style="
+                          border: unset;
+                          padding-top: 0% !important;
+                          padding-bottom: 0% !important;
+                          font-size: 12px;
+                          font-weight: bold !important;
+                        " type="text" class="pe-none" formControlName="address2" />
+                    </td>
+                    <td style="font-size: 12px !important">Email</td>
+                    <td>
+                      <input cFormControl style="
+                          border: unset;
+                          padding-top: 0% !important;
+                          padding-bottom: 0% !important;
+                          font-size: 12px;
+                          font-weight: bold !important;
+                        " type="text" id="invoiceNo" formControlName="emailId" />
+                    </td>
+                    <td style="font-size: 12px !important">Phone No.</td>
+                    <td>
+                      <input cFormControl style="
+                          border: unset;
+                          padding-top: 0% !important;
+                          padding-bottom: 0% !important;
+                          font-size: 12px;
+                          font-weight: bold !important;
+                        " type="text" class="pe-none" formControlName="cellNo" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </c-col>
+          </c-row>
+        </form>
+
+
+        <!-- start -->
+
+        <div class="table-responsive">
+          <table id="table" [striped]="true" [responsive]="true" cTable>
+            <thead>
+              <tr>
+                <th scope="col" class="text-center">Sr.&nbsp;No.</th>
+                <th scope="col" class="text-center">
+                  Select&nbsp;Item
+                </th>
+                <!-- not visible ginning & debit note-->
+                <th scope="col" class="text-center" *ngIf="isShow">
+                  KG/Bag
+                </th>
+                <th scope="col" class="text-center" *ngIf="isShow">
+                  No.&nbsp;of&nbsp;Bags
+                </th>
+                <th scope="col" class="text-center" *ngIf="isDebitNote">
+                  Total&nbsp;Qty.
+                </th>
+                <th scope="col" class="text-center" *ngIf="isDebitNote">
+                  Rate
+                </th>
+                <th scope="col" class="text-center">Amount</th>
+
+                <th scope="col" class="text-center" style="display: none">
+                  Taxable
+                </th>
+
+                <th scope="col" class="text-center" style="display: none">
+                  Sgst
+                </th>
+                <th scope="col" class="text-center" style="display: none">
+                  Cgst
+                </th>
+                <th scope="col" class="text-center" style="display: none">
+                  Igst
+                </th>
+
+                <th scope="col" class="text-center">Mark</th>
+                <th scope="col" class="text-center">&nbsp;</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let dynamic of dynamicArray; let i = index">
+                <td class="text-center">{{ i + 1 }}</td>
+                <td class="">
+                  <ng-select #party (keyup)="getProductList(party.searchTerm)"
+                    [items]="productList" bindLabel="commodityName" bindValue="_Id"
+                    placeholder="Select Item" [(ngModel)]="dynamicArray[i].CommodityId" >
+                    <ng-template ng-option-tmp let-item="item" let-index="index"
+                      let-search="searchTerm">
+                      <div class="item">
+                        <div (click)="productItemClick($event, item, i)">
+                          {{ item.commodityName }}
+                        </div>
+                      </div>
+                    </ng-template>
+                  </ng-select>
+                </td>
+                <td *ngIf="isShow" class="text-center">
+                  <input class="inputs text-end" cFormControl type="text"
+                    placeholder="KG/Bag" #kgBag
+                    (keyup)="LineItemTotal(kgBag.value, i, 'KgBag')" (keypress)="
+                      commonService.ValidateNumeric($event.keyCode)
+                    " [(ngModel)]="dynamicArray[i].WeightPerBag" />
+                </td>
+                <td *ngIf="isShow" class="text-center">
+                  <input class="inputs text-end" cFormControl type="text"
+                    placeholder="No. of Bags" #noOfBags (keyup)="
+                      LineItemTotal(noOfBags.value, i, 'NoofBags')
+                    " (keypress)="
+                      commonService.ValidateNumeric($event.keyCode)
+                    " [(ngModel)]="dynamicArray[i].NoOfBags" />
+                </td>
+                <td *ngIf="isDebitNote" class="text-center">
+                  <input class="inputs text-end" cFormControl type="text"
+                    placeholder="Total Qty" [value]="totalQty" #totalQaunt (keyup)="
+                      LineItemTotal(totalQaunt.value, i, 'TotalQty')
+                    " (keypress)="
+                      commonService.ValidateNumeric($event.keyCode)
+                    " [(ngModel)]="dynamicArray[i].TotalWeight" />
+                </td>
+                <td *ngIf="isDebitNote" class="text-center">
+                  <input class="inputs text-end" cFormControl type="text" placeholder="Rate"
+                    #rate (keyup)="LineItemTotal(rate.value, i, 'rate')" (keypress)="
+                      commonService.ValidateNumeric($event.keyCode)
+                    " [(ngModel)]="dynamicArray[i].Rate" />
+                </td>
+                <td class="text-center">
+                  <input class="inputs text-end" [ngClass]="{ 'pe-none': isDebitNote }"
+                    cFormControl type="text" #amount
+                    (keyup)="LineItemTotal(amount.value, i, 'Amount')" placeholder="Amount"
+                    (keypress)="
+                      commonService.ValidateNumeric($event.keyCode)
+                    " [value]="SeperateComma(dynamicArray[i].Amount)" />
+                </td>
+
+                <td class="text-center" style="display: none">
+                  <input class="inputs pe-none text-end" cFormControl type="text"
+                    placeholder="Taxable" [(ngModel)]="dynamicArray[i].Taxable" />
+                </td>
+
+                <td class="text-center" style="display: none">
+                  <input class="inputs text-end" cFormControl type="text"
+                    [(ngModel)]="dynamicArray[i].SgstAmount" />
+                </td>
+                <td class="text-center" style="display: none">
+                  <input class="inputs text-end" cFormControl type="text"
+                    [(ngModel)]="dynamicArray[i].CgstAmount" />
+                </td>
+                <td class="text-center" style="display: none">
+                  <input class="inputs text-end" cFormControl type="text"
+                    [(ngModel)]="dynamicArray[i].IgstAmount" />
+                </td>
+                <td class="text-center">
+                  <input class="inputs" cFormControl type="text" placeholder="Mark"
+                    [(ngModel)]="dynamicArray[i].Remark" />
+                </td>
+                <td class="text-center">
+                  <button type="button" class="btn btn-secondary btn-sm mt-1"
+                    (click)="deleteRow(i)" *ngIf="dynamicArray.length != 1"
+                    cTooltip="Remove Item" cTooltipPlacement="bottom">
+                    <i class="fa-solid fa-xmark"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="dynamicArray.length < 10">
+                <td class="text-center">
+                  <button type="button" class="btn btn-secondary btn-sm" (click)="addRow(i)"
+                    cTooltip="Add Item" cTooltipPlacement="bottom">
+                    <i class="fa-solid fa-plus"></i>
+                  </button>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr class="bg-secondary">
+                <td class="text-center fw-semibold">Total</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center">
+                  <input class="inputs pe-none text-end" cFormControl type="text"
+                    [(ngModel)]="totalNoOfBags" />
+                </td>
+                <td class="text-center">
+                  <input class="inputs pe-none text-end" cFormControl type="text"
+                    [(ngModel)]="totalQuantity" />
+                </td>
+                <td class="text-center" *ngIf="isDebitNote"></td>
+                <td class="text-center" *ngIf="isDebitNote">
+                  <input class="inputs pe-none text-end" cFormControl type="text"
+                    [(ngModel)]="totalAmount" />
+                </td>
+                <td class="text-center" style="display: none"></td>
+                <td class="text-center" style="display: none"></td>
+                <td class="text-center" style="display: none"></td>
+                <td class="text-center" style="display: none"></td>
+                <td class="text-center"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <c-col xs="3">
+          <div class="d-flex justify-content-between align-items-center">
+            <!-- <p class="mb-0">Current Stock : <b>20</b></p> -->
+            <!-- <p class="mb-0">
+              GST Rate: <b>{{ newRate }}%</b>
+            </p> -->
+          </div>
+        </c-col>
+
+        <!-- end -->
+
+        <!-- start -->
 
         <c-row class="mb-0">
-          <c-col xs="12">
-            <c-card>
-              <c-card-header>
-                <div class="d-flex justify-content-between align-item-center">
-                  <h3 class="mb-0 mt-2">Other Charges</h3>
-                  <button type="button" class="btn btn-dark btn-sm px-3" (click)="toggleLiveDemo()"
-                    cButton>
-                    Lorry Details
-                  </button>
-                </div>
-              </c-card-header>
-              <c-card-body>
-                <form [formGroup]="formGroup1">
-                  <div class="table-responsive">
-                    <table class="table border border-0 border-light" id="table1" [striped]="false"
-                      [responsive]="true" cTable>
-                      <thead></thead>
-                      <tbody>
-                        <tr *ngIf="isThirdParty" class="border border-0 border-light">
-                          <td width="52%" colspan="5" class="text-center"></td>
-                          <td width="12%" class="text-center">
-                            <input style="border: unset" cFormControl
-                              class="inputs pe-none text-end" placeholder="Amount" type="text"
-                              formControlName="otherChargesAny" />
-                          </td>
-                          <td width="12%" class="text-center">
-                            <input cFormControl class="inputs pe-none text-end"
-                              placeholder="Advance amount" type="text"
-                              formControlName="otherChargesAnyValue" />
-                          </td>
-                          <td width="13%" colspan="2"></td>
-                        </tr>
-                        <tr *ngIf="isnotThirdParty" class="border border-0 border-light">
-                          <td width="52%" colspan="5" class="text-center"></td>
-                          <td width="12%" class="text-center">
-                            <input cFormControl class="inputs pe-none text-end" placeholder="Amount"
-                              type="text" formControlName="otherChargesAny" />
-                          </td>
-                          <td width="12%" class="text-center">
-                            <input cFormControl class="inputs pe-none text-end"
-                              placeholder="Advance amount" type="text"
-                              formControlName="otherChargesAnyValue" />
-                          </td>
-                          <td width="13%" colspan="2"></td>
-                        </tr>
-                        <tr class="border border-0 border-light">
-                          <td width="52%" colspan="5" class="text-center"></td>
-                          <td width="12%" class="text-center">
-                            <ng-select #otherAcc1 (keyup)="getOtherAccList(otherAcc1.searchTerm)"
-                              [items]="otherAccList" 
-                              bindLabel="ledgerName" bindValue="ledgerName" formControlName="DrpExpenses1"
-                              placeholder="Select Other Account">
-                              <ng-template ng-option-tmp let-item="item" let-index="index"
-                                let-search="searchTerm">
-                                <div class="item">
-                                  <div (click)="onOtherAcc1(item)">
-                                    {{ item.ledgerName }}
-                                  </div>
-                                </div>
-                              </ng-template>
-                            </ng-select>
-                          </td>
-                          <td width="12%" class="text-center">
-                            <input cFormControl placeholder="Amount" type="text"
-                              formControlName="otherCharges1" class="inputs text-end" #otherCharges1
-                              (keyup)="LineItemTotal(0, 0, 'SaveLorryDetails')" (keypress)="
-                                commonService.ValidateNumeric($event.keyCode)
-                              " />
-                          </td>
-                          <td width="13%" colspan="2"></td>
-                        </tr>
-                        <tr class="border border-0">
-                          <td colspan="5" class="text-center"></td>
-                          <td>
-                            <ng-select #otherAcc2 (keyup)="getOtherAccList(otherAcc2.searchTerm)"
-                              [items]="otherAccList" 
-                              bindLabel="ledgerName" bindValue="ledgerName" formControlName="DrpExpenses2"
-                              placeholder="Select Other Account" >
-                              <ng-template ng-option-tmp let-item="item" let-index="index"
-                                let-search="searchTerm">
-                                <div class="item">
-                                  <div (click)="onOtherAcc2(item)">
-                                    {{ item.ledgerName }}
-                                  </div>
-                                </div>
-                              </ng-template>
-                            </ng-select>
-                          </td>
-                          <td class="text-center">
-                            <input cFormControl placeholder="Amount" type="text"
-                              class="inputs text-end" formControlName="otherCharges2" #otherCharges2
-                              (keyup)="LineItemTotal(0, 0, 'SaveLorryDetails')" (keypress)="
-                                commonService.ValidateNumeric($event.keyCode)
-                              " />
-                          </td>
-                          <td colspan="2"></td>
-                        </tr>
-                        <tr class="border border-0">
-                          <td colspan="5" class="text-center"></td>
-                          <td class="text-center">
-                            <ng-select #otherAcc3 (keyup)="getOtherAccList(otherAcc3.searchTerm)"
-                              [items]="otherAccList" 
-                              bindLabel="ledgerName" bindValue="ledgerName" formControlName="DrpExpenses3"
-                              placeholder="Select Other Account" >
-                              <ng-template ng-option-tmp let-item="item" let-index="index"
-                                let-search="searchTerm">
-                                <div class="item">
-                                  <div (click)="onOtherAcc3(item)">
-                                    {{ item.ledgerName }}
-                                  </div>
-                                </div>
-                              </ng-template>
-                            </ng-select>
-                          </td>
-                          <td class="text-center">
-                            <input cFormControl placeholder="Amount" type="text"
-                              class="inputs text-end" formControlName="otherCharges3" #otherCharges3
-                              (keyup)="LineItemTotal(0, 0, 'SaveLorryDetails')" (keypress)="
-                                commonService.ValidateNumeric($event.keyCode)
-                              " />
-                          </td>
-                          <td colspan="2"></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </form>
-              </c-card-body>
-            </c-card>
-          </c-col>
-        </c-row>
-      </c-card-body>
-    </c-card>
-  </c-col>
-</c-row>
-
-
-<c-row class="mb-3">
-  <c-col xs="12">
-    <c-card>
-      <c-card-header>
-        <h3 class="mb-0 mt-1">Payment Details</h3>
-      </c-card-header>
-      <c-card-body>
-        <form [formGroup]="formGroup2">
-          <div class="table-responsive">
-            <table class="table border border-0 border-light" id="table1" [striped]="false"
-              [responsive]="true" cTable>
-              <thead></thead>
-              <tbody>
-                <tr class="border border-0 border-light">
-                  <td class="text-end">
-                    <!--label cLabel="col" class="text-end" cCol [sm]="6">
-                                            Discount (%)
-                                        </label-->
-                    <label *ngIf="
-                        igstShow == false &&
-                        sgstShow == true &&
-                        cgstShow == true
-                      " cLabel="col" class="text-end" cCol [sm]="6">
-                      SGST
-                    </label>
-                    <label *ngIf="
-                        igstShow == true &&
-                        sgstShow == false &&
-                        cgstShow == false
-                      " cLabel="col" class="text-end" cCol [sm]="12">
-                      IGST
-                    </label>
-                  </td>
-                  <td width="15%" class="text-center">
-                    <input *ngIf="
-                        igstShow == false &&
-                        sgstShow == true &&
-                        cgstShow == true
-                      " class="text-end" cFormControl type="text"
-                      [ngClass]="disableRates == true ? 'pe-none bg-gray' : ''"
-                      formControlName="totalsgstAmt"
-                      (keypress)="commonService.ValidateNumeric($event.keyCode)" />
-
-                    <input *ngIf="
-                        igstShow == true &&
-                        sgstShow == false &&
-                        cgstShow == false
-                      " class="text-end" cFormControl type="text"
-                      [ngClass]="disableRates == true ? 'pe-none bg-gray' : ''"
-                      formControlName="totaligstAmt"
-                      (keypress)="commonService.ValidateNumeric($event.keyCode)" />
-                    <!--input cFormControl type="text"
-                                            formControlName="discount" #discAmt
-                                            (keyup)="onChangeDiscount(discAmt.value)"
-                                            (keypress)="commonService.ValidateNumeric($event.keyCode)" /-->
-                  </td>
-                  <td class="text-end">
-                    <label cLabel="col" class="text-end" cCol [sm]="6">
-                      Taxable Amount
-                    </label>
-                  </td>
-                  <td width="12%" class="text-center">
-                    <input cFormControl type="text" class="text-end" formControlName="taxableAmt"
-                      class="pe-none bg-gray text-end" [value]="SeperateComma(taxableAmt)" />
-                  </td>
-                  <td width="13%" colspan="2">
-                    <input [checked]="false" cFormCheckInput id="checkTwo" type="checkbox"
-                      formControlName="sezSale" />
-                    <label cFormCheckLabel for="checkTwo">SEZ Sale</label>
-                  </td>
-                </tr>
-                <tr class="border border-0 border-light">
-                  <td class="text-end">
-                    <!--label cLabel="col" class="text-end" cCol [sm]="6">
-                                            Round OFF
-                                        </label-->
-                    <label *ngIf="
-                        igstShow == false &&
-                        sgstShow == true &&
-                        cgstShow == true
-                      " cLabel="col" class="text-end" cCol [sm]="12">
-                      CGST
-                    </label>
-                  </td>
-                  <td width="15%" class="text-center">
-                    <input *ngIf="
-                        igstShow == false &&
-                        sgstShow == true &&
-                        cgstShow == true
-                      " cFormControl type="text" class="text-end"
-                      [ngClass]="disableRates == true ? 'pe-none bg-gray' : ''"
-                      formControlName="totalcgstAmt"
-                      (keypress)="commonService.ValidateNumeric($event.keyCode)" />
-                  </td>
-                  <td class="text-end">
-                    <label cLabel="col" class="text-end" cCol [sm]="6">
-                      Total GST Amount
-                    </label>
-                  </td>
-                  <td width="12%" class="text-center">
-                    <input class="text-end" cFormControl type="text" formControlName="totalGstAmt"
-                      class="pe-none text-end" />
-                  </td>
-                  <td width="13%" colspan="2"></td>
-                </tr>
-                <!--tr class="border border-0 border-light">
-                                    <td width="30%"></td>
-                                    <td width="15%" class="text-end">
-                                        <!--div class="container">
-                                            <div class="row">
-                                                <div class="col-4" class="myclass"
-                                                    *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
-                                                    <label cLabel="col" class="text-end" cCol [sm]="12">
-                                                        SGST (%)
-                                                    </label>
-                                                    <input cFormControl type="text"
-                                                        [ngClass]="disableRates==true ? 'pe-none bg-gray' : ''"
-                                                        formControlName="sgstRate"
-                                                        (keypress)="commonService.ValidateNumeric($event.keyCode)" />
-                                                </div>
-                                                <div class="col-4" class="myclass"
-                                                    *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
-                                                    <label cLabel="col" class="text-end" cCol [sm]="12">
-                                                        CGST (%)
-                                                    </label>
-                                                    <input cFormControl type="text"
-                                                        [ngClass]="disableRates==true ? 'pe-none bg-gray' : ''"
-                                                        formControlName="cgstRate"
-                                                        (keypress)="commonService.ValidateNumeric($event.keyCode)" />
-                                                </div>
-                                                <div class="col-4" class="myclass"
-                                                    *ngIf="igstShow == true && sgstShow == false && cgstShow == false">
-
-                                                    <label cLabel="col" class="text-end" cCol [sm]="12">
-                                                        IGST (%)
-                                                    </label>
-                                                    <input cFormControl type="text"
-                                                        [ngClass]="disableRates==true ? 'pe-none bg-gray' : ''"
-                                                        formControlName="igstRate"
-                                                        (keypress)="commonService.ValidateNumeric($event.keyCode)" />
-                                                </div>
-
-                                            </div>
-                                        </div--
+          <!--
+                    <c-col xs="12">
+                      <c-card> -->
+                        <!-- <c-card-header>
+                          <div class="d-flex justify-content-between align-item-center">
+                            <h3 class="mb-0 mt-2">Other Charges</h3>
+                            <button type="button" class="btn btn-dark btn-sm px-3" (click)="toggleLiveDemo()"
+                              cButton>
+                              Lorry Details
+                            </button>
+                          </div>
+                        </c-card-header> -->
+          <!--
+                        <c-card-body>
+                          <form [formGroup]="formGroup1">
+                            <div class="table-responsive">
+                              <table class="table border border-0 border-light" id="table1" [striped]="false"
+                                [responsive]="true" cTable>
+                                <thead></thead>
+                                <tbody>
+                                  <tr *ngIf="isThirdParty" class="border border-0 border-light">
+                                    <td width="52%" colspan="5" class="text-center"></td>
+                                    <td width="12%" class="text-center">
+                                      <input style="border: unset" cFormControl
+                                        class="inputs pe-none text-end" placeholder="Amount" type="text"
+                                        formControlName="otherChargesAny" />
                                     </td>
-                                    <td class="text-end">
-                                        <label cLabel="col" class="text-end" cCol [sm]="6"
-                                            *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
-                                            Total GST(%)
-                                        </label>
-                                    </td>
-                                    <td width="12%" class="text-center"> <c-col class="align-items-start" [sm]="12"
-                                            *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
-                                            <input cFormControl type="text" class="text-end" formControlName="totalGst"
-                                                class="pe-none" />
-                                        </c-col>
+                                    <td width="12%" class="text-center">
+                                      <input cFormControl class="inputs pe-none text-end"
+                                        placeholder="Advance amount" type="text"
+                                        formControlName="otherChargesAnyValue" />
                                     </td>
                                     <td width="13%" colspan="2"></td>
-                                </tr-->
-                <tr class="border border-0 border-light">
-                  <td class="text-end"></td>
-                  <td width="15%" class="text-center"></td>
-                  <td class="text-end">
-                    <label cLabel="col" class="text-end" cCol [sm]="6">
-                      Round OFF
-                    </label>
-                  </td>
-                  <td width="15%" class="text-center">
-                    <input cFormControl type="text" class="text-end" formControlName="roundOff" />
-                  </td>
-                  <td width="12%" colspan="2"></td>
-                </tr>
-                <tr class="border border-0 border-light">
-                  <td class="text-end"></td>
-                  <td width="15%" class="text-center"></td>
-                  <td class="text-end">
-                    <label cLabel="col" class="text-end fw-bold" cCol [sm]="6">
-                      Grand Total
-                    </label>
-                  </td>
-                  <td width="15%" class="text-center">
-                    <input cFormControl type="text" class="pe-none bg-gray text-end"
-                      formControlName="grandTotal" [(ngModel)]="grandTotalAmount" />
-                  </td>
-                  <td width="12%" colspan="2"></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </form>
-      </c-card-body>
-    </c-card>
-  </c-col>
-</c-row>
+                                  </tr>
+                                  <tr *ngIf="isnotThirdParty" class="border border-0 border-light">
+                                    <td width="52%" colspan="5" class="text-center"></td>
+                                    <td width="12%" class="text-center">
+                                      <input cFormControl class="inputs pe-none text-end" placeholder="Amount"
+                                        type="text" formControlName="otherChargesAny" />
+                                    </td>
+                                    <td width="12%" class="text-center">
+                                      <input cFormControl class="inputs pe-none text-end"
+                                        placeholder="Advance amount" type="text"
+                                        formControlName="otherChargesAnyValue" />
+                                    </td>
+                                    <td width="13%" colspan="2"></td>
+                                  </tr>
+                                  <tr class="border border-0 border-light">
+                                    <td width="52%" colspan="5" class="text-center"></td>
+                                    <td width="12%" class="text-center">
+                                      <ng-select #otherAcc1 (keyup)="getOtherAccList(otherAcc1.searchTerm)"
+                                        [items]="otherAccList"
+                                        bindLabel="ledgerName" bindValue="ledgerName" formControlName="DrpExpenses1"
+                                        placeholder="Select Other Account">
+                                        <ng-template ng-option-tmp let-item="item" let-index="index"
+                                          let-search="searchTerm">
+                                          <div class="item">
+                                            <div (click)="onOtherAcc1(item)">
+                                              {{ item.ledgerName }}
+                                            </div>
+                                          </div>
+                                        </ng-template>
+                                      </ng-select>
+                                    </td>
+                                    <td width="12%" class="text-center">
+                                      <input cFormControl placeholder="Amount" type="text"
+                                        formControlName="otherCharges1" class="inputs text-end" #otherCharges1
+                                        (keyup)="LineItemTotal(0, 0, 'SaveLorryDetails')" (keypress)="
+                                          commonService.ValidateNumeric($event.keyCode)
+                                        " />
+                                    </td>
+                                    <td width="13%" colspan="2"></td>
+                                  </tr>
+                                  <tr class="border border-0">
+                                    <td colspan="5" class="text-center"></td>
+                                    <td>
+                                      <ng-select #otherAcc2 (keyup)="getOtherAccList(otherAcc2.searchTerm)"
+                                        [items]="otherAccList"
+                                        bindLabel="ledgerName" bindValue="ledgerName" formControlName="DrpExpenses2"
+                                        placeholder="Select Other Account" >
+                                        <ng-template ng-option-tmp let-item="item" let-index="index"
+                                          let-search="searchTerm">
+                                          <div class="item">
+                                            <div (click)="onOtherAcc2(item)">
+                                              {{ item.ledgerName }}
+                                            </div>
+                                          </div>
+                                        </ng-template>
+                                      </ng-select>
+                                    </td>
+                                    <td class="text-center">
+                                      <input cFormControl placeholder="Amount" type="text"
+                                        class="inputs text-end" formControlName="otherCharges2" #otherCharges2
+                                        (keyup)="LineItemTotal(0, 0, 'SaveLorryDetails')" (keypress)="
+                                          commonService.ValidateNumeric($event.keyCode)
+                                        " />
+                                    </td>
+                                    <td colspan="2"></td>
+                                  </tr>
+                                  <tr class="border border-0">
+                                    <td colspan="5" class="text-center"></td>
+                                    <td class="text-center">
+                                      <ng-select #otherAcc3 (keyup)="getOtherAccList(otherAcc3.searchTerm)"
+                                        [items]="otherAccList"
+                                        bindLabel="ledgerName" bindValue="ledgerName" formControlName="DrpExpenses3"
+                                        placeholder="Select Other Account" >
+                                        <ng-template ng-option-tmp let-item="item" let-index="index"
+                                          let-search="searchTerm">
+                                          <div class="item">
+                                            <div (click)="onOtherAcc3(item)">
+                                              {{ item.ledgerName }}
+                                            </div>
+                                          </div>
+                                        </ng-template>
+                                      </ng-select>
+                                    </td>
+                                    <td class="text-center">
+                                      <input cFormControl placeholder="Amount" type="text"
+                                        class="inputs text-end" formControlName="otherCharges3" #otherCharges3
+                                        (keyup)="LineItemTotal(0, 0, 'SaveLorryDetails')" (keypress)="
+                                          commonService.ValidateNumeric($event.keyCode)
+                                        " />
+                                    </td>
+                                    <td colspan="2"></td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </form>
+                        </c-card-body>
 
-<c-row class="mb-3">
-  <c-col xs="12">
-    <c-card>
-      <c-card-header>
-        <h3 class="mb-0 mt-1">Address Details</h3>
-      </c-card-header>
-      <c-card-body>
+                      </c-card>
+                    </c-col> -->
+
+                    <c-row class="mb-3">
+                      <!-- First c-col (Other Charges Section) -->
+                      <c-col xs="12" md="6">
+                        <c-card>
+                          <c-card-body>
+                            <h5> Other Charges </h5>
+                            <div style="text-align: right;margin-bottom: 2px;">
+                              <button type="button" class="btn btn-dark btn-sm px-3" (click)="toggleLiveDemo()" cButton>
+                                        Lorry Details
+                              </button>
+                            </div>
+
+                            <form [formGroup]="formGroup1">
+                              <div class="table-responsive">
+                                <table class="table border border-0 border-light" id="table1" [striped]="false"
+                                  [responsive]="true" cTable>
+                                  <thead></thead>
+                                  <tbody>
+                                    <tr *ngIf="isThirdParty" class="border border-0 border-light">
+                                      <td width="45%" colspan="5" class="text-center"></td>
+                                      <td width="30%" class="text-center">
+                                        <input style="border: unset" cFormControl
+                                          class="inputs pe-none text-end" placeholder="Amount" type="text"
+                                          formControlName="otherChargesAny" />
+                                      </td>
+                                      <td width="30%" class="text-center">
+                                        <input cFormControl class="inputs pe-none text-end"
+                                          placeholder="Advance amount" type="text"
+                                          formControlName="otherChargesAnyValue" />
+                                      </td>
+                                      <td width="13%" colspan="2"></td>
+                                    </tr>
+                                    <tr *ngIf="isnotThirdParty" class="border border-0 border-light">
+                                      <td width="45%" colspan="5" class="text-center"></td>
+                                      <td width="30%" class="text-center">
+                                        <input cFormControl class="inputs pe-none text-end" placeholder="Amount"
+                                          type="text" formControlName="otherChargesAny" />
+                                      </td>
+                                      <td width="30%" class="text-center">
+                                        <input cFormControl class="inputs pe-none text-end"
+                                          placeholder="Advance amount" type="text"
+                                          formControlName="otherChargesAnyValue" />
+                                      </td>
+                                      <td width="13%" colspan="2"></td>
+                                    </tr>
+                                    <tr class="border border-0 border-light">
+                                      <td width="45%" colspan="5" class="text-center"></td>
+                                      <td width="30%" class="text-center">
+                                        <ng-select #otherAcc1 (keyup)="getOtherAccList(otherAcc1.searchTerm)"
+                                          [items]="otherAccList"
+                                          bindLabel="ledgerName" bindValue="ledgerName" formControlName="DrpExpenses1"
+                                          placeholder="Select Other Account">
+                                          <ng-template ng-option-tmp let-item="item" let-index="index"
+                                            let-search="searchTerm">
+                                            <div class="item">
+                                              <div (click)="onOtherAcc1(item)">
+                                                {{ item.ledgerName }}
+                                              </div>
+                                            </div>
+                                          </ng-template>
+                                        </ng-select>
+                                      </td>
+                                      <td width="30%" class="text-center">
+                                        <input cFormControl placeholder="Amount" type="text"
+                                          formControlName="otherCharges1" class="inputs text-end" #otherCharges1
+                                          (keyup)="LineItemTotal(0, 0, 'SaveLorryDetails')" (keypress)="
+                                            commonService.ValidateNumeric($event.keyCode)
+                                          " />
+                                      </td>
+                                      <td width="13%" colspan="2"></td>
+                                    </tr>
+                                    <tr class="border border-0">
+                                      <td colspan="5" class="text-center"></td>
+                                      <td>
+                                        <ng-select #otherAcc2 (keyup)="getOtherAccList(otherAcc2.searchTerm)"
+                                          [items]="otherAccList"
+                                          bindLabel="ledgerName" bindValue="ledgerName" formControlName="DrpExpenses2"
+                                          placeholder="Select Other Account" >
+                                          <ng-template ng-option-tmp let-item="item" let-index="index"
+                                            let-search="searchTerm">
+                                            <div class="item">
+                                              <div (click)="onOtherAcc2(item)">
+                                                {{ item.ledgerName }}
+                                              </div>
+                                            </div>
+                                          </ng-template>
+                                        </ng-select>
+                                      </td>
+                                      <td class="text-center">
+                                        <input cFormControl placeholder="Amount" type="text"
+                                          class="inputs text-end" formControlName="otherCharges2" #otherCharges2
+                                          (keyup)="LineItemTotal(0, 0, 'SaveLorryDetails')" (keypress)="
+                                            commonService.ValidateNumeric($event.keyCode)
+                                          " />
+                                      </td>
+                                      <td colspan="2"></td>
+                                    </tr>
+                                    <tr class="border border-0">
+                                      <td colspan="5" class="text-center"></td>
+                                      <td class="text-center">
+                                        <ng-select #otherAcc3 (keyup)="getOtherAccList(otherAcc3.searchTerm)"
+                                          [items]="otherAccList"
+                                          bindLabel="ledgerName" bindValue="ledgerName" formControlName="DrpExpenses3"
+                                          placeholder="Select Other Account" >
+                                          <ng-template ng-option-tmp let-item="item" let-index="index"
+                                            let-search="searchTerm">
+                                            <div class="item">
+                                              <div (click)="onOtherAcc3(item)">
+                                                {{ item.ledgerName }}
+                                              </div>
+                                            </div>
+                                          </ng-template>
+                                        </ng-select>
+                                      </td>
+                                      <td class="text-center">
+                                        <input cFormControl placeholder="Amount" type="text"
+                                          class="inputs text-end" formControlName="otherCharges3" #otherCharges3
+                                          (keyup)="LineItemTotal(0, 0, 'SaveLorryDetails')" (keypress)="
+                                            commonService.ValidateNumeric($event.keyCode)
+                                          " />
+                                      </td>
+                                      <td colspan="2"></td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </form>
+                          </c-card-body>
+                        </c-card>
+                      </c-col>
+
+
+                      <!-- Second c-col (Payment Details Section) -->
+        <c-col xs="12" md="6">
+                        <c-card>
+                          <c-card-body>
+                            <h5> Payment Details </h5>
+                            <form [formGroup]="formGroup2">
+                              <div class="table-responsive">
+                                <table class="table border border-0 border-light" id="table1" [striped]="false"
+                                  [responsive]="true" cTable>
+                                  <thead></thead>
+                                  <tbody>
+                                    <tr class="border border-0 border-light">
+                                      <td class="text-end">
+                                        <!--label cLabel="col" class="text-end" cCol [sm]="6">
+                                                                Discount (%)
+                                                            </label-->
+                                        <label *ngIf="
+                                            igstShow == false &&
+                                            sgstShow == true &&
+                                            cgstShow == true
+                                          " cLabel="col" class="text-end" cCol [sm]="6">
+                                          SGST
+                                        </label>
+                                        <label *ngIf="
+                                            igstShow == true &&
+                                            sgstShow == false &&
+                                            cgstShow == false
+                                          " cLabel="col" class="text-end" cCol [sm]="12">
+                                          IGST
+                                        </label>
+                                      </td>
+                                      <td width="15%" class="text-center">
+                                        <input *ngIf="
+                                            igstShow == false &&
+                                            sgstShow == true &&
+                                            cgstShow == true
+                                          " class="text-end" cFormControl type="text"
+                                          [ngClass]="disableRates == true ? 'pe-none bg-gray' : ''"
+                                          formControlName="totalsgstAmt"
+                                          (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+
+                                        <input *ngIf="
+                                            igstShow == true &&
+                                            sgstShow == false &&
+                                            cgstShow == false
+                                          " class="text-end" cFormControl type="text"
+                                          [ngClass]="disableRates == true ? 'pe-none bg-gray' : ''"
+                                          formControlName="totaligstAmt"
+                                          (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                                        <!--input cFormControl type="text"
+                                                                formControlName="discount" #discAmt
+                                                                (keyup)="onChangeDiscount(discAmt.value)"
+                                                                (keypress)="commonService.ValidateNumeric($event.keyCode)" /-->
+                                      </td>
+                                      <td class="text-end">
+                                        <label cLabel="col" class="text-end" cCol [sm]="6">
+                                          Taxable Amount
+                                        </label>
+                                      </td>
+                                      <td width="12%" class="text-center">
+                                        <input cFormControl type="text" class="text-end" formControlName="taxableAmt"
+                                          class="pe-none bg-gray text-end" [value]="SeperateComma(taxableAmt)" />
+                                      </td>
+                                      <td width="13%" colspan="2">
+                                        <input [checked]="false" cFormCheckInput id="checkTwo" type="checkbox"
+                                          formControlName="sezSale" />
+                                        <label cFormCheckLabel for="checkTwo">SEZ Sale</label>
+                                      </td>
+                                    </tr>
+                                    <tr class="border border-0 border-light">
+                                      <td class="text-end">
+                                        <!--label cLabel="col" class="text-end" cCol [sm]="6">
+                                                                Round OFF
+                                                            </label-->
+                                        <label *ngIf="
+                                            igstShow == false &&
+                                            sgstShow == true &&
+                                            cgstShow == true
+                                          " cLabel="col" class="text-end" cCol [sm]="12">
+                                          CGST
+                                        </label>
+                                      </td>
+                                      <td width="15%" class="text-center">
+                                        <input *ngIf="
+                                            igstShow == false &&
+                                            sgstShow == true &&
+                                            cgstShow == true
+                                          " cFormControl type="text" class="text-end"
+                                          [ngClass]="disableRates == true ? 'pe-none bg-gray' : ''"
+                                          formControlName="totalcgstAmt"
+                                          (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                                      </td>
+                                      <td class="text-end">
+                                        <label cLabel="col" class="text-end" cCol [sm]="6">
+                                          Total GST Amount
+                                        </label>
+                                      </td>
+                                      <td width="12%" class="text-center">
+                                        <input class="text-end" cFormControl type="text" formControlName="totalGstAmt"
+                                          class="pe-none text-end" />
+                                      </td>
+                                      <td width="13%" colspan="2"></td>
+                                    </tr>
+                                    <!--tr class="border border-0 border-light">
+                                                        <td width="30%"></td>
+                                                        <td width="15%" class="text-end">
+                                                            <!--div class="container">
+                                                                <div class="row">
+                                                                    <div class="col-4" class="myclass"
+                                                                        *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
+                                                                        <label cLabel="col" class="text-end" cCol [sm]="12">
+                                                                            SGST (%)
+                                                                        </label>
+                                                                        <input cFormControl type="text"
+                                                                            [ngClass]="disableRates==true ? 'pe-none bg-gray' : ''"
+                                                                            formControlName="sgstRate"
+                                                                            (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                                                                    </div>
+                                                                    <div class="col-4" class="myclass"
+                                                                        *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
+                                                                        <label cLabel="col" class="text-end" cCol [sm]="12">
+                                                                            CGST (%)
+                                                                        </label>
+                                                                        <input cFormControl type="text"
+                                                                            [ngClass]="disableRates==true ? 'pe-none bg-gray' : ''"
+                                                                            formControlName="cgstRate"
+                                                                            (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                                                                    </div>
+                                                                    <div class="col-4" class="myclass"
+                                                                        *ngIf="igstShow == true && sgstShow == false && cgstShow == false">
+
+                                                                        <label cLabel="col" class="text-end" cCol [sm]="12">
+                                                                            IGST (%)
+                                                                        </label>
+                                                                        <input cFormControl type="text"
+                                                                            [ngClass]="disableRates==true ? 'pe-none bg-gray' : ''"
+                                                                            formControlName="igstRate"
+                                                                            (keypress)="commonService.ValidateNumeric($event.keyCode)" />
+                                                                    </div>
+
+                                                                </div>
+                                                            </div--
+                                                        </td>
+                                                        <td class="text-end">
+                                                            <label cLabel="col" class="text-end" cCol [sm]="6"
+                                                                *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
+                                                                Total GST(%)
+                                                            </label>
+                                                        </td>
+                                                        <td width="12%" class="text-center"> <c-col class="align-items-start" [sm]="12"
+                                                                *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
+                                                                <input cFormControl type="text" class="text-end" formControlName="totalGst"
+                                                                    class="pe-none" />
+                                                            </c-col>
+                                                        </td>
+                                                        <td width="13%" colspan="2"></td>
+                                                    </tr-->
+                                    <tr class="border border-0 border-light">
+                                      <td class="text-end"></td>
+                                      <td width="15%" class="text-center"></td>
+                                      <td class="text-end">
+                                        <label cLabel="col" class="text-end" cCol [sm]="6">
+                                          Round OFF
+                                        </label>
+                                      </td>
+                                      <td width="15%" class="text-center">
+                                        <input cFormControl type="text" class="text-end" formControlName="roundOff" />
+                                      </td>
+                                      <td width="12%" colspan="2"></td>
+                                    </tr>
+                                    <tr class="border border-0 border-light">
+                                      <td class="text-end"></td>
+                                      <td width="15%" class="text-center"></td>
+                                      <td class="text-end">
+                                        <label cLabel="col" class="text-end fw-bold" cCol [sm]="6">
+                                          Grand Total
+                                        </label>
+                                      </td>
+                                      <td width="15%" class="text-center">
+                                        <input cFormControl type="text" class="pe-none bg-gray text-end"
+                                          formControlName="grandTotal" [(ngModel)]="grandTotalAmount" />
+                                      </td>
+                                      <td width="12%" colspan="2"></td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </form>
+                          </c-card-body>
+                        </c-card>
+                      </c-col>
+                    </c-row>
+
+                  </c-row>
+
+        <!-- end -->
+
+        <!-- start -->
+
         <form [formGroup]="formGroup3">
           <c-row class="mb-3">
             <label cLabel="col" class="text-end" cCol [sm]="2">
@@ -870,15 +1165,11 @@
             </c-col>
           </c-row>
         </form>
-      </c-card-body>
-    </c-card>
-  </c-col>
-</c-row>
 
-<c-row class="mb-3">
-  <c-col xs="12">
-    <c-card>
-      <c-card-body>
+        <!-- end -->
+
+        <!-- start -->
+
         <c-row class="mb-0">
           <c-col [sm]="2"></c-col>
           <c-col [sm]="8">
@@ -898,7 +1189,11 @@
             </div>
           </c-col>
         </c-row>
+
+        <!-- end -->
+
       </c-card-body>
+
     </c-card>
   </c-col>
 </c-row>
