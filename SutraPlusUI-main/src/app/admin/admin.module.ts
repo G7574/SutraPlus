@@ -67,6 +67,9 @@ import { ImportEInvoiceComponent } from './components/sales/import-e-invoice/imp
 import { ItemWiseReportComponent } from './components/item-wise-report/item-wise-report.component';
 import { DxReportDesignerModule, DxReportViewerModule } from 'devexpress-reporting-angular';
 import { MonthWiseReportComponent } from './components/month-wise-report/month-wise-report.component';
+import { PartyWiseCaseReportComponent } from './components/party-wise-case-report/party-wise-case-report.component';
+import { PartyWiseCommHamaliComponent } from './components/party-wise-comm-hamali/party-wise-comm-hamali.component';
+import { ListAndRegistersComponent } from './components/list-and-registers/list-and-registers.component';
 
 @NgModule({
   declarations: [
@@ -104,6 +107,9 @@ import { MonthWiseReportComponent } from './components/month-wise-report/month-w
     ImportEInvoiceComponent,
     ItemWiseReportComponent,
     MonthWiseReportComponent,
+    PartyWiseCaseReportComponent,
+    PartyWiseCommHamaliComponent,
+    ListAndRegistersComponent,
   ],
   imports: [
     CommonModule,

@@ -42,6 +42,9 @@ import { CreateDcComponent } from './components/sales/create-dc/create-dc/create
 import { ImportEInvoiceComponent } from './components/sales/import-e-invoice/import-e-invoice.component';
 import { ItemWiseReportComponent } from './components/item-wise-report/item-wise-report.component';
 import { MonthWiseReportComponent } from './components/month-wise-report/month-wise-report.component';
+import { PartyWiseCaseReportComponent } from './components/party-wise-case-report/party-wise-case-report.component';
+import { PartyWiseCommHamaliComponent } from './components/party-wise-comm-hamali/party-wise-comm-hamali.component';
+import { ListAndRegistersComponent } from './components/list-and-registers/list-and-registers.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent },
@@ -75,6 +78,9 @@ const routes: Routes = [
   //{ path: 'add-export-invoice', component: AddExportInvoiceComponent },
   { path: 'reports', component: ReportsMainComponent },
   { path: 'ItemWise', component: ItemWiseReportComponent },
+  { path: 'PartyWiseCaseReport', component: PartyWiseCaseReportComponent },
+  { path: 'PartyWiseCommHamali', component: PartyWiseCommHamaliComponent },
+  { path: 'ListAndRegisters', component: ListAndRegistersComponent },
   { path: 'MonthWise', component: MonthWiseReportComponent },
   { path: 'BankJournal', component: BankJournalEntriesComponent },
   { path: 'akada-entry', component: AkadaEntryComponent },

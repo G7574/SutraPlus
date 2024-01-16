@@ -69,9 +69,15 @@ namespace PassParameterExample.Services
                 using var ms = new MemoryStream();
                 XtraReport report = new XtraReport();
                 if (parts[0] == "ItemWise")
-                     report = ReportsFactory.Reports["ItemWise"]();
-                else if(parts[0] == "MonthView")
+                    report = ReportsFactory.Reports["ItemWise"]();
+                else if (parts[0] == "MonthView")
                     report = ReportsFactory.Reports1["MonthView"]();
+                else if (parts[0] == "PartyCaseWise")
+                    report = ReportsFactory.Reports2["PartyCaseWise"]();
+                else if (parts[0] == "PartyWiseCommHamali")
+                    report = ReportsFactory.Reports3["PartyWiseCommHamali"]();
+                else if (parts[0] == "ListAndRegisters")
+                    report = ReportsFactory.Reports4["ListAndRegisters"]();
 
 
                 if (parts[0] == "ItemWise")

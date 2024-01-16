@@ -2,6 +2,7 @@ using DevExpress.XtraReports.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Permissions;
 using System.Threading.Tasks;
 
 namespace SutraPlusReportApi.PredefinedReports
@@ -17,6 +18,19 @@ namespace SutraPlusReportApi.PredefinedReports
         {
             //["TestReport"] = () => new TestReport()
             ["MonthView"] = () => new MonthView()
+        };
+        public static Dictionary<string, Func<XtraReport>> Reports2 = new Dictionary<string, Func<XtraReport>>()
+        {
+            //["TestReport"] = () => new TestReport()
+            ["PartyCaseWise"] = () => new PartyCaseWise() 
+        };
+        public static Dictionary<string, Func<XtraReport>> Reports3 = new Dictionary<string, Func<XtraReport>>()
+        {
+            ["PartyWiseCommHamali"] = () => new PartyWiseCommHamali()
+        };
+        public static Dictionary<string, Func<XtraReport>> Reports4 = new Dictionary<string, Func<XtraReport>>()
+        {
+            ["ListAndRegisters"] = () => new ListAndRegisters()
         };
     }
 }
