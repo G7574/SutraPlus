@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   //api: 'http://43.231.124.151:2023/'
-  api: 'https://localhost:7184/api/',
+  api: 'https://localhost:7184/',
   Reportingapi: 'https://localhost:54688/'
    //api: 'http://103.50.212.163:7184/'
   //api: 'http://43.231.124.151:2023/'

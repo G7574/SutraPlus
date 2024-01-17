@@ -176,71 +176,137 @@ export const navItems: INavData[] = [
     url: '/base',
     iconComponent: { name: 'cil-spreadsheet' },
     children: [
-      {
-        name: 'Account Statement',
-        url: 'admin/reports',
-        linkProps: { queryParams: { ReportName: 'AccountStatement' } },
-      },
-      {
-        name: 'Day Book',
-        url: 'admin/reports',
-        linkProps: { queryParams: { ReportName: 'DayBook' } },
-      },
-      {
-        name: 'Monthwise Purchase',
-        url: 'admin/reports',
-        linkProps: { queryParams: { ReportName: 'MonthwisePurchase' } },
-      },
-      {
-        name: 'Party List',
-        url: 'admin/reports',
-        linkProps: { queryParams: { ReportName: 'PartyList' } },
-      },
-      {
-        name: 'Partywise Cess',
-        url: 'admin/reports',
-        linkProps: { queryParams: { ReportName: 'PartywiseCess' } },
-      },
-      {
-        name: 'Partywise Purchase',
-        url: 'admin/reports',
-        linkProps: { queryParams: { ReportName: 'PartywisePurchase' } },
-      },
-      {
-        name: 'Partywise TDS',
-        url: 'admin/reports',
-        linkProps: { queryParams: { ReportName: 'PartywiseTDS' } },
-      },
+      // {
+      //   name: 'Account Statement',
+      //   url: 'admin/reports',
+      //   linkProps: { queryParams: { ReportName: 'AccountStatement' } },
+      // },
+      // {
+      //   name: 'Day Book',
+      //   url: 'admin/reports',
+      //   linkProps: { queryParams: { ReportName: 'DayBook' } },
+      // },
+      // {
+      //   name: 'Monthwise Purchase',
+      //   url: 'admin/reports',
+      //   linkProps: { queryParams: { ReportName: 'MonthwisePurchase' } },
+      // },
+      // {
+      //   name: 'Party List',
+      //   url: 'admin/reports',
+      //   linkProps: { queryParams: { ReportName: 'PartyList' } },
+      // },
+      // {
+      //   name: 'Partywise Cess',
+      //   url: 'admin/reports',
+      //   linkProps: { queryParams: { ReportName: 'PartywiseCess' } },
+      // },
+      // {
+      //   name: 'Partywise Purchase',
+      //   url: 'admin/reports',
+      //   linkProps: { queryParams: { ReportName: 'PartywisePurchase' } },
+      // },
+      // {
+      //   name: 'Partywise TDS',
+      //   url: 'admin/reports',
+      //   linkProps: { queryParams: { ReportName: 'PartywiseTDS' } },
+      // },
+
+      // {
+      //   name: 'Payment List',
+      //   url: 'admin/reports',
+      //   linkProps: { queryParams: { ReportName: 'PaymentList' } },
+      // },
+      // {
+      //   name: 'Purchase Register',
+      //   url: 'admin/reports',
+      //   linkProps: { queryParams: { ReportName: 'PurchaseRegister' } },
+      // },
+      // {
+      //   name: 'Stock Ledger',
+      //   url: 'admin/reports',
+      //   linkProps: { queryParams: { ReportName: 'StockLedger' } },
+      // },
+      // {
+      //   name: 'Transaction Summary',
+      //   url: 'admin/reports',
+      //   linkProps: { queryParams: { ReportName: 'TransactionSummary' } },
+      // },
+      // {
+      //   name: 'Trial Balance',
+      //   url: 'admin/reports',
+      //   linkProps: { queryParams: { ReportName: 'TrialBalance' } },
+      // },
       {
         name: 'Item Wise',
         url: 'admin/ItemWise',
         linkProps: { queryParams: { ReportName: 'Item Wise' } },
       },
+
       {
-        name: 'Payment List',
-        url: 'admin/reports',
-        linkProps: { queryParams: { ReportName: 'PaymentList' } },
+        name: 'List and Registers',
+                url: 'admin/ListAndRegisters',
+        linkProps: { queryParams: { ReportName: 'ListAndRegisters Report' } },
       },
       {
-        name: 'Purchase Register',
-        url: 'admin/reports',
-        linkProps: { queryParams: { ReportName: 'PurchaseRegister' } },
+        name: 'Party Wise Cess',
+        url: 'admin/PartyWiseCaseReport',
+        linkProps: { queryParams: { ReportName: 'Party Wise Case Report' } },
       },
       {
-        name: 'Stock Ledger',
-        url: 'admin/reports',
-        linkProps: { queryParams: { ReportName: 'StockLedger' } },
+        name: 'Party Wise Commission Hamali',
+        url: 'admin/PartyWiseCommHamali',
+        linkProps: { queryParams: { ReportName: 'Party Wise Comm Hamali Report' } },
+      },
+      {
+        name: 'Day Summary',
+        
+      },
+      {
+        name: 'Account Statement',
+        
+      },
+      {
+        name: 'Print Day Book',
+        
       },
       {
         name: 'Transaction Summary',
-        url: 'admin/reports',
-        linkProps: { queryParams: { ReportName: 'TransactionSummary' } },
+        
       },
       {
         name: 'Trial Balance',
-        url: 'admin/reports',
-        linkProps: { queryParams: { ReportName: 'TrialBalance' } },
+        
       },
+      {
+        name: 'Trial Balance (Without Auto Grouping)',
+       
+      },
+      {
+        name: 'Profit And Loss',
+       
+      },
+      {
+        name: 'GSTR-1s',
+     
+      },
+      {
+        name: 'Stock Ledger',
+      
+      },
+      {
+        name: 'Payment List',
+       
+      },
+      {
+        name: 'Receivablea',
+       
+      },
+      {
+        name: 'TDS List',
+        
+      },
+
     ],
   },
   {
@@ -252,11 +318,12 @@ export const navItems: INavData[] = [
     url: '/base',
     iconComponent: { name: 'cil-spreadsheet' },
     children: [
+   
       {
         name: 'Month Wise',
         url: 'admin/MonthWise',
         linkProps: { queryParams: { ReportName: 'Month Wise' } },
-      },
+      }
     ],
   },
 ];

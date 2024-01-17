@@ -70,6 +70,8 @@ namespace SutraPlusReportApi.PredefinedReports
             DevExpress.DataAccess.Sql.TableInfo TableInfo4 = new DevExpress.DataAccess.Sql.TableInfo();
             DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo23 = new DevExpress.DataAccess.Sql.ColumnInfo();
             DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo24 = new DevExpress.DataAccess.Sql.ColumnInfo();
+            DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo25 = new DevExpress.DataAccess.Sql.ColumnInfo();
+            DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo26 = new DevExpress.DataAccess.Sql.ColumnInfo();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ListAndRegisters));
             DevExpress.XtraReports.UI.XRSummary XrSummary9 = new DevExpress.XtraReports.UI.XRSummary();
             DevExpress.XtraReports.UI.XRSummary XrSummary10 = new DevExpress.XtraReports.UI.XRSummary();
@@ -228,6 +230,12 @@ namespace SutraPlusReportApi.PredefinedReports
             this.XrTableCell5.StylePriority.UseTextAlignment = false;
             this.XrTableCell5.TextAlignment = DevExpress.XtraPrinting.TextAlignment.TopRight;
             this.XrTableCell5.Weight = 0.68708282520869957D;
+           
+            //this.Report.FilterString = "(GetDate([TranctDate]) Between(?StartDate,?EndDate) or GetDate([TranctDate]) = ?StartDate or GetDate([TranctDate]) = ?EndDate)";
+            //this.Report.FilterString = "CompanyId=?companyidrecord";
+
+            //this.Report.FilterString = "(GetDate([TranctDate]) Between(?StartDate,?EndDate) or GetDate([TranctDate]) = ?StartDate or GetDate([TranctDate]) = ?EndDate)";
+            this.Report.FilterString = "(GetDate([TranctDate]) Between(?StartDate,?EndDate) or GetDate([TranctDate]) = ?StartDate or GetDate([TranctDate]) = ?EndDate) and (VochType Between(?vochtype1,?vochtype2) or (VochType = ?vochtype1) or (VochType = ?vochtype2) ) and CompanyId=?companyidrecord";
             //
             //hidezeroweight
             //
@@ -449,7 +457,8 @@ namespace SutraPlusReportApi.PredefinedReports
             ColumnInfo17.Name = "ToPrint";
             ColumnInfo18.Name = "TranctDate";
             ColumnInfo19.Name = "IsGSTUpload";
-            TableInfo2.SelectedColumns.AddRange(new DevExpress.DataAccess.Sql.ColumnInfo[] { ColumnInfo5, ColumnInfo6, ColumnInfo7, ColumnInfo8, ColumnInfo9, ColumnInfo10, ColumnInfo11, ColumnInfo12, ColumnInfo13, ColumnInfo14, ColumnInfo15, ColumnInfo16, ColumnInfo17, ColumnInfo18, ColumnInfo19 });
+            ColumnInfo25.Name = "CompanyID";
+            TableInfo2.SelectedColumns.AddRange(new DevExpress.DataAccess.Sql.ColumnInfo[] { ColumnInfo5, ColumnInfo6, ColumnInfo7, ColumnInfo8, ColumnInfo9, ColumnInfo10, ColumnInfo11, ColumnInfo12, ColumnInfo13, ColumnInfo14, ColumnInfo15, ColumnInfo16, ColumnInfo17, ColumnInfo18, ColumnInfo19, ColumnInfo25 });
             TableInfo3.Name = "Ledger";
             ColumnInfo20.Name = "LedgerName";
             ColumnInfo21.Alias = "Ledger_Place";
@@ -460,7 +469,8 @@ namespace SutraPlusReportApi.PredefinedReports
             TableInfo4.Name = "VoucherTypes";
             ColumnInfo23.Name = "VoucherId";
             ColumnInfo24.Name = "VoucherName";
-            TableInfo4.SelectedColumns.AddRange(new DevExpress.DataAccess.Sql.ColumnInfo[] { ColumnInfo23, ColumnInfo24 });
+
+            TableInfo4.SelectedColumns.AddRange(new DevExpress.DataAccess.Sql.ColumnInfo[] { ColumnInfo23, ColumnInfo24,});
             TableQuery1.Tables.AddRange(new DevExpress.DataAccess.Sql.TableInfo[] { TableInfo1, TableInfo2, TableInfo3, TableInfo4 });
             this.SqlDataSource1.Queries.AddRange(new DevExpress.DataAccess.Sql.SqlQuery[] { TableQuery1 });
             this.SqlDataSource1.ResultSchemaSerializable = resources.GetString("SqlDataSource1.ResultSchemaSerializable");
