@@ -32,5 +32,9 @@ namespace SutraPlusReportApi.PredefinedReports
         {
             ["ListAndRegisters"] = () => new ListAndRegisters()
         };
+        public static Dictionary<string, Func<XtraReport>> Reports5 = new Dictionary<string, Func<XtraReport>>
+        {
+            ["PrintPartyReport"] = () => new PrintPartyReport()
+        };
     }
 }
