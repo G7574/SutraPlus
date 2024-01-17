@@ -88,6 +88,8 @@ namespace PassParameterExample.Services
                     report = ReportsFactory.Reports3["PartyWiseCommHamali"]();
                 else if (parts[0] == "ListAndRegisters")
                     report = ReportsFactory.Reports4["ListAndRegisters"]();
+                else if (parts[0] == "PrintPartyReport")
+                    report = ReportsFactory.Reports5["PrintPartyReport"]();
 
 
 

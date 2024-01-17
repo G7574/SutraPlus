@@ -259,6 +259,11 @@ export const navItems: INavData[] = [
         linkProps: { queryParams: { ReportName: 'Party Wise Comm Hamali Report' } },
       },
       {
+        name: 'Print Party Report',
+        url: 'admin/PrintPartyReport',
+        linkProps: { queryParams: { ReportName: 'Print Party Report' } },
+      },
+      {
         name: 'Day Summary',
         
       },
