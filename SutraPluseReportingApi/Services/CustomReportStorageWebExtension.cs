@@ -1,16 +1,23 @@
+using DevExpress.Data.Filtering;
+using DevExpress.Utils.CommonDialogs.Internal;
+using DevExpress.Xpo;
 using DevExpress.XtraCharts;
+using DevExpress.XtraPrinting;
 using DevExpress.XtraReports.Expressions;
 using DevExpress.XtraReports.Parameters;
 using DevExpress.XtraReports.UI;
 using DevExpress.XtraReports.Web.Extensions;
 using DevExpress.XtraRichEdit.Import.Doc;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.SqlServer.Server;
 using SutraPlusReportApi.PredefinedReports;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Web;
 
 namespace PassParameterExample.Services
@@ -19,6 +26,8 @@ namespace PassParameterExample.Services
     {
         readonly string ReportDirectory;
         const string FileExtension = ".resx";
+        public static XtraReport report = new XtraReport();
+
         public CustomReportStorageWebExtension(IWebHostEnvironment env)
         {
             ReportDirectory = Path.Combine(env.ContentRootPath, "Reports");
@@ -35,6 +44,7 @@ namespace PassParameterExample.Services
         }
         public override bool CanSetData(string url) { return true; }
         public override bool IsValidUrl(string url) { return Path.GetFileName(url) == url; }
+
         public override byte[] GetData(string url)
         {
             try
@@ -64,7 +74,7 @@ namespace PassParameterExample.Services
                 if (parts.Length > 5)
                     if (parts[5].Split("=")[1] != "")
                         vochtype2 = parts.Length > 5 ? Convert.ToInt32(parts[5].Split("=")[1]) : 0;
-
+                 
 
                 using var ms = new MemoryStream();
                 XtraReport report = new XtraReport();
@@ -80,83 +90,82 @@ namespace PassParameterExample.Services
                     report = ReportsFactory.Reports4["ListAndRegisters"]();
 
 
-                if (parts[0] == "ItemWise")
+
+                if (report.Parameters["StartDate"] == null)
                 {
-                    if (report.Parameters["StartDate"] == null)
+                    var dateParameter = new Parameter()
                     {
-                        var dateParameter = new Parameter()
-                        {
-                            Name = "StartDate",
-                            Description = "From Date",
-                            Value = StartDate,
-                        };
-                        report.Parameters.Add(dateParameter);
-                    }
-                    else
-                    {
-                        report.Parameters["StartDate"].Value = StartDate;
-                    }
-
-                    if (report.Parameters["EndDate"] == null)
-                    {
-                        var dateParameter = new Parameter()
-                        {
-                            Name = "EndDate",
-                            Description = "To Date",
-                            Value = EndDate,
-                        };
-                        report.Parameters.Add(dateParameter);
-                    }
-                    else
-                    {
-                        report.Parameters["EndDate"].Value = EndDate;
-                    }
-
-                    if (report.Parameters["companyidrecord"] == null)
-                    {
-                        var dateParameter = new Parameter()
-                        {
-                            Name = "companyidrecord",
-                            Description = "CompanyId",
-                            Value = companyid,
-                        };
-                        report.Parameters.Add(dateParameter);
-                    }
-                    else
-                    {
-                        report.Parameters["companyidrecord"].Value = companyid;
-                    }
-
-                    if (report.Parameters["vochtype1"] == null)
-                    {
-                        var dateParameter = new Parameter()
-                        {
-                            Name = "vochtype1",
-                            Description = "VochType1",
-                            Value = vochtype1,
-                        };
-                        report.Parameters.Add(dateParameter);
-                    }
-                    else
-                    {
-                        report.Parameters["vochtype1"].Value = vochtype1;
-                    }
-
-                    if (report.Parameters["vochtype2"] == null)
-                    {
-                        var dateParameter = new Parameter()
-                        {
-                            Name = "vochtype2",
-                            Description = "VochType1",
-                            Value = vochtype2,
-                        };
-                        report.Parameters.Add(dateParameter);
-                    }
-                    else
-                    {
-                        report.Parameters["vochtype2"].Value = vochtype2;
-                    }
+                        Name = "StartDate",
+                        Description = "From Date",
+                        Value = StartDate,
+                    };
+                    report.Parameters.Add(dateParameter);
                 }
+                else
+                {
+                    report.Parameters["StartDate"].Value = StartDate;
+                }
+
+                if (report.Parameters["EndDate"] == null)
+                {
+                    var dateParameter = new Parameter()
+                    {
+                        Name = "EndDate",
+                        Description = "To Date",
+                        Value = EndDate,
+                    };
+                    report.Parameters.Add(dateParameter);
+                }
+                else
+                {
+                    report.Parameters["EndDate"].Value = EndDate;
+                }
+
+                if (report.Parameters["companyidrecord"] == null)
+                {
+                    var dateParameter = new Parameter()
+                    {
+                        Name = "companyidrecord",
+                        Description = "CompanyId",
+                        Value = companyid,
+                    };
+                    report.Parameters.Add(dateParameter);
+                }
+                else
+                {
+                    report.Parameters["companyidrecord"].Value = companyid;
+                }
+
+                if (report.Parameters["vochtype1"] == null)
+                {
+                    var dateParameter = new Parameter()
+                    {
+                        Name = "vochtype1",
+                        Description = "VochType1",
+                        Value = vochtype1,
+                    };
+                    report.Parameters.Add(dateParameter);
+                }
+                else
+                {
+                    report.Parameters["vochtype1"].Value = vochtype1;
+                }
+
+                if (report.Parameters["vochtype2"] == null)
+                {
+                    var dateParameter = new Parameter()
+                    {
+                        Name = "vochtype2",
+                        Description = "VochType1",
+                        Value = vochtype2,
+                    };
+                    report.Parameters.Add(dateParameter);
+                }
+                else
+                {
+                    report.Parameters["vochtype2"].Value = vochtype2;
+                }
+
                 //string Querystring = "";
                 //if (StartDate != new DateTime() && EndDate != new DateTime())
                 //{
@@ -193,10 +202,10 @@ namespace PassParameterExample.Services
                 //}
 
                 report.RequestParameters = false;
-
                 report.CreateDocument();
-
+                 
                 report.SaveLayoutToXml(ms);
+                CustomReportStorageWebExtension.report = report;
 
                 return ms.ToArray();
 

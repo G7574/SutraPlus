@@ -7,6 +7,7 @@ import { predefinedDateRanges } from 'devexpress-reporting/dx-webdocumentviewer'
 import { fetchSetup } from '@devexpress/analytics-core/analytics-utils';
 import * as $ from 'jquery';
 import { formatDate } from '@angular/common';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-month-wise-report',
@@ -16,6 +17,7 @@ import { formatDate } from '@angular/common';
 export class MonthWiseReportComponent implements OnInit {
   startDate: any;
   endDate: any;
+  onchangeValue: string = "All";
   ngOnInit(): void {
     // Additional initialization logic can be added here
     const currentDate = new Date();
@@ -23,6 +25,7 @@ export class MonthWiseReportComponent implements OnInit {
     this.endDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0));
     $("#startDate").val(this.startDate);
     $("#endDate").val(this.endDate);
+
   }
 
   private formatDate(date: Date): string {
@@ -50,7 +53,6 @@ export class MonthWiseReportComponent implements OnInit {
   invokeAction: string = '/DXXRDV';
 
 
-
   print() {
     fetchSetup.fetchSettings = {
       headers: { 'BeforeRender': 'BeforeRender' },
@@ -58,7 +60,6 @@ export class MonthWiseReportComponent implements OnInit {
           requestParameters.credentials = 'include';
       }
   };
-
 
     // this.viewer.bindingSender.Print();
   }
@@ -74,10 +75,14 @@ export class MonthWiseReportComponent implements OnInit {
       printPageAction.visible = false;
   }
 
-
   ParametersSubmitted(event: any) {
     event.args.Parameters.filter(function (p: any) { return p.Key == "StartDate"; })[0].Value = new Date();
     event.args.Parameters.filter(function (p: any) { return p.Key == "EndDate"; })[0].Value = new Date();
+}
+
+setParameterALL() {
+  let globalCompanyId = sessionStorage.getItem('companyID');
+  this.viewer.bindingSender.OpenReport("MonthView" + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99");
 }
 
 setParameterVP() {
@@ -94,8 +99,52 @@ setParameterVPR() {
 }
 setParameterVSR() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6");
+  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6&vochtype2=6");
 }
+
+export(format : string) {
+
+  fetch("https://localhost:54688/DXXRD/Export?format=" + format)
+  .then(response => response.blob())
+  .then(data => {
+      console.log(data);
+      saveAs(data, 'TestReport.' + format);
+
+  });
+
+}
+
+onChange(event: any){
+  this.onchangeValue = event.target.value;
+}
+
+generateRepo() {
+  switch (this.onchangeValue)
+  {
+      case "All":
+        this.setParameterALL();
+          break;
+      case "Purchase":
+          this.setParameterVP();
+          break;
+      case "Sales":
+          this.setParameterVS();
+          break;
+      case "PurchaseReturn":
+          this.setParameterVPR();
+          break;
+      case "SalesReturn":
+          this.setParameterVSR();
+          break;
+      case "CreditNote":
+          this.setParameterVCN();
+          break;
+      case "DebitNote":
+          this.setParameterVDN();
+          break;
+  }
+}
+
 setParameterVCN() {
   let globalCompanyId = sessionStorage.getItem('companyID');
   this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9");
