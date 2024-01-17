@@ -49,6 +49,10 @@ namespace DXWebApplication5.Controllers {
                         contentType = "application/vnd.ms-excel";
                         CustomReportStorageWebExtension.report.ExportToXls(ms);
                         break;
+                    case "xlsx":
+                        contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                        CustomReportStorageWebExtension.report.ExportToXls(ms);
+                        break;
                 }
                    
                 return File(ms.ToArray(), contentType);

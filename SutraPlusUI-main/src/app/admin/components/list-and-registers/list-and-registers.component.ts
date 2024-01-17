@@ -5,6 +5,7 @@ import { fetchSetup } from '@devexpress/analytics-core/analytics-utils';
 import { DxReportViewerComponent } from 'devexpress-reporting-angular';
 import { ActionId } from 'devexpress-reporting/dx-webdocumentviewer';
 import { environment } from 'src/environments/environment';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-list-and-registers',
@@ -15,6 +16,7 @@ export class ListAndRegistersComponent {
   constructor(private http: HttpClient) {}
   startDate: any;
   endDate: any;
+  onchangeValue: string = "All";
   ngOnInit(): void {
     const currentDate = new Date();
     this.startDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1));
@@ -44,9 +46,9 @@ export class ListAndRegistersComponent {
 
   @ViewChild(DxReportViewerComponent, { static: false }) viewer: DxReportViewerComponent;
   reportUrl: string = "ListAndRegisters";
-  // The built-in controller in the back-end ASP.NET Core Reporting application.  
+  // The built-in controller in the back-end ASP.NET Core Reporting application.
   invokeAction: string = '/DXXRDV';
-  
+
 
 
   print() {
@@ -78,6 +80,12 @@ export class ListAndRegistersComponent {
     event.args.Parameters.filter(function (p: any) { return p.Key == "EndDate"; })[0].Value = new Date();
 }
 
+setParameterALL() {
+  let globalCompanyId = sessionStorage.getItem('companyID');
+  this.viewer.bindingSender.OpenReport("ListAndRegisters" + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99");
+}
+
+
 setParameterVP() {
   let globalCompanyId = sessionStorage.getItem('companyID');
   this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4");
@@ -101,6 +109,49 @@ setParameterVCN() {
 setParameterVDN() {
   let globalCompanyId = sessionStorage.getItem('companyID');
   this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15");
+}
+
+export(format : string) {
+
+  fetch("https://localhost:54688/DXXRD/Export?format=" + format)
+  .then(response => response.blob())
+  .then(data => {
+      console.log(data);
+      saveAs(data, 'ListAndRegisterReport.' + format);
+
+  });
+
+}
+
+onChange(event: any){
+  this.onchangeValue = event.target.value;
+}
+
+generateRepo() {
+  switch (this.onchangeValue)
+  {
+      case "All":
+        this.setParameterALL();
+          break;
+      case "Purchase":
+          this.setParameterVP();
+          break;
+      case "Sales":
+          this.setParameterVS();
+          break;
+      case "PurchaseReturn":
+          this.setParameterVPR();
+          break;
+      case "SalesReturn":
+          this.setParameterVSR();
+          break;
+      case "CreditNote":
+          this.setParameterVCN();
+          break;
+      case "DebitNote":
+          this.setParameterVDN();
+          break;
+  }
 }
 
 }
