@@ -108,7 +108,7 @@ export(format : string) {
   .then(response => response.blob())
   .then(data => {
       console.log(data);
-      saveAs(data, 'TestReport.' + format);
+      saveAs(data, 'MonthWiseReport.' + format);
 
   });
 

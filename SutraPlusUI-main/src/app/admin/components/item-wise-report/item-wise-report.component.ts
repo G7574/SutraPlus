@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 import { predefinedDateRanges } from 'devexpress-reporting/dx-webdocumentviewer'
 import { fetchSetup } from '@devexpress/analytics-core/analytics-utils';
 import * as $ from 'jquery';
+import { saveAs } from 'file-saver';
 
 
 @Component({
@@ -16,6 +17,7 @@ import * as $ from 'jquery';
 export class ItemWiseReportComponent implements OnInit {
   startDate: any;
   endDate: any;
+  onchangeValue: string = "All";
   ngOnInit(): void {
     const currentDate = new Date();
     this.startDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1));
@@ -45,9 +47,9 @@ export class ItemWiseReportComponent implements OnInit {
 
   @ViewChild(DxReportViewerComponent, { static: false }) viewer: DxReportViewerComponent;
   reportUrl: string = "ItemWise";
-  // The built-in controller in the back-end ASP.NET Core Reporting application.  
+  // The built-in controller in the back-end ASP.NET Core Reporting application.
   invokeAction: string = '/DXXRDV';
-  
+
 
 
   print() {
@@ -79,6 +81,12 @@ export class ItemWiseReportComponent implements OnInit {
     event.args.Parameters.filter(function (p: any) { return p.Key == "EndDate"; })[0].Value = new Date();
 }
 
+setParameterALL() {
+  let globalCompanyId = sessionStorage.getItem('companyID');
+  this.viewer.bindingSender.OpenReport("ItemWise" + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99");
+}
+ 
+
 setParameterVP() {
   let globalCompanyId = sessionStorage.getItem('companyID');
   this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4");
@@ -102,6 +110,49 @@ setParameterVCN() {
 setParameterVDN() {
   let globalCompanyId = sessionStorage.getItem('companyID');
   this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15");
+}
+
+export(format : string) {
+
+  fetch("https://localhost:54688/DXXRD/Export?format=" + format)
+  .then(response => response.blob())
+  .then(data => {
+      console.log(data);
+      saveAs(data, 'ItemWiseReport.' + format);
+
+  });
+
+}
+
+onChange(event: any){
+  this.onchangeValue = event.target.value;
+}
+
+generateRepo() {
+  switch (this.onchangeValue)
+  {
+      case "All":
+        this.setParameterALL();
+          break;
+      case "Purchase":
+          this.setParameterVP();
+          break;
+      case "Sales":
+          this.setParameterVS();
+          break;
+      case "PurchaseReturn":
+          this.setParameterVPR();
+          break;
+      case "SalesReturn":
+          this.setParameterVSR();
+          break;
+      case "CreditNote":
+          this.setParameterVCN();
+          break;
+      case "DebitNote":
+          this.setParameterVDN();
+          break;
+  }
 }
 
 }
