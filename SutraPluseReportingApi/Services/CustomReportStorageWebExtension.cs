@@ -92,82 +92,100 @@ namespace PassParameterExample.Services
                     report = ReportsFactory.Reports5["PrintPartyReport"]();
 
 
-
-                if (report.Parameters["StartDate"] == null)
+                if (parts[0] == "PrintPartyReport")
                 {
-                    var dateParameter = new Parameter()
+                    if (report.Parameters["companyidrecord"] == null)
                     {
-                        Name = "StartDate",
-                        Description = "From Date",
-                        Value = StartDate,
-                    };
-                    report.Parameters.Add(dateParameter);
+                        var dateParameter = new Parameter()
+                        {
+                            Name = "companyidrecord",
+                            Description = "CompanyId",
+                            Value = companyid,
+                        };
+                        report.Parameters.Add(dateParameter);
+                    }
+                    else
+                    {
+                        report.Parameters["companyidrecord"].Value = companyid;
+                    }
                 }
                 else
                 {
-                    report.Parameters["StartDate"].Value = StartDate;
-                }
-
-                if (report.Parameters["EndDate"] == null)
-                {
-                    var dateParameter = new Parameter()
+                    if (report.Parameters["StartDate"] == null)
                     {
-                        Name = "EndDate",
-                        Description = "To Date",
-                        Value = EndDate,
-                    };
-                    report.Parameters.Add(dateParameter);
-                }
-                else
-                {
-                    report.Parameters["EndDate"].Value = EndDate;
-                }
-
-                if (report.Parameters["companyidrecord"] == null)
-                {
-                    var dateParameter = new Parameter()
+                        var dateParameter = new Parameter()
+                        {
+                            Name = "StartDate",
+                            Description = "From Date",
+                            Value = StartDate,
+                        };
+                        report.Parameters.Add(dateParameter);
+                    }
+                    else
                     {
-                        Name = "companyidrecord",
-                        Description = "CompanyId",
-                        Value = companyid,
-                    };
-                    report.Parameters.Add(dateParameter);
-                }
-                else
-                {
-                    report.Parameters["companyidrecord"].Value = companyid;
-                }
+                        report.Parameters["StartDate"].Value = StartDate;
+                    }
 
-                if (report.Parameters["vochtype1"] == null)
-                {
-                    var dateParameter = new Parameter()
+                    if (report.Parameters["EndDate"] == null)
                     {
-                        Name = "vochtype1",
-                        Description = "VochType1",
-                        Value = vochtype1,
-                    };
-                    report.Parameters.Add(dateParameter);
-                }
-                else
-                {
-                    report.Parameters["vochtype1"].Value = vochtype1;
-                }
-
-                if (report.Parameters["vochtype2"] == null)
-                {
-                    var dateParameter = new Parameter()
+                        var dateParameter = new Parameter()
+                        {
+                            Name = "EndDate",
+                            Description = "To Date",
+                            Value = EndDate,
+                        };
+                        report.Parameters.Add(dateParameter);
+                    }
+                    else
                     {
-                        Name = "vochtype2",
-                        Description = "VochType1",
-                        Value = vochtype2,
-                    };
-                    report.Parameters.Add(dateParameter);
-                }
-                else
-                {
-                    report.Parameters["vochtype2"].Value = vochtype2;
-                }
+                        report.Parameters["EndDate"].Value = EndDate;
+                    }
 
+                    if (report.Parameters["companyidrecord"] == null)
+                    {
+                        var dateParameter = new Parameter()
+                        {
+                            Name = "companyidrecord",
+                            Description = "CompanyId",
+                            Value = companyid,
+                        };
+                        report.Parameters.Add(dateParameter);
+                    }
+                    else
+                    {
+                        report.Parameters["companyidrecord"].Value = companyid;
+                    }
+
+                    if (report.Parameters["vochtype1"] == null)
+                    {
+                        var dateParameter = new Parameter()
+                        {
+                            Name = "vochtype1",
+                            Description = "VochType1",
+                            Value = vochtype1,
+                        };
+                        report.Parameters.Add(dateParameter);
+                    }
+                    else
+                    {
+                        report.Parameters["vochtype1"].Value = vochtype1;
+                    }
+
+                    if (report.Parameters["vochtype2"] == null)
+                    {
+                        var dateParameter = new Parameter()
+                        {
+                            Name = "vochtype2",
+                            Description = "VochType1",
+                            Value = vochtype2,
+                        };
+                        report.Parameters.Add(dateParameter);
+                    }
+                    else
+                    {
+                        report.Parameters["vochtype2"].Value = vochtype2;
+                    }
+                }
                 //string Querystring = "";
                 //if (StartDate != new DateTime() && EndDate != new DateTime())
                 //{
