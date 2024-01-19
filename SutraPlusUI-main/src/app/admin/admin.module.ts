@@ -71,6 +71,7 @@ import { PartyWiseCaseReportComponent } from './components/party-wise-case-repor
 import { PartyWiseCommHamaliComponent } from './components/party-wise-comm-hamali/party-wise-comm-hamali.component';
 import { ListAndRegistersComponent } from './components/list-and-registers/list-and-registers.component';
 import { PrintPartyReportComponent } from './components/print-party-report/print-party-report.component';
+import { PaymentListComponent } from './components/payment-list/payment-list.component';
 
 @NgModule({
   declarations: [
@@ -112,6 +113,7 @@ import { PrintPartyReportComponent } from './components/print-party-report/print
     PartyWiseCommHamaliComponent,
     ListAndRegistersComponent,
     PrintPartyReportComponent,
+    PaymentListComponent,
   ],
   imports: [
     CommonModule,

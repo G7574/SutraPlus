@@ -3,6 +3,7 @@ using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.qrcode;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -2520,8 +2521,16 @@ namespace SutraPlus_DAL.Repository
             try
             {
                 var searchText = Convert.ToString(Data?["SearchText"]);
+                var balance = Convert.ToDecimal(Data?["Balance"]);
+                var Date = Convert.ToString(Data?["Date"]);
+                 
                 var page = JsonConvert.DeserializeObject<pagination<BillSummary>>(Convert.ToString(Data?["Page"]));
                 var data = JsonConvert.DeserializeObject<dynamic>(Data?["InvoiceData"]?.ToString());
+
+                if(Convert.ToString(Data?["Balance"]) == null || Convert.ToString(Data?["Balance"]).Equals(""))
+                {
+                    balance = -1;
+                }
 
                 if (data == null)
                 {
@@ -2534,19 +2543,7 @@ namespace SutraPlus_DAL.Repository
                 var list = new List<BillSummary>();
 
                 IQueryable<BillSummary> query = _tenantDBContext.BillSummaries;
-
-                if (!string.IsNullOrEmpty(searchText))
-                {
-                    query = query
-                     .Where(e =>
-                         (searchText != null && (e.LedgerName != null && e.LedgerName.Contains(searchText))) &&
-                         (e.IsActive.GetValueOrDefault() && (invoiceType == null || (e.InvoiceType != null && e.InvoiceType.Contains(invoiceType))))
-                     );
-
-
-                }
-                else
-                {
+                  
                     switch (invoiceType)
                     {
 
@@ -2820,7 +2817,7 @@ namespace SutraPlus_DAL.Repository
                         default:
                             // Default case or handle unrecognized InvoiceType
                             break;
-                    }
+                    
 
                     //query = from bls in query 
                     //        join cpn in _tenantDBContext.Companies on bls.CompanyId equals cpn.CompanyId
@@ -2849,6 +2846,30 @@ namespace SutraPlus_DAL.Repository
                     //        };
 
                 }
+
+                if (!string.IsNullOrEmpty(searchText) || balance != null || !string.IsNullOrEmpty(Date))
+                {
+
+                    if (!string.IsNullOrEmpty(searchText))
+                    {
+                        query = query.Where(n => n.Place.Contains(searchText)).ToList()
+                            .AsQueryable();
+                    }
+
+                    if (balance != null && balance > -1)
+                    {
+                        query = query.Where(n => n.BillAmount == balance).ToList()
+                            .AsQueryable();
+                    }
+
+                    if (!string.IsNullOrEmpty(Date))
+                    {
+                        query = query.Where(n => n.TranctDate <= DateTime.Parse(Date)).ToList()
+                            .AsQueryable();
+                    }
+
+                }
+
                 if (query.Any())
                 {
                     query = query.Distinct();

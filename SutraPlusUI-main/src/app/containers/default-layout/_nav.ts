@@ -1,7 +1,7 @@
 import { INavData } from '@coreui/angular';
 
 export const navItems: INavData[] = [
-  
+
   {
     name: 'Dashboard',
     url: '/dashboard',
@@ -11,7 +11,7 @@ export const navItems: INavData[] = [
     name: 'Masters',
     title: true,
   },
-  
+
   {
     name: 'Masters',
     url: '/base',
@@ -265,51 +265,52 @@ export const navItems: INavData[] = [
       },
       {
         name: 'Day Summary',
-        
+
       },
       {
         name: 'Account Statement',
-        
+
       },
       {
         name: 'Print Day Book',
-        
+
       },
       {
         name: 'Transaction Summary',
-        
+
       },
       {
         name: 'Trial Balance',
-        
+
       },
       {
         name: 'Trial Balance (Without Auto Grouping)',
-       
+
       },
       {
         name: 'Profit And Loss',
-       
+
       },
       {
         name: 'GSTR-1s',
-     
+
       },
       {
         name: 'Stock Ledger',
-      
+
       },
       {
         name: 'Payment List',
-       
+        url: 'admin/PaymentList',
+        linkProps: { queryParams: { ReportName: 'Payment List' } },
       },
       {
         name: 'Receivablea',
-       
+
       },
       {
         name: 'TDS List',
-        
+
       },
 
     ],
@@ -323,7 +324,7 @@ export const navItems: INavData[] = [
     url: '/base',
     iconComponent: { name: 'cil-spreadsheet' },
     children: [
-   
+
       {
         name: 'Month Wise',
         url: 'admin/MonthWise',
