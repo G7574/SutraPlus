@@ -1,4 +1,5 @@
 <c-row>
+  <div class="container-fluid">
   <form class="row justify-content-center align-items-center mb-4">
 
     <!-- <div class="col-md-2">
@@ -15,29 +16,34 @@
         </div>
     </div>
 
-    <div class="col-md-8">
-        <div class="row">
+    <div class="col-md-10">
+      <div class="row">
 
-            <div class="col-md-3" style="padding-top: 4px;">
+          <div class="col-md-3" style="padding-top: 4px; display: flex; align-items: center;">
+              <label for="searchText" style="margin-right: 10px;">Search Text:</label>
+              <input [ngClass]="{ 'is-invalid': errorMsg }" class="search-input" name="searchText" #Place (keyup)="onPlace(Place.value)" cFormControl type="text" placeholder="Enter text">
+              <span *ngIf="errorMsg" class="is-invalid">Enter at least 3 characters</span>
+          </div>
 
-              <input [ngClass]="{ 'is-invalid': errorMsg }" class="search-input" name="searchText" #Place (keyup)="onPlace(Place.value)" cFormControl type="text" placeholder="Search Text">
-              <span *ngIf="errorMsg" class="is-invalid">Enter at least 3
-              characters</span>
-            </div>
+          <div class="col-md-3" style="padding-top: 4px; display: flex; align-items: center;">
+              <label for="balance" style="margin-right: 10px;">Search Balance:</label>
+              <input class="search-input" cFormControl type="number" #Balance (keyup)="onBalance(Balance.value)" name="balance" placeholder="Enter balance">
+          </div>
 
-            <div class="col-md-3" style="padding-top: 4px;">
-              <input class="search-input" cFormControl type="number" #Balance (keyup)="onBalance(Balance.value)" name="balance" placeholder="Search Balance >">
-            </div>
+          <div class="col-md-2" style="padding-top: 4px;">
+              <button type="submit" class="btn btn-dark" style="font-size: 11px; width: 100%" (click)="fireQuery()">
+                  Submit
+              </button>
+          </div>
 
-            <div class="col-md-2" style="padding-top: 4px;">
-                <button type="submit" class="btn btn-dark" style="font-size: 11px;width: 100%" (click)="fireQuery()">
-                    Submit
-                </button>
-            </div>
+      </div>
+  </div>
 
-        </div>
-    </div>
+
+
   </form>
+</div>
+
   <c-col md="12">
       <c-card class="my-3">
          <c-card-header>
@@ -61,7 +67,7 @@
                       <tr *ngFor="let item of invoiceList; let i = index;">
                           <td class="text-center">{{10 *(pageNumber-1)+i+1}}</td>
                           <td>{{item.LedgerName || '-'}} - {{item.Place || '-'}}</td>
-                          <td>{{item.AsOnDateBalance || '-'}}</td>
+                          <td style="text-align: right;">{{item.AsOnDateBalance || '-'}}</td>
                           <td style="text-align: right;">{{item.TotalBalance ||
                               '-'}}</td>
                       </tr>

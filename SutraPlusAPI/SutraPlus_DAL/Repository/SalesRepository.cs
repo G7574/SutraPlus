@@ -3161,7 +3161,7 @@ namespace SutraPlus_DAL.Repository
                     {
                         LedgerName = group.Key.LedgerName,
                         Place = group.Key.Place,
-                        AsOnDateBalance = group.Where(x => x.TranctDate == null).Sum(x => x.Credit),
+                        AsOnDateBalance = group.Sum(x => x.Credit),
                         TotalBalance = group.Sum(x => x.Credit),
                         TranctDate = group.Key.TranctDate ?? new DateTime()
                     })
