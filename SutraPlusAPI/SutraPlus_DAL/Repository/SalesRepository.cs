@@ -2852,13 +2852,13 @@ namespace SutraPlus_DAL.Repository
 
                     if (!string.IsNullOrEmpty(searchText))
                     {
-                        query = query.Where(n => n.Place.Contains(searchText)).ToList()
+                        query = query.Where(n => n.Place.Contains(searchText) || n.LedgerName.Contains(searchText)).ToList()
                             .AsQueryable();
                     }
 
                     if (balance != null && balance > -1)
                     {
-                        query = query.Where(n => n.BillAmount == balance).ToList()
+                        query = query.Where(n => n.BillAmount > balance).ToList()
                             .AsQueryable();
                     }
 
