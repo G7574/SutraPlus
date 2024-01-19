@@ -14,6 +14,7 @@ using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static SutraPlus_DAL.Repository.SalesRepository;
 
 namespace SutraPlus_BAL.Service
 {
@@ -286,9 +287,9 @@ namespace SutraPlus_BAL.Service
                 }
                 else if (reportType == "PaymentList")
                 {
-                    List<ReportDTO> reportDTOs = _salesRepository.GetPaymentList(Data);
-                    List<JObject> result = reportDTOs.Select(reportDTO => JObject.FromObject(reportDTO)).ToList();
-                    return result;
+                    pagination<LedgerInfo> reportDTOs = _salesRepository.GetPaymentList(Data);
+                    List<JObject> result = reportDTOs.Records.Select(reportDTO => JObject.FromObject(reportDTO)).ToList();
+                    return result; 
                 }
                 else if (reportType == "StockLedger")
                 {
@@ -318,6 +319,7 @@ namespace SutraPlus_BAL.Service
                 throw ex;
             }
         }
+
 
 
         public bool GetInvoiceResponse(JObject Data)

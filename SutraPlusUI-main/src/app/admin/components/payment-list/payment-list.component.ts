@@ -79,6 +79,7 @@ export class PaymentListComponent implements OnInit {
   }
 
   onBalance(text: string){
+    console.log("balance" + text);
     this.balance = text;
   }
 
@@ -109,18 +110,18 @@ export class PaymentListComponent implements OnInit {
         PageNumber: this.pageNumber,
         PageSize: 20,
       },
-      InvoiceData: {
+      ReportData: {
         CompanyId: this.globalCompanyId,
-        InvoiceType: "GoodsInvoice",
+        ReportType: "PaymentList",
       },
     };
 
-    this.adminService.getInvoiceList(partyDetails).subscribe({
+    this.adminService.getReport(partyDetails).subscribe({
       next: (res: any) => {
         this.spinner.show();
         if (!res.HasErrors && res?.Data !== null) {
-          this.invoiceList = res.records;
-          this.totalInvoice = res.totalCount;
+          this.invoiceList = res;
+          this.totalInvoice = res.length;
           this.getPages();
           this.pagesObj.next(true);
         } else {
