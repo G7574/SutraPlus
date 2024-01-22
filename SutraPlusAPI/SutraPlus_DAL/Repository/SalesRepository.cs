@@ -38,6 +38,7 @@ using WebApplication2.Implementations;
 using static iTextSharp.text.pdf.AcroFields;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using static QRCoder.PayloadGenerator.SwissQrCode;
 using QRCodeGenerator = QRCoder.QRCodeGenerator;
 
 
@@ -3090,8 +3091,7 @@ namespace SutraPlus_DAL.Repository
                 {
                     balance = -1;
                 }
-
-                //var searchText = Convert.ToString(Data?["SearchText"]);
+                 
                 var data = JsonConvert.DeserializeObject<dynamic>(Data?["ReportData"]?.ToString());
 
                 if (data == null)
@@ -3104,70 +3104,97 @@ namespace SutraPlus_DAL.Repository
                 DateTime? endDate = data?["EndDate"];
                 string reportType = data?["ReportType"];
 
-                //var query = from led in _tenantDBContext.Ledgers
-                //            join tr in _tenantDBContext.TmpPaymentList on new { CompanyId = (int?)led.CompanyId, LedgerId = (int?)led.LedgerId }
-                //            equals new { CompanyId = tr.CompanyId, LedgerId = tr.LedgerID }
-                //            orderby led.LedgerName
-                //            select new ReportDTO
-                //            {
-                //                LedgerName = led.LedgerName,
-                //                Place = led.Place,
-                //                YadiBalance = tr.YadiBalance,
-                //                AccountBalance = tr.AccountBalance,
-                //                AsOnDate = tr.AsOnDate
-                //            };
+                /*first*/
+                /*   var query = from ledger in _tenantDBContext.Ledgers
+                               join voucher in _tenantDBContext.Vouchers on ledger.LedgerId equals voucher.LedgerId
+                               where voucher.CompanyId == companyId && ledger.AccountingGroupId == 21
+                               select new
+                               {
+                                   ledger.LedgerId,
+                                   ledger.LedgerName,
+                                   ledger.Place,
+                                   voucher.Credit,
+                                   voucher.TranctDate
+                               };*/
+                /*
+                                var ledgerInfoList = query
+                                    .GroupBy(result => new { result.LedgerName, result.Place, result.TranctDate })
+                                    .Select(group => new LedgerInfo
+                                    {
+                                        LedgerName = group.Key.LedgerName,
+                                        Place = group.Key.Place,
+                                        AsOnDateBalance = group.Sum(x => x.Credit),
+                                        TotalBalance = group.Sum(x => x.Credit),
+                                        TranctDate = group.Key.TranctDate ?? new DateTime()
+                                    })
+                                    .ToList();*/
+                /**/
+                 
+                 
+                var ledgerQuery = from led in _tenantDBContext.Ledgers
+                                  where led.CompanyId == companyId && led.AccountingGroupId == 21
+                                  orderby led.LedgerName
+                                  select new
+                                  {
+                                      led.LedgerId,
+                                      led.LedgerName,
+                                      led.Place,
+                                      TotalBalance = 0m, 
+                                      AsOnDateBalance = 0m,  
+                                      Sno = 0
+                                  };
+
+                var ledgerList = ledgerQuery.ToList();
+                var ledgerInfoList = new List<LedgerInfo>();
+
+                foreach (var ledger in ledgerList.ToList())
+                {
+                    var ledgerId = ledger.LedgerId;
 
 
-                /*var query = from ledger in _tenantDBContext.Ledgers
-                            join voucher in _tenantDBContext.Vouchers on ledger.LedgerId equals voucher.LedgerId
-                            where voucher.CompanyId == companyId && ledger.AccountingGroupId == 21
-                            select new
-                            {
-                                ledger.LedgerName,
-                                ledger.Place,
-                                voucher.Credit,
-                                voucher.TranctDate
-                            };*/
-
-                var query = from ledger in _tenantDBContext.Ledgers
-                            join voucher in _tenantDBContext.Vouchers on ledger.LedgerId equals voucher.LedgerId
-                            where voucher.CompanyId == companyId && ledger.AccountingGroupId == 21
-                            select new
-                            {
-                                ledger.LedgerName,
-                                ledger.Place,
-                                voucher.Credit,
-                                voucher.TranctDate
-                            };
+                    string dateString = Date;
+                    DateTime dateTime = DateTime.ParseExact(dateString, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
 
-                //var ledgerInfoList1 = query.ToList()
-                //        .GroupBy(x => new { x.LedgerName, x.Place })
-                //        .Select(grouped => new LedgerInfo
-                //        {
-                //            LedgerName = grouped.Key.LedgerName,
-                //            Place = grouped.Key.Place,
-                //            AsOnDateBalance = grouped.Sum(x => x.TranctDate == null ? x.Credit : 0) - grouped.Sum(x => x.Credit) ?? 0,
-                //            TotalBalance = grouped.Sum(x => x.Credit) - grouped.Sum(x => x.Credit) ?? 0,
-                //            TranctDate = new DateTime()
-                //        })
-                //        .Where(info => info.AsOnDateBalance > 0)
-                //        .ToList();
+                    var asOnDateCredit = _tenantDBContext.Vouchers
+                        .Where(v => v.LedgerId == ledgerId && v.CompanyId == companyId && v.TranctDate <= dateTime)
+                        .Sum(v => (decimal?)v.Credit) ?? 0;
 
+                    var totalDebit = _tenantDBContext.Vouchers
+                        .Where(v => v.LedgerId == ledgerId && v.CompanyId == companyId)
+                        .Sum(v => (decimal?)v.Debit) ?? 0;
 
-                     var ledgerInfoList = query
-                    .GroupBy(result => new { result.LedgerName, result.Place, result.TranctDate })
-                    .Select(group => new LedgerInfo
+                    var asOnDateBalance = asOnDateCredit - totalDebit;
+
+                    if (asOnDateBalance > 1000)
                     {
-                        LedgerName = group.Key.LedgerName,
-                        Place = group.Key.Place,
-                        AsOnDateBalance = group.Sum(x => x.Credit),
-                        TotalBalance = group.Sum(x => x.Credit),
-                        TranctDate = group.Key.TranctDate ?? new DateTime()
-                    })
-                    .ToList();
+                        var totalCredit = _tenantDBContext.Vouchers
+                            .Where(v => v.LedgerId == ledgerId && v.CompanyId == companyId)
+                            .Sum(v => (decimal?)v.Credit) ?? 0;
 
-              
+                        var totalDebit2 = _tenantDBContext.Vouchers
+                            .Where(v => v.LedgerId == ledgerId && v.CompanyId == companyId)
+                            .Sum(v => (decimal?)v.Debit) ?? 0;
+
+                        var totalBalance = totalCredit - totalDebit2;
+ 
+                        var updatedLedger = new LedgerInfo
+                        {
+                            LedgerId = (int)ledger.LedgerId,
+                            LedgerName = ledger.LedgerName,
+                            Place = ledger.Place,
+                            TotalBalance = totalBalance,
+                            AsOnDateBalance = asOnDateBalance,
+                        };
+                        ledgerInfoList.Add(updatedLedger);
+                    }
+                    else
+                    {
+                        ledgerList.Remove(ledger);
+                    }
+                }
+                 
+
                 if (!string.IsNullOrEmpty(searchText) || balance != null || !string.IsNullOrEmpty(Date))
                 {
 
@@ -3191,7 +3218,7 @@ namespace SutraPlus_DAL.Repository
                 var result1 = ledgerInfoList.ToList();
 
                 var page = new pagination<LedgerInfo>();
-                page.TotalCount = query.Count();
+                page.TotalCount = ledgerQuery.Count();
                 page.Records = ledgerInfoList.ToList();
 
                 return page;
@@ -3204,9 +3231,36 @@ namespace SutraPlus_DAL.Repository
                 throw;
             }
         }
+  
+        private decimal CalculateAsOnDateBalance(int companyId,int ledgerId, DateTime? tranctDate)
+        {
+            var asOnDateCredit = _tenantDBContext.Vouchers
+                .Where(v => v.LedgerId == ledgerId && v.CompanyId == companyId && v.TranctDate <= tranctDate)
+                .Sum(v => (decimal?)v.Credit) ?? 0;
+
+            var totalDebit = _tenantDBContext.Vouchers
+                .Where(v => v.LedgerId == ledgerId && v.CompanyId == companyId)
+                .Sum(v => (decimal?)v.Debit) ?? 0;
+
+            return asOnDateCredit - totalDebit;
+        }
+
+        private decimal CalculateTotalBalance(int companyId, int ledgerId)
+        {
+            var totalCredit = _tenantDBContext.Vouchers
+                .Where(v => v.LedgerId == ledgerId && v.CompanyId == companyId)
+                .Sum(v => (decimal?)v.Credit) ?? 0;
+
+            var totalDebit = _tenantDBContext.Vouchers
+                .Where(v => v.LedgerId == ledgerId && v.CompanyId == companyId)
+                .Sum(v => (decimal?)v.Debit) ?? 0;
+
+            return totalCredit - totalDebit;
+        }
 
         public class LedgerInfo
         {
+            public int LedgerId { get; set; } 
             public string LedgerName { get; set; }
             public string Place { get; set; }
             public decimal? AsOnDateBalance { get; set; }

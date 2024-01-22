@@ -49,7 +49,7 @@ export class PaymentListComponent implements OnInit {
   ngOnInit(): void {
     const currentDate = new Date();
     // this.startDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1));
-    //this.endDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0));
+    this.endDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0));
     this.financialYear = sessionStorage.getItem('financialYear');
     this.customerCode = sessionStorage.getItem('globalCustomerCode');
     this.userDetails = sessionStorage.getItem('userDetails');
