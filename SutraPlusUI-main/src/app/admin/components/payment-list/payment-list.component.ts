@@ -57,10 +57,10 @@ export class PaymentListComponent implements OnInit {
     this.userEmail = this.userDetails?.result?.UserEmailId;
     this.globalCompanyId = sessionStorage.getItem('companyID');
     // this.SearchText = sessionStorage.getItem("SearchText");
-    this.activatedRoute.queryParams.subscribe((params) => {
+    // this.activatedRoute.queryParams.subscribe((params) => {
 
-      this.getInvoiceList();
-    });
+    //   this.getInvoiceList();
+    // });
     this.pagesObj.subscribe((res) => {
       res ? this.getPages() : '';
     });
