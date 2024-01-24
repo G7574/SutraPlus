@@ -3144,56 +3144,36 @@ namespace SutraPlus_DAL.Repository
                                       Sno = 0
                                   };
 
-                var ledgerList = ledgerQuery.ToList();
-                var ledgerInfoList = new List<LedgerInfo>();
 
-                foreach (var ledger in ledgerList.ToList())
+                string dateString = Date;
+                DateTime dateTime = DateTime.ParseExact(dateString, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                var ledgerInfoList = _tenantDBContext.Ledgers
+                .Where(led => led.CompanyId == companyId && led.AccountingGroupId == 21)
+                .OrderBy(led => led.LedgerName)
+                .Select(led => new
                 {
-                    var ledgerId = ledger.LedgerId;
-
-
-                    string dateString = Date;
-                    DateTime dateTime = DateTime.ParseExact(dateString, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-
-
-                    var asOnDateCredit = _tenantDBContext.Vouchers
-                        .Where(v => v.LedgerId == ledgerId && v.CompanyId == companyId && v.TranctDate <= dateTime)
-                        .Sum(v => (decimal?)v.Credit) ?? 0;
-
-                    var totalDebit = _tenantDBContext.Vouchers
-                        .Where(v => v.LedgerId == ledgerId && v.CompanyId == companyId)
-                        .Sum(v => (decimal?)v.Debit) ?? 0;
-
-                    var asOnDateBalance = asOnDateCredit - totalDebit;
-
-                    if (asOnDateBalance > 1000)
-                    {
-                        var totalCredit = _tenantDBContext.Vouchers
-                            .Where(v => v.LedgerId == ledgerId && v.CompanyId == companyId)
-                            .Sum(v => (decimal?)v.Credit) ?? 0;
-
-                        var totalDebit2 = _tenantDBContext.Vouchers
-                            .Where(v => v.LedgerId == ledgerId && v.CompanyId == companyId)
-                            .Sum(v => (decimal?)v.Debit) ?? 0;
-
-                        var totalBalance = totalCredit - totalDebit2;
- 
-                        var updatedLedger = new LedgerInfo
-                        {
-                            LedgerId = (int)ledger.LedgerId,
-                            LedgerName = ledger.LedgerName,
-                            Place = ledger.Place,
-                            TotalBalance = totalBalance,
-                            AsOnDateBalance = asOnDateBalance,
-                        };
-                        ledgerInfoList.Add(updatedLedger);
-                    }
-                    else
-                    {
-                        ledgerList.Remove(ledger);
-                    }
-                }
-                 
+                    led.LedgerId,
+                    led.LedgerName,
+                    led.Place,
+                    AsOnDateCredit = _tenantDBContext.Vouchers
+                        .Where(v => v.LedgerId == led.LedgerId && v.CompanyId == companyId && v.TranctDate <= dateTime)
+                        .Sum(v => (decimal?)v.Credit) ?? 0,
+                    TotalDebit = _tenantDBContext.Vouchers
+                        .Where(v => v.LedgerId == led.LedgerId && v.CompanyId == companyId)
+                        .Sum(v => (decimal?)v.Debit) ?? 0
+                })
+                .Where(ledger => (ledger.AsOnDateCredit - ledger.TotalDebit) > 1000)
+                .Select(ledger => new LedgerInfo
+                {
+                    LedgerId = Convert.ToInt32(ledger.LedgerId),
+                    LedgerName = ledger.LedgerName,
+                    Place = ledger.Place,
+                    TotalBalance = _tenantDBContext.Vouchers
+                        .Where(v => v.LedgerId == ledger.LedgerId && v.CompanyId == companyId)
+                        .Sum(v => (decimal?)v.Credit - v.Debit) ?? 0,
+                    AsOnDateBalance = ledger.AsOnDateCredit - ledger.TotalDebit
+                })
+                .ToList();
 
                 if (!string.IsNullOrEmpty(searchText) || balance != null || !string.IsNullOrEmpty(Date))
                 {
