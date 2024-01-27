@@ -36,14 +36,94 @@
               </button>
           </div>
 
+          <!-- <div class="col-md-2" style="padding-top: 4px;">
+            <button type="submit" class="btn btn-dark" style="font-size: 11px; width: 100%" (click)="generateRepo()">
+                Generate Report
+            </button>
+        </div> -->
+
+        <div class="col-md-2" style="padding-top: 4px;">
+          <button type="submit" class="btn btn-dark" style="font-size: 11px; width: 100%" (click)="exportAsPdf('pdf')">
+              Export as Pdf
+          </button>
+      </div>
+
+      <div class="col-md-2" style="padding-top: 4px;">
+        <button type="submit" class="btn btn-dark" style="font-size: 11px; width: 100%" (click)="exportToExcel()">
+          Export as Excel
+        </button>
+    </div>
+
       </div>
   </div>
 
 
 
   </form>
-</div>
 
+</div>
+  <div class="dev-express" *ngIf="!isTableViewVisible">
+
+    <!-- <dx-report-viewer [reportUrl]="reportName" height="800px" cssClass="myViewer">
+      <dxrv-request-options [invokeAction]="invokeAction" [host]="host"></dxrv-request-options>
+
+      <dxrv-tabpanel-settings position="Left"></dxrv-tabpanel-settings>
+      <dxrv-export-settings [useSameTab]="false" [useAsynchronousExport]="false"></dxrv-export-settings>
+      <dxrv-search-settings [useAsyncSearch]="false"></dxrv-search-settings>
+
+      <dxrv-callbacks (CustomizeMenuActions)="CustomizeMenuActions($event)" (ParametersInitialized)="ParametersSubmitted($event)">
+      </dxrv-callbacks>
+      </dx-report-viewer> -->
+
+      <!-- <div class="table-view" *ngIf="!isTableViewVisible">
+        <c-col md="12">
+            <c-card class="my-3">
+                <c-card-header>
+                    <h4 class="mb-0"> Payment List <span class="badge badge-primary">{{totalInvoice}}</span> </h4>
+                </c-card-header>
+
+                <c-card-body class="p-3">
+                    <dx-data-grid [dataSource]="invoiceList" [columnAutoWidth]="true" [showBorders]="true">
+                      <dxi-column caption="Party Name" [calculateCellValue]="concatFields"></dxi-column>
+
+                        <dxi-column dataField="AsOnDateBalance" caption="Yadi Balance" alignment="right"></dxi-column>
+                        <dxi-column dataField="TotalBalance" caption="Amount" alignment="right"></dxi-column>
+                    </dx-data-grid>
+                </c-card-body>
+
+
+                <div class="d-flex justify-content-end align-items-center" *ngIf="invoiceList">
+                    <ul class="pagination">
+                        <li [ngClass]="[pages[0]===1&&commonService.gettotalPages(totalInvoice)>5 ? 'disabled' : '']"
+                            (click)="pageNumber>1 ? previous() : '' " class="page-item"><a
+                                [ngClass]="[pageNumber===1 ? 'disabled' : '' , pages[0]===1&&commonService.gettotalPages(totalInvoice)>5 ? 'disabled' : '']"
+                                class="page-link">Previous</a></li>
+                        <li (click)="changePage(data)" *ngFor="let data of pages" class="page-item">
+                            <a [ngClass]="[pageNumber===data ? 'active-page' : '']" class="page-link">{{data}}</a>
+                        </li>
+                        <li [ngClass]="[pageNumber===commonService.gettotalPages(totalInvoice) ? 'disabled' : '', commonService.gettotalPages(totalInvoice)===pages[commonService.getLastIndex(pages)] ? 'disabled' : '']"
+                            (click)="pageNumber<commonService.gettotalPages(totalInvoice) ? next() : '';"
+                            class="page-item"><a
+                                [ngClass]="[pageNumber===commonService.gettotalPages(totalInvoice) ? 'disabled' : '', commonService.gettotalPages(totalInvoice)===pages[commonService.getLastIndex(pages)] ? 'disabled' : '']"
+                                class="page-link">Next</a></li>
+                    </ul>
+                </div>
+            </c-card>
+        </c-col>
+    </div> -->
+
+      <!-- <dx-data-grid
+          [dataSource]="invoiceList"
+          [columnAutoWidth]="true"
+          [showBorders]="true">
+          <dxi-column dataField="Place" caption="Party Name"></dxi-column>
+          <dxi-column dataField="AsOnDateBalance" caption="Yadi Balance"></dxi-column>
+          <dxi-column dataField="TotalBalance" caption="Amount"></dxi-column>
+    </dx-data-grid> -->
+
+  </div>
+  <!-- *ngIf="isTableViewVisible" -->
+  <div class="table-view" >
   <c-col md="12">
       <c-card class="my-3">
          <c-card-header>
@@ -100,5 +180,8 @@
 
       </c-card>
     </c-col>
+  </div>
+
+
 </c-row>
 

@@ -72,6 +72,7 @@ import { PartyWiseCommHamaliComponent } from './components/party-wise-comm-hamal
 import { ListAndRegistersComponent } from './components/list-and-registers/list-and-registers.component';
 import { PrintPartyReportComponent } from './components/print-party-report/print-party-report.component';
 import { PaymentListComponent } from './components/payment-list/payment-list.component';
+import { DxDataGridModule } from 'devextreme-angular';
 
 @NgModule({
   declarations: [
@@ -147,8 +148,8 @@ import { PaymentListComponent } from './components/payment-list/payment-list.com
     MatDialogModule,
     MatTableModule,
     MatFormFieldModule,
-    DxReportViewerModule, 
-
+    DxReportViewerModule,
+    DxDataGridModule,
 
 
   ],

@@ -1,14 +1,26 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { ToastrService } from 'ngx-toastr';
+import { ActionId } from 'devexpress-reporting/dx-webdocumentviewer';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { CommonService } from 'src/app/share/services/common.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AdminServicesService } from '../../services/admin-services.service';
 import { ConsoleService } from '@ng-select/ng-select/lib/console.service';
 import { colorSerializable } from 'devexpress-reporting/scopes/reporting-chart-internal-series';
+import { DxReportViewerComponent } from 'devexpress-reporting-angular';
+import { DataService } from 'src/app/core/services/data.service';
+import { data } from 'jquery';
+import { DxDataGridComponent } from 'devextreme-angular';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import { ca } from 'date-fns/locale';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { Ledger } from '../sales/models/ladger.model';
+import * as XLSX from 'xlsx';
+
 
 @Component({
   selector: 'app-payment-list',
@@ -33,6 +45,7 @@ export class PaymentListComponent implements OnInit {
   startDate: any;
   endDate: any;
   balance: any;
+  data$: Observable<any>;
 
   @ViewChild('invoiceDialog') invoiceDialog!: TemplateRef<any>;
 
@@ -43,9 +56,9 @@ export class PaymentListComponent implements OnInit {
     private spinner: NgxSpinnerService,
     public commonService: CommonService,
     private activatedRoute: ActivatedRoute,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) { }
-
+  isTableViewVisible: boolean = true;
   ngOnInit(): void {
     const currentDate = new Date();
     // this.startDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1));
@@ -65,6 +78,11 @@ export class PaymentListComponent implements OnInit {
       res ? this.getPages() : '';
     });
   }
+
+  @ViewChild(DxReportViewerComponent, { static: false }) viewer: DxReportViewerComponent;
+  reportUrl: string = "rptPaymentList";
+  // The built-in controller in the back-end ASP.NET Core Reporting application.
+  invokeAction: string = '/DXXRDV';
 
   private formatDate(date: Date): string {
     const year = date.getFullYear();
@@ -140,10 +158,127 @@ export class PaymentListComponent implements OnInit {
     });
   }
 
-  fireQuery() {
 
-    console.log("search : " + this.SearchText);
-    console.log("balance : " + this.balance);
+  title = 'DXReportDesignerSample';
+  // If you use the ASP.NET Core backend:
+  getDesignerModelAction = "/DXXRD/GetDesignerModel";
+  // The report name.
+  reportName = "rptPaymentList" + "&StartDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1)) + "&EndDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth()+ 1, 0)) + "&companyidrecord=" + sessionStorage.getItem('companyID') + "&vochtype1=0&vochtype1=99";
+  // The backend application URL.
+  host = environment.Reportingapi;
+
+  ParametersSubmitted(event: any) {
+    event.args.Parameters.filter(function (p: any) { return p.Key == "StartDate"; })[0].Value = new Date();
+    event.args.Parameters.filter(function (p: any) { return p.Key == "EndDate"; })[0].Value = new Date();
+}
+
+  CustomizeMenuActions(event: any) {
+
+    // Hide the "Print" and "PrintPage" actions.
+    var printAction = event.args.GetById(ActionId.Print);
+    if (printAction)
+      printAction.visible = false;
+    var printPageAction = event.args.GetById(ActionId.PrintPage);
+    if (printPageAction)
+      printPageAction.visible = false;
+  }
+
+  @ViewChild(DxDataGridComponent, { static: false }) dataGrid!: DxDataGridComponent;
+  generateRepo() {
+    this.isTableViewVisible = !this.isTableViewVisible;
+  }
+
+  exportAsPdf(pdf:string) {
+    this.exportPdf(this.invoiceList,pdf);
+  }
+
+  exportAsExcel(pdf:string) {
+    this.exportPdf(this.invoiceList,pdf);
+  }
+
+  concatFields(data: any): string {
+    return `${data.LedgerName || ''} - ${data.Place || ''}`;
+  }
+
+  exportToExcel(): void {
+    const customLines = [
+      ['Search Filter'],
+      ['Date',this.endDate],
+      ['Search Text',this.SearchText],
+      ['Balance > ',this.balance]
+    ];
+
+
+    const headers = ['Sr. No.','Party Name', 'Yadi Balance', 'Amount'];
+    const excelData = [
+      ...customLines,
+      headers,
+      ...this.invoiceList.map((item, index) => [
+        index + 1,
+        `${item.LedgerName} - ${item.Place}`,
+        item.AsOnDateBalance,
+        item.TotalBalance
+      ])
+    ];
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(excelData);
+    const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    this.saveAsExcelFile(excelBuffer, 'PaymentWiseList');
+  }
+
+  private saveAsExcelFile(buffer: any, fileName: string): void {
+    const data: Blob = new Blob([buffer], { type: 'application/octet-stream' });
+    const url: string = window.URL.createObjectURL(data);
+    const a: HTMLAnchorElement = document.createElement('a');
+    a.href = url;
+    a.download = fileName + '.xlsx';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  }
+
+  exportPdf(data: any[],pdf:string) {
+
+    const customLines = [
+      ['Search Filter'],
+      ['Date',this.endDate],
+      ['Search Text',this.SearchText],
+      ['Balance > ',this.balance]
+    ];
+
+    const documentDefinition = {
+      content: [
+        {
+          table: {
+            headerRows: 1,
+            widths: ['*', '*', '*'],
+            body: [
+              ['Party Name', 'Yadi Balance', 'Amount'],
+              ...data.map(item => [
+                item.LedgerName + '-' + item.Place || '-',
+                item.AsOnDateBalance || '-',
+                item.TotalBalance || '-'
+              ])
+            ]
+          }
+        }
+      ],
+      layout: {
+        defaultBorder: false
+      }
+    };
+
+    try {
+      pdfMake.createPdf(documentDefinition, null, null, pdfFonts.pdfMake.vfs).download('PaymentWiseList.' + pdf);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    }
+
+  }
+
+  fireQuery() {
 
     this.SearchText.length < 3 ? (this.errorMsg = true) : (this.error = false);
     if (this.SearchText.length === 0) {
