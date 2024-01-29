@@ -47,6 +47,7 @@ import { PartyWiseCommHamaliComponent } from './components/party-wise-comm-hamal
 import { ListAndRegistersComponent } from './components/list-and-registers/list-and-registers.component';
 import { PrintPartyReportComponent } from './components/print-party-report/print-party-report.component';
 import { PaymentListComponent } from './components/payment-list/payment-list.component';
+import { TDSReportComponent } from './components/tdsreport/tdsreport.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent },
@@ -83,6 +84,7 @@ const routes: Routes = [
   { path: 'PartyWiseCaseReport', component: PartyWiseCaseReportComponent },
   { path: 'PartyWiseCommHamali', component: PartyWiseCommHamaliComponent },
   { path: 'PaymentList', component: PaymentListComponent },
+  { path: 'TDSReport',component: TDSReportComponent },
   { path: 'PrintPartyReport', component: PrintPartyReportComponent },
   { path: 'ListAndRegisters', component: ListAndRegistersComponent },
   { path: 'MonthWise', component: MonthWiseReportComponent },

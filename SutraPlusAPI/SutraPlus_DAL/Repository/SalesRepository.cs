@@ -3078,11 +3078,98 @@ namespace SutraPlus_DAL.Repository
             }
         }
 
+        public class TDSReportEntry
+        {
+            public long LedgerId { get; set; }
+            public string LedgerName { get; set; }
+            public string Place { get; set; }
+            public decimal TotalCommission { get; set; }
+            public decimal TDSBalance { get; set; }
+        }
+
+        public pagination<TDSReportEntry> GetTDSReport(JObject Data)
+        {
+            try
+            { 
+                var data = JsonConvert.DeserializeObject<dynamic>(Data?["ReportData"]?.ToString());
+
+                if (data == null)
+                {
+                    throw new ArgumentNullException(nameof(data), "ReportType is required and cannot be null.");
+                }
+
+                int companyId = data?["CompanyId"];
+
+                var ledgerQuery = (from led in _tenantDBContext.Ledgers
+                                   where led.CompanyId == companyId && led.AccountingGroupId == 21
+                                   orderby led.LedgerName
+                                   select new
+                                   {
+                                       led.LedgerId,
+                                       led.LedgerName,
+                                       led.Place,
+                                       TotalCommission = 0m,
+                                       TDSBalance = 0m
+                                   }).ToList();
+                 
+                string dateString = "2023-02-25";
+                DateTime dateTime = DateTime.Today;
+                //DateTime dateTime = DateTime.ParseExact(dateString, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+                var ledgerInfoList = _tenantDBContext.Ledgers
+                    .Where(led => led.CompanyId == companyId && led.AccountingGroupId == 21)
+                    .OrderBy(led => led.LedgerName)
+                    .Select(led => new
+                    {
+                        led.LedgerId,
+                        led.LedgerName,
+                        led.Place,
+                        AsOnDateCredit = _tenantDBContext.Vouchers
+                            .Where(v => v.LedgerId == led.LedgerId && v.CompanyId == companyId && v.TranctDate <= dateTime)
+                            .Sum(v => (decimal?)v.Credit) ?? 0,
+                        TotalDebit = _tenantDBContext.Vouchers
+                            .Where(v => v.LedgerId == led.LedgerId && v.CompanyId == companyId && v.Tdstype == 1)
+                            .Sum(v => (decimal?)v.Debit) ?? 0
+                    })
+                    .Where(ledger => (ledger.AsOnDateCredit - ledger.TotalDebit) > 0)
+                    .Select(ledger => new TDSReportEntry
+                    {
+                        LedgerId = ledger.LedgerId ?? 0,
+                        LedgerName = ledger.LedgerName,
+                        Place = ledger.Place,
+                        TotalCommission = _tenantDBContext.BillSummaries
+                            .Where(bill => bill.LedgerId == ledger.LedgerId && bill.CompanyId == companyId && bill.TranctDate <= dateTime)
+                            .Sum(bill => (decimal?)bill.DalaliValue) ?? 0,
+                        TDSBalance = Math.Round((((_tenantDBContext.BillSummaries
+                            .Where(bill => bill.LedgerId == ledger.LedgerId && bill.CompanyId == companyId && bill.TranctDate <= dateTime)
+                            .Sum(bill => (decimal?)bill.DalaliValue) ?? 0) * 5) / 100) -
+                            (_tenantDBContext.Vouchers
+                            .Where(voucher => voucher.LedgerId == ledger.LedgerId && voucher.CompanyId == companyId && voucher.Tdstype == 1)
+                            .Sum(voucher => (decimal?)voucher.Debit) ?? 0), 2)
+                    })
+                    .Where(n => n.TDSBalance > 0 && n.TotalCommission > 0)
+                    .ToList();
+   
+                var page = new pagination<TDSReportEntry>
+                {
+                    TotalCount = ledgerInfoList.Count(),
+                    Records = ledgerInfoList
+                };
+
+                return page;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+         
+
         public pagination<LedgerInfo> GetPaymentList(JObject Data)
         {
             try
-            {
-
+            { 
                 var searchText = Convert.ToString(Data?["SearchText"]);
                 var balance = Convert.ToDecimal(Data?["Balance"]);
                 var Date = Convert.ToString(Data?["Date"]);
@@ -3129,8 +3216,7 @@ namespace SutraPlus_DAL.Repository
                                     })
                                     .ToList();*/
                 /**/
-                 
-                 
+                  
                 var ledgerQuery = from led in _tenantDBContext.Ledgers
                                   where led.CompanyId == companyId && led.AccountingGroupId == 21
                                   orderby led.LedgerName
@@ -3149,7 +3235,7 @@ namespace SutraPlus_DAL.Repository
                 DateTime dateTime = DateTime.ParseExact(dateString, "yyyy-MM-dd", CultureInfo.InvariantCulture);
                 var ledgerInfoList = _tenantDBContext.Ledgers
                 .Where(led => led.CompanyId == companyId && led.AccountingGroupId == 21)
-                .OrderBy(led => led.LedgerName)
+                .OrderBy(led => led.LedgerName) 
                 .Select(led => new
                 {
                     led.LedgerId,

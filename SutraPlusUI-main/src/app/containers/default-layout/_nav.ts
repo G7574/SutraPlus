@@ -305,6 +305,11 @@ export const navItems: INavData[] = [
         linkProps: { queryParams: { ReportName: 'Payment List' } },
       },
       {
+        name: 'TDSReport',
+        url: 'admin/TDSReport',
+        linkProps: { queryParams: { ReportName: 'TDSReport' } },
+      },
+      {
         name: 'Receivablea',
 
       },

@@ -73,6 +73,7 @@ import { ListAndRegistersComponent } from './components/list-and-registers/list-
 import { PrintPartyReportComponent } from './components/print-party-report/print-party-report.component';
 import { PaymentListComponent } from './components/payment-list/payment-list.component';
 import { DxDataGridModule } from 'devextreme-angular';
+import { TDSReportComponent } from './components/tdsreport/tdsreport.component';
 
 @NgModule({
   declarations: [
@@ -115,6 +116,7 @@ import { DxDataGridModule } from 'devextreme-angular';
     ListAndRegistersComponent,
     PrintPartyReportComponent,
     PaymentListComponent,
+    TDSReportComponent,
   ],
   imports: [
     CommonModule,

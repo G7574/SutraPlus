@@ -262,7 +262,7 @@ namespace SutraPlus_BAL.Service
         }
 
         public List<JObject> GetReport(JObject Data)
-        {
+        {    
             try
             {
                 var data = JsonConvert.DeserializeObject<dynamic>(Data?["ReportData"]?.ToString());
@@ -290,6 +290,12 @@ namespace SutraPlus_BAL.Service
                     pagination<LedgerInfo> reportDTOs = _salesRepository.GetPaymentList(Data);
                     List<JObject> result = reportDTOs.Records.Select(reportDTO => JObject.FromObject(reportDTO)).ToList();
                     return result; 
+                }
+                else if (reportType == "TDSReport")
+                {
+                    pagination<TDSReportEntry> reportDTOs = _salesRepository.GetTDSReport(Data);
+                    List<JObject> result = reportDTOs.Records.Select(reportDTO => JObject.FromObject(reportDTO)).ToList();
+                    return result;
                 }
                 else if (reportType == "StockLedger")
                 {
