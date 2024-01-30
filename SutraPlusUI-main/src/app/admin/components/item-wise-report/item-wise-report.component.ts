@@ -7,6 +7,8 @@ import { predefinedDateRanges } from 'devexpress-reporting/dx-webdocumentviewer'
 import { fetchSetup } from '@devexpress/analytics-core/analytics-utils';
 import * as $ from 'jquery';
 import { saveAs } from 'file-saver';
+import { end } from 'pdfkit';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -17,14 +19,51 @@ import { saveAs } from 'file-saver';
 export class ItemWiseReportComponent implements OnInit {
   startDate: any;
   endDate: any;
-  onchangeValue: string = "All";
+  selectMonth: any;
+  onchangeValue: string = "";
+  onMonthChange: string = "";
+  financialYear: string = "";
+  startYear : string = "";
+  endYear : string = "";
+
   ngOnInit(): void {
-    const currentDate = new Date();
-    this.startDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1));
-    this.endDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0));
+
+    this.financialYear = sessionStorage.getItem('financialYear');
+    let [startYear, endYear] = this.financialYear.split("-");
+
+    this.startYear = startYear;
+    this.endYear = endYear;
+
+    // const currentDate = new Date();
+    // this.startDate = this.formatDate(new Date(Number(this.startYear), 3, 1));
+    // this.endDate = this.formatDate(new Date(Number(this.endYear), 2, 31));
+
+    //this.endDate = this.formatDate(new Date(Number(this.startYear), currentDate.getMonth() + 1, 0));
+
     $("#startDate").val(this.startDate);
     $("#endDate").val(this.endDate);
+
     // Additional initialization logic can be added here
+  }
+
+  onStartDateChange(event: any) {
+    const startDateValue = event.target.value;
+    const [year, month, day] = startDateValue.split('-');
+    this.startDate = this.formatDate(new Date(Number(year), month, day));
+
+//    updating start select month
+      //this.startYear = year;
+
+  }
+
+  onEndChange(event: any) {
+    const endDateValue = event.target.value;
+    const [year, month, day] = endDateValue.split('-');
+    this.endDate = this.formatDate(new Date(Number(year), month, day));
+
+//    updating end select month
+      //this.endYear = year;
+
   }
 
   private formatDate(date: Date): string {
@@ -35,11 +74,15 @@ export class ItemWiseReportComponent implements OnInit {
     // return `2022-04-01`;
   }
 
+  constructor(
+    private toastr: ToastrService,
+  ) { }
+
   title = 'DXReportDesignerSample';
   // If you use the ASP.NET Core backend:
   getDesignerModelAction = "/DXXRD/GetDesignerModel";
   // The report name.
-  reportName = "ItemWise" + "&StartDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1)) + "&EndDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth()+ 1, 0)) + "&companyidrecord=" + sessionStorage.getItem('companyID') + "&vochtype1=0&vochtype1=99";
+  reportName = "ItemWise" + "&StartDate=" + this.formatDate(new Date(Number(this.startYear), new Date().getMonth(), 1)) + "&EndDate=" + this.formatDate(new Date(Number(this.endYear), new Date().getMonth()+ 1, 0)) + "&companyidrecord=" + sessionStorage.getItem('companyID') + "&vochtype1=0&vochtype1=99";
   // The backend application URL.
   host = environment.Reportingapi;
   yearSelection!: FormGroup
@@ -47,10 +90,9 @@ export class ItemWiseReportComponent implements OnInit {
 
   @ViewChild(DxReportViewerComponent, { static: false }) viewer: DxReportViewerComponent;
   reportUrl: string = "ItemWise";
+
   // The built-in controller in the back-end ASP.NET Core Reporting application.
   invokeAction: string = '/DXXRDV';
-
-
 
   print() {
     fetchSetup.fetchSettings = {
@@ -59,7 +101,6 @@ export class ItemWiseReportComponent implements OnInit {
           requestParameters.credentials = 'include';
       }
   };
-
 
     // this.viewer.bindingSender.Print();
   }
@@ -85,7 +126,7 @@ setParameterALL() {
   let globalCompanyId = sessionStorage.getItem('companyID');
   this.viewer.bindingSender.OpenReport("ItemWise" + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99");
 }
- 
+
 
 setParameterVP() {
   let globalCompanyId = sessionStorage.getItem('companyID');
@@ -128,7 +169,37 @@ onChange(event: any){
   this.onchangeValue = event.target.value;
 }
 
+onMonthChangeListener(event: any){
+  const currentDate = new Date();
+  this.onMonthChange = event.target.value;
+
+  let year = Number(this.startYear);
+
+  if(Number(this.onMonthChange) > 3 && Number(this.onMonthChange) < 13) {
+
+  } else {
+    year++;
+  }
+
+  if(this.onMonthChange.length > 0) {
+    this.startDate = this.formatDate(new Date(year, (Number(this.onMonthChange) -1 ), 1));
+    this.endDate = this.formatDate(new Date(year, Number(this.onMonthChange), 0));
+  } else {
+    this.startDate = this.formatDate(new Date(year, currentDate.getMonth(), 1));
+    this.endDate = this.formatDate(new Date(year, currentDate.getMonth() + 1, 0));
+  }
+}
+
 generateRepo() {
+
+  if (typeof this.startDate === 'undefined') {
+    this.toastr.error("Start Date is not selected");
+    return;
+  } else if(typeof this.endDate === 'undefined') {
+    this.toastr.error("End Date is not selected");
+    return;
+  }
+
   switch (this.onchangeValue)
   {
       case "All":
@@ -152,6 +223,9 @@ generateRepo() {
       case "DebitNote":
           this.setParameterVDN();
           break;
+      case "" :
+        this.toastr.error("Report type is not selected");
+        break
   }
 }
 
