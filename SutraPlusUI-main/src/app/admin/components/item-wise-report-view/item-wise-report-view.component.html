@@ -1,0 +1,13 @@
+<dx-report-viewer [reportUrl]="reportName" height="100%" cssClass="myViewer">
+  <dxrv-request-options [invokeAction]="invokeAction" [host]="host"></dxrv-request-options>
+
+  <dxrv-tabpanel-settings position="Left"></dxrv-tabpanel-settings>
+  <dxrv-export-settings [useSameTab]="false" [useAsynchronousExport]="false"></dxrv-export-settings>
+  <dxrv-search-settings [useAsyncSearch]="false"></dxrv-search-settings>
+  <!-- <dxrv-callbacks (BeforeRender)="CustomizePredefinedRanges($event)">
+                </dxrv-callbacks> -->
+                <!-- (BeforeRender)="CustomizePredefinedRanges($event)" -->
+
+  <dxrv-callbacks (CustomizeMenuActions)="CustomizeMenuActions($event)" (ParametersInitialized)="ParametersSubmitted($event)">
+  </dxrv-callbacks>
+</dx-report-viewer>

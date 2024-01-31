@@ -74,6 +74,7 @@ import { PrintPartyReportComponent } from './components/print-party-report/print
 import { PaymentListComponent } from './components/payment-list/payment-list.component';
 import { DxDataGridModule } from 'devextreme-angular';
 import { TDSReportComponent } from './components/tdsreport/tdsreport.component';
+import { ItemWiseReportViewComponent } from './components/item-wise-report-view/item-wise-report-view.component';
 
 @NgModule({
   declarations: [
@@ -110,6 +111,7 @@ import { TDSReportComponent } from './components/tdsreport/tdsreport.component';
     CreateDcComponent,
     ImportEInvoiceComponent,
     ItemWiseReportComponent,
+    ItemWiseReportViewComponent,
     MonthWiseReportComponent,
     PartyWiseCaseReportComponent,
     PartyWiseCommHamaliComponent,
@@ -117,6 +119,7 @@ import { TDSReportComponent } from './components/tdsreport/tdsreport.component';
     PrintPartyReportComponent,
     PaymentListComponent,
     TDSReportComponent,
+    ItemWiseReportViewComponent,
   ],
   imports: [
     CommonModule,
@@ -152,7 +155,6 @@ import { TDSReportComponent } from './components/tdsreport/tdsreport.component';
     MatFormFieldModule,
     DxReportViewerModule,
     DxDataGridModule,
-
 
   ],
   providers: [DatePipe, ExportAsService],

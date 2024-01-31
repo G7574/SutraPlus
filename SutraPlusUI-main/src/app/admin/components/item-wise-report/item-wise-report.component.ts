@@ -9,6 +9,8 @@ import * as $ from 'jquery';
 import { saveAs } from 'file-saver';
 import { end } from 'pdfkit';
 import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
+import { DataService } from 'src/app/core/services/data.service';
 
 
 @Component({
@@ -34,11 +36,12 @@ export class ItemWiseReportComponent implements OnInit {
     this.startYear = startYear;
     this.endYear = endYear;
 
-    // const currentDate = new Date();
-    // this.startDate = this.formatDate(new Date(Number(this.startYear), 3, 1));
-    // this.endDate = this.formatDate(new Date(Number(this.endYear), 2, 31));
+    const currentDate = new Date();
+    //this.startDate = this.formatDate(new Date(Number(this.startYear), 3, 1));
+    //this.endDate = this.formatDate(new Date(Number(this.endYear), 2, 31));
 
-    //this.endDate = this.formatDate(new Date(Number(this.startYear), currentDate.getMonth() + 1, 0));
+    this.startDate = this.formatDate(new Date(Number(this.startYear), currentDate.getMonth(), 1));
+    this.endDate = this.formatDate(new Date(Number(this.startYear), currentDate.getMonth() + 1, 0));
 
     $("#startDate").val(this.startDate);
     $("#endDate").val(this.endDate);
@@ -76,6 +79,7 @@ export class ItemWiseReportComponent implements OnInit {
 
   constructor(
     private toastr: ToastrService,
+    private router: Router,
   ) { }
 
   title = 'DXReportDesignerSample';
@@ -124,33 +128,39 @@ export class ItemWiseReportComponent implements OnInit {
 
 setParameterALL() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport("ItemWise" + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99");
+  this.openNewTab("ItemWise" + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99");
+  //this.viewer.bindingSender.OpenReport("ItemWise" + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99");
 }
-
 
 setParameterVP() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4");
+  this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4");
+  //this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4");
 }
 setParameterVS() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13");
+  this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13");
+  //this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13");
 }
 setParameterVPR() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14");
+  this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14");
+  //this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14");
 }
 setParameterVSR() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6");
+  this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6");
+  //this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6");
 }
 setParameterVCN() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9");
+  this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9");
+  //this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9");
 }
 setParameterVDN() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15");
+  this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15");
+  //this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15");
 }
 
 export(format : string) {
@@ -206,27 +216,41 @@ generateRepo() {
         this.setParameterALL();
           break;
       case "Purchase":
+          sessionStorage.setItem('selectedReport',"Purchase");
           this.setParameterVP();
           break;
       case "Sales":
+          sessionStorage.setItem('selectedReport',"Salse");
           this.setParameterVS();
           break;
       case "PurchaseReturn":
+          sessionStorage.setItem('selectedReport',"PurchaseReturn");
           this.setParameterVPR();
           break;
       case "SalesReturn":
+          sessionStorage.setItem('selectedReport',"SalesReturn");
           this.setParameterVSR();
           break;
       case "CreditNote":
+          sessionStorage.setItem('selectedReport',"CreditNote");
           this.setParameterVCN();
           break;
       case "DebitNote":
+          sessionStorage.setItem('selectedReport',"DebitNote");
           this.setParameterVDN();
           break;
       case "" :
         this.toastr.error("Report type is not selected");
         break
   }
+}
+
+
+openNewTab(data:any) {
+  sessionStorage.setItem('query', data)
+
+  const url = this.router.createUrlTree(['/'], { fragment: 'ReportView' }).toString();
+  window.open(url, '_blank');
 }
 
 }

@@ -6,6 +6,8 @@ import { DxReportViewerComponent } from 'devexpress-reporting-angular';
 import { ActionId } from 'devexpress-reporting/dx-webdocumentviewer';
 import { environment } from 'src/environments/environment';
 import { saveAs } from 'file-saver';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-list-and-registers',
@@ -13,17 +15,59 @@ import { saveAs } from 'file-saver';
   styleUrls: ['./list-and-registers.component.scss']
 })
 export class ListAndRegistersComponent {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private toastr: ToastrService,private router: Router) {}
   startDate: any;
   endDate: any;
-  onchangeValue: string = "All";
+  onchangeValue: string = "";
+  selectMonth: any;
+  onMonthChange: string = "";
+  financialYear: string = "";
+  startYear : string = "";
+  endYear : string = "";
   ngOnInit(): void {
+    // const currentDate = new Date();
+    // this.startDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1));
+    // this.endDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0));
+    // $("#startDate").val(this.startDate);
+    // $("#endDate").val(this.endDate);
+    // Additional initialization logic can be added here
+
+    this.financialYear = sessionStorage.getItem('financialYear');
+    let [startYear, endYear] = this.financialYear.split("-");
+
+    this.startYear = startYear;
+    this.endYear = endYear;
+
     const currentDate = new Date();
-    this.startDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1));
-    this.endDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0));
+    //this.startDate = this.formatDate(new Date(Number(this.startYear), 3, 1));
+    //this.endDate = this.formatDate(new Date(Number(this.endYear), 2, 31));
+
+    this.startDate = this.formatDate(new Date(Number(this.startYear), currentDate.getMonth(), 1));
+    this.endDate = this.formatDate(new Date(Number(this.startYear), currentDate.getMonth() + 1, 0));
+
     $("#startDate").val(this.startDate);
     $("#endDate").val(this.endDate);
-    // Additional initialization logic can be added here
+
+  }
+
+  onStartDateChange(event: any) {
+    const startDateValue = event.target.value;
+    const [year, month, day] = startDateValue.split('-');
+    this.startDate = this.formatDate(new Date(Number(year), month, day));
+
+//    updating start select month
+      //this.startYear = year;
+
+  }
+
+  onEndChange(event: any) {
+    const endDateValue = event.target.value;
+    const [year, month, day] = endDateValue.split('-');
+    this.endDate = this.formatDate(new Date(Number(year), month, day));
+
+//    updating end select month
+      //this.endYear = year;
+
   }
 
   private formatDate(date: Date): string {
@@ -82,34 +126,71 @@ export class ListAndRegistersComponent {
 
 setParameterALL() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport("ListAndRegisters" + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99");
+  this.openNewTab("ListAndRegisters" + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99");
+  //this.viewer.bindingSender.OpenReport("ListAndRegisters" + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99");
 }
-
 
 setParameterVP() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4");
+  this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4");
+  //this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4");
 }
 setParameterVS() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13");
+  this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13");
+  //this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13");
 }
 setParameterVPR() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14");
+  this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14");
+  //this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14");
 }
 setParameterVSR() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6");
+  this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6");
+  //this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6");
 }
 setParameterVCN() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9");
+  this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9");
+  //this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9");
 }
 setParameterVDN() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15");
+  this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15");
+  //this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15");
 }
+
+// setParameterALL() {
+//   let globalCompanyId = sessionStorage.getItem('companyID');
+//   this.viewer.bindingSender.OpenReport("ListAndRegisters" + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99");
+// }
+
+
+// setParameterVP() {
+//   let globalCompanyId = sessionStorage.getItem('companyID');
+//   this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4");
+// }
+// setParameterVS() {
+//   let globalCompanyId = sessionStorage.getItem('companyID');
+//   this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13");
+// }
+// setParameterVPR() {
+//   let globalCompanyId = sessionStorage.getItem('companyID');
+//   this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14");
+// }
+// setParameterVSR() {
+//   let globalCompanyId = sessionStorage.getItem('companyID');
+//   this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6");
+// }
+// setParameterVCN() {
+//   let globalCompanyId = sessionStorage.getItem('companyID');
+//   this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9");
+// }
+// setParameterVDN() {
+//   let globalCompanyId = sessionStorage.getItem('companyID');
+//   this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15");
+// }
 
 export(format : string) {
 
@@ -127,7 +208,38 @@ onChange(event: any){
   this.onchangeValue = event.target.value;
 }
 
+onMonthChangeListener(event: any){
+  const currentDate = new Date();
+  this.onMonthChange = event.target.value;
+
+  let year = Number(this.startYear);
+
+  if(Number(this.onMonthChange) > 3 && Number(this.onMonthChange) < 13) {
+
+  } else {
+    year++;
+  }
+
+  if(this.onMonthChange.length > 0) {
+    this.startDate = this.formatDate(new Date(year, (Number(this.onMonthChange) -1 ), 1));
+    this.endDate = this.formatDate(new Date(year, Number(this.onMonthChange), 0));
+  } else {
+    this.startDate = this.formatDate(new Date(year, currentDate.getMonth(), 1));
+    this.endDate = this.formatDate(new Date(year, currentDate.getMonth() + 1, 0));
+  }
+}
+
+
 generateRepo() {
+
+  if (typeof this.startDate === 'undefined') {
+    this.toastr.error("Start Date is not selected");
+    return;
+  } else if(typeof this.endDate === 'undefined') {
+    this.toastr.error("End Date is not selected");
+    return;
+  }
+
   switch (this.onchangeValue)
   {
       case "All":
@@ -151,7 +263,17 @@ generateRepo() {
       case "DebitNote":
           this.setParameterVDN();
           break;
+      case "" :
+          this.toastr.error("Report type is not selected");
+          break;
   }
+}
+
+openNewTab(data:any) {
+  sessionStorage.setItem('query', data)
+
+  const url = this.router.createUrlTree(['/'], { fragment: 'ReportView' }).toString();
+  window.open(url, '_blank');
 }
 
 }

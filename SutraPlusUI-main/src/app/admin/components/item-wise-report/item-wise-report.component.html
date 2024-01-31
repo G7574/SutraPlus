@@ -124,14 +124,14 @@
 
               <!-- Export PDF Button -->
               <div class="col-md-1">
-                <button type="submit" class="btn btn-dark" (click)="export('pdf')" style="font-size: 11px; width: 100%;">
+                <button type="submit" class="btn btn-dark" (click)="export('pdf')" style="font-size: 11px; width: 100%;visibility: collapse;">
                   Export PDF
                 </button>
               </div>
 
               <!-- Export Excel Button -->
               <div class="col-md-2">
-                <button type="submit" class="btn btn-dark" (click)="export('xlsx')" style="font-size: 11px; width: 50%;">
+                <button type="submit" class="btn btn-dark" (click)="export('xlsx')" style="font-size: 11px; width: 50%;visibility: collapse;">
                   Export Excel
                 </button>
               </div>
@@ -216,7 +216,7 @@
             </form> -->
             <!--  -->
 
-<dx-report-viewer [reportUrl]="reportName" height="800px" cssClass="myViewer">
+<dx-report-viewer [reportUrl]="reportName" height="800px" cssClass="myViewer" style="visibility: collapse;">
   <dxrv-request-options [invokeAction]="invokeAction" [host]="host"></dxrv-request-options>
 
   <dxrv-tabpanel-settings position="Left"></dxrv-tabpanel-settings>

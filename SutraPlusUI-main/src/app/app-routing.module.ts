@@ -9,6 +9,7 @@ import { RegisterComponent } from './views/pages/register/register.component';
 import { LoginComponent } from './super-admin/components/login/login.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { ForgotPasswordComponent } from './super-admin/components/forgot-password/forgot-password.component';
+import { ItemWiseReportViewComponent } from './admin/components/item-wise-report-view/item-wise-report-view.component';
 
 const routes: Routes = [
   // {
@@ -97,7 +98,7 @@ const routes: Routes = [
         path: 'user',
         loadChildren: () => import('./user/user.module').then(m => m.UserModule)
       },
-      { 
+      {
         path: 'super-admin',
         loadChildren: () => import('./super-admin/super-admin.module').then(m => m.SuperAdminModule) },
       {
@@ -145,12 +146,16 @@ const routes: Routes = [
     path: 'forgot-password',
     component: ForgotPasswordComponent,
   },
+  {
+    path: 'ReportView',
+    component: ItemWiseReportViewComponent,
+  },
   { path: 'profile', loadChildren: () => import('./share/profile/profile.module').then(m => m.ProfileModule) },
   // { path: 'super-admin', loadChildren: () => import('./super-admin/super-admin.module').then(m => m.SuperAdminModule) },
-  
+
   {path: '**', redirectTo: 'dashboard'},
 
- 
+
 ];
 
 @NgModule({
