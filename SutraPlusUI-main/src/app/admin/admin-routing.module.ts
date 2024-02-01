@@ -49,6 +49,7 @@ import { PrintPartyReportComponent } from './components/print-party-report/print
 import { PaymentListComponent } from './components/payment-list/payment-list.component';
 import { TDSReportComponent } from './components/tdsreport/tdsreport.component';
 import { ItemWiseReportViewComponent } from './components/item-wise-report-view/item-wise-report-view.component';
+import { CommonReportGeneratorComponent } from './components/common-report-generator/common-report-generator.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent },
@@ -82,6 +83,7 @@ const routes: Routes = [
   //{ path: 'add-export-invoice', component: AddExportInvoiceComponent },
   { path: 'reports', component: ReportsMainComponent },
   { path: 'ItemWise', component: ItemWiseReportComponent },
+  { path: 'ReportGenerator', component: CommonReportGeneratorComponent  },
   { path: 'ItemWiseReportView', component: ItemWiseReportViewComponent },
   { path: 'PartyWiseCaseReport', component: PartyWiseCaseReportComponent },
   { path: 'PartyWiseCommHamali', component: PartyWiseCommHamaliComponent },

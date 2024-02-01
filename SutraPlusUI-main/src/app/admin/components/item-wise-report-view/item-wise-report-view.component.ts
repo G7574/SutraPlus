@@ -1,6 +1,9 @@
-import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
+import { fetchSetup } from '@devexpress/analytics-core/analytics-utils';
 import { DxReportViewerComponent } from 'devexpress-reporting-angular';
 import { ActionId } from 'devexpress-reporting/dx-webdocumentviewer';
 import { environment } from 'src/environments/environment';
@@ -20,8 +23,9 @@ export class ItemWiseReportViewComponent {
     // return `2022-04-01`;
   }
 
-  constructor(private route: ActivatedRoute,private router: Router) {
+  constructor(private http: HttpClient,private sanitizer: DomSanitizer,private route: ActivatedRoute,private router: Router) {
     this.reportName = sessionStorage.getItem('query');
+    this.headerContent = sessionStorage.getItem('headerContent');
     this.handleReportQuery();
   }
 
@@ -29,6 +33,7 @@ export class ItemWiseReportViewComponent {
   endDate: any;
   globalCompanyId: any;
   query: any;
+  headerContent: string = "";
 
    title = 'DXReportDesignerSample';
   // If you use the ASP.NET Core backend:
@@ -48,12 +53,12 @@ export class ItemWiseReportViewComponent {
 
   ngOnInit(): void {
     this.reportName = sessionStorage.getItem('query');
-
+    this.headerContent = sessionStorage.getItem('headerContent');
     this.handleReportQuery();
-
   }
 
   handleReportQuery() {
+
     if(sessionStorage.getItem('query') != null) {
       this.query = sessionStorage.getItem('query');
     } else {
@@ -61,6 +66,32 @@ export class ItemWiseReportViewComponent {
         this.reportName = this.query;
       }
     }
+
+  }
+
+  @ViewChild('printFrame', { static: true })
+  printFrame!: ElementRef;
+
+
+  printReport() {
+
+    var frameElement = window.open(environment.Reportingapi + "DXXRD/Export?format=pdf", "_blank");
+
+    // frameElement?.addEventListener("load", function (e) {
+    //     if (frameElement && frameElement.document.contentType !== "text/html"){
+    //       frameElement.print();
+    //     }
+    // });
+
+    // if (frameElement) {
+    //     frameElement.print();
+    // } else {
+    //     console.error("Failed to open new window");
+    // }
+
+  }
+      
+  onReportOpened(event: any) { ;
   }
 
   CustomizeMenuActions(event: any) {

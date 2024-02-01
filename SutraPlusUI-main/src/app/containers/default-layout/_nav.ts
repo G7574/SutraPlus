@@ -238,26 +238,31 @@ export const navItems: INavData[] = [
       //   linkProps: { queryParams: { ReportName: 'TrialBalance' } },
       // },
       {
-        name: 'Item Wise',
-        url: 'admin/ItemWise',
-        linkProps: { queryParams: { ReportName: 'Item Wise' } },
+        name: 'ReportGenerator',
+        url: 'admin/ReportGenerator',
+        linkProps: { queryParams: { ReportName: 'ReportGenerator' } },
       },
+      // {  
+      //   name: 'Item Wise',
+      //   url: 'admin/ItemWise',
+      //   linkProps: { queryParams: { ReportName: 'Item Wise' } },
+      // },
 
-      {
-        name: 'List and Registers',
-                url: 'admin/ListAndRegisters',
-        linkProps: { queryParams: { ReportName: 'ListAndRegisters Report' } },
-      },
-      {
-        name: 'Party Wise Cess',
-        url: 'admin/PartyWiseCaseReport',
-        linkProps: { queryParams: { ReportName: 'Party Wise Case Report' } },
-      },
-      {
-        name: 'Party Wise Commission Hamali',
-        url: 'admin/PartyWiseCommHamali',
-        linkProps: { queryParams: { ReportName: 'Party Wise Comm Hamali Report' } },
-      },
+      // {
+      //   name: 'List and Registers',
+      //           url: 'admin/ListAndRegisters',
+      //   linkProps: { queryParams: { ReportName: 'ListAndRegisters Report' } },
+      // },
+      // {
+      //   name: 'Party Wise Cess',
+      //   url: 'admin/PartyWiseCaseReport',
+      //   linkProps: { queryParams: { ReportName: 'Party Wise Case Report' } },
+      // },
+      // {
+      //   name: 'Party Wise Commission Hamali',
+      //   url: 'admin/PartyWiseCommHamali',
+      //   linkProps: { queryParams: { ReportName: 'Party Wise Comm Hamali Report' } },
+      // },
       {
         name: 'Print Party Report',
         url: 'admin/PrintPartyReport',

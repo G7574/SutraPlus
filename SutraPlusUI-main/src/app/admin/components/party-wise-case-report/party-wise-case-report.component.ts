@@ -8,6 +8,8 @@ import { fetchSetup } from '@devexpress/analytics-core/analytics-utils';
 import * as $ from 'jquery';
 import { HttpClient } from '@angular/common/http';
 import { saveAs } from 'file-saver';
+import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-party-wise-case-report',
@@ -15,14 +17,25 @@ import { saveAs } from 'file-saver';
   styleUrls: ['./party-wise-case-report.component.scss']
 })
 export class PartyWiseCaseReportComponent {
-  constructor(private http: HttpClient) {}
+  constructor(private toastr: ToastrService,private router: Router,private http: HttpClient,) {}
   startDate: any;
   endDate: any;
-  onchangeValue: string = "All";
+  onchangeValue: string = "";
+  onMonthChange: string = "";
+  financialYear: string = "";
+  startYear : string = "";
+  endYear : string = "";
   ngOnInit(): void {
     const currentDate = new Date();
-    this.startDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1));
-    this.endDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0));
+    // this.startDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1));
+    // this.endDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0));
+
+    this.financialYear = sessionStorage.getItem('financialYear');
+    let [startYear, endYear] = this.financialYear.split("-");
+
+    this.startYear = startYear;
+    this.endYear = endYear;
+
     $("#startDate").val(this.startDate);
     $("#endDate").val(this.endDate);
     // Additional initialization logic can be added here
@@ -34,6 +47,26 @@ export class PartyWiseCaseReportComponent {
     const day = ('0' + date.getDate()).slice(-2);
     return `${year}-${month}-${day}`;
     // return `2022-04-01`;
+  }
+
+  onStartDateChange(event: any) {
+    const startDateValue = event.target.value;
+    const [year, month, day] = startDateValue.split('-');
+    this.startDate = this.formatDate(new Date(Number(year), month, day));
+
+//    updating start select month
+      //this.startYear = year;
+
+  }
+
+  onEndChange(event: any) {
+    const endDateValue = event.target.value;
+    const [year, month, day] = endDateValue.split('-');
+    this.endDate = this.formatDate(new Date(Number(year), month, day));
+
+//    updating end select month
+      //this.endYear = year;
+
   }
 
   title = 'DXReportDesignerSample';
@@ -128,7 +161,39 @@ onChange(event: any){
   this.onchangeValue = event.target.value;
 }
 
+onMonthChangeListener(event: any){
+  const currentDate = new Date();
+  this.onMonthChange = event.target.value;
+
+  let year = Number(this.startYear);
+
+  if(Number(this.onMonthChange) > 3 && Number(this.onMonthChange) < 13) {
+
+  } else {
+    year++;
+  }
+
+  if(this.onMonthChange.length > 0) {
+    this.startDate = this.formatDate(new Date(year, (Number(this.onMonthChange) -1 ), 1));
+    this.endDate = this.formatDate(new Date(year, Number(this.onMonthChange), 0));
+  } else {
+    this.startDate = this.formatDate(new Date(year, currentDate.getMonth(), 1));
+    this.endDate = this.formatDate(new Date(year, currentDate.getMonth() + 1, 0));
+  }
+}
+
 generateRepo() {
+
+  if (typeof this.startDate === 'undefined') {
+    this.toastr.error("Start Date is not selected");
+    return;
+  } else if(typeof this.endDate === 'undefined') {
+    this.toastr.error("End Date is not selected");
+    return;
+  }
+
+  console.log(this.onchangeValue);
+
   switch (this.onchangeValue)
   {
       case "All":
@@ -152,7 +217,17 @@ generateRepo() {
       case "DebitNote":
           this.setParameterVDN();
           break;
+          case "" :
+        this.toastr.error("Report type is not selected");
+        break
   }
+}
+
+openNewTab(data:any) {
+  sessionStorage.setItem('query', data)
+
+  const url = this.router.createUrlTree(['/'], { fragment: 'ReportView' }).toString();
+  window.open(url, '_blank');
 }
 
 }

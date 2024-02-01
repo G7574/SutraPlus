@@ -75,6 +75,7 @@ import { PaymentListComponent } from './components/payment-list/payment-list.com
 import { DxDataGridModule } from 'devextreme-angular';
 import { TDSReportComponent } from './components/tdsreport/tdsreport.component';
 import { ItemWiseReportViewComponent } from './components/item-wise-report-view/item-wise-report-view.component';
+import { CommonReportGeneratorComponent } from './components/common-report-generator/common-report-generator.component';
 
 @NgModule({
   declarations: [
@@ -111,6 +112,7 @@ import { ItemWiseReportViewComponent } from './components/item-wise-report-view/
     CreateDcComponent,
     ImportEInvoiceComponent,
     ItemWiseReportComponent,
+    CommonReportGeneratorComponent,
     ItemWiseReportViewComponent,
     MonthWiseReportComponent,
     PartyWiseCaseReportComponent,
@@ -120,6 +122,7 @@ import { ItemWiseReportViewComponent } from './components/item-wise-report-view/
     PaymentListComponent,
     TDSReportComponent,
     ItemWiseReportViewComponent,
+    CommonReportGeneratorComponent,
   ],
   imports: [
     CommonModule,

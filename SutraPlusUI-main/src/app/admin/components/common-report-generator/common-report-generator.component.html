@@ -1,0 +1,181 @@
+<form class="row justify-content-center mb-4">
+
+  <!-- Search Month -->
+  <div class="col-md-2">
+    <div style="display: flex; align-items: center;">
+      <label for="selectMonth" style="margin-right: 10px">Select Month:</label>
+      <select class="form-control" id="exampleSelect" (change)="onMonthChangeListener($event)" style="width: 180%;">
+        <option value="">Select Month</option>
+        <option value="4">April</option>
+        <option value="5">May</option>
+        <option value="6">June</option>
+        <option value="7">July</option>
+        <option value="8">August</option>
+        <option value="9">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
+        <option value="1">January</option>
+        <option value="2">February</option>
+        <option value="3">March</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- From Date -->
+  <div class="col-md-2">
+    <div style="display: flex; align-items: center;">
+      <label for="startDate" style="margin-right: 10px">From:</label>
+      <input type="date" id="startDate" name="startDate" class="form-control" [value]="startDate" (change)="onStartDateChange($event)" />
+    </div>
+  </div>
+
+  <!-- To Date -->
+  <div class="col-md-2">
+    <div style="display: flex; align-items: center;">
+      <label for="endDate" style="margin-right: 10px">To:</label>
+      <input type="date" id="endDate" name="endDate" class="form-control" [value]="endDate" (change)="onEndChange($event)" />
+    </div>
+  </div>
+
+</form>
+
+<!-- item-wise -->
+<div class="card text-center">
+  <div class="card-header">
+    <h3>Print Registers</h3>
+  </div>
+  <div class="card-body">
+    <div class="col-md-3" style="display: flex; justify-content: center;">
+        <div style="display: flex; align-items: center;">
+            <label style="margin-right: 10px"> Select Party : </label>
+            <input type="text" class="form-control" />
+        </div>
+    </div> <br/>
+
+    <div class="row justify-content-center mb-4">
+      <div class="col-md-1">
+        <button type="submit" class="btn btn-dark" (click)="initReportGen('Purchase','item-wise')" style="font-size: 11px; width: 100%;">
+          Purchase
+        </button>
+      </div>
+
+      <div class="col-md-1">
+        <button type="submit" class="btn btn-dark" (click)="initReportGen('Sales','item-wise')" style="font-size: 11px; width: 100%;">
+          Sales
+        </button>
+      </div>
+
+      <div class="col-md-3">
+        <button type="submit" class="btn btn-dark" (click)="initReportGen('PurchaseReturn','item-wise')" style="font-size: 11px; width: 100%;">
+          Purchase Return
+        </button>
+      </div>
+
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-dark" (click)="initReportGen('SalesReturn','item-wise')" style="font-size: 11px; width: 100%;">
+          Sales Return
+        </button>
+      </div>
+
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-dark" (click)="initReportGen('CreditNote','item-wise')" style="font-size: 11px; width: 100%;">
+          Credit Note
+        </button>
+      </div>
+
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-dark" (click)="initReportGen('DebitNote','item-wise')" style="font-size: 11px; width: 100%;">
+          Debit Note
+        </button>
+      </div>
+
+    </div>
+
+</div>
+</div>
+
+<br/>
+
+<!-- list-register-wise -->
+<div class="card text-center">
+  <div class="card-header">
+    <h3>List and Registers</h3>
+  </div>
+  <div class="card-body">
+    <div class="col-md-3" style="display: flex; justify-content: center;">
+        <div style="display: flex; align-items: center;">
+            <label style="margin-right: 10px"> Select Party : </label>
+            <input type="text" class="form-control" />
+        </div>
+    </div> <br/>
+
+    <div class="row justify-content-center mb-4">
+      <div class="col-md-1">
+        <button type="submit" class="btn btn-dark" (click)="initReportGen('Purchase','list-register-wise')" style="font-size: 11px; width: 100%;">
+          Purchase
+        </button>
+      </div>
+
+      <div class="col-md-1">
+        <button type="submit" class="btn btn-dark" (click)="initReportGen('Sales','list-register-wise')" style="font-size: 11px; width: 100%;">
+          Sales
+        </button>
+      </div>
+
+      <div class="col-md-3">
+        <button type="submit" class="btn btn-dark" (click)="initReportGen('PurchaseReturn','list-register-wise')" style="font-size: 11px; width: 100%;">
+          Purchase Return
+        </button>
+      </div>
+
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-dark" (click)="initReportGen('SalesReturn','list-register-wise')" style="font-size: 11px; width: 100%;">
+          Sales Return
+        </button>
+      </div>
+
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-dark" (click)="initReportGen('CreditNote','list-register-wise')" style="font-size: 11px; width: 100%;">
+          Credit Note
+        </button>
+      </div>
+
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-dark" (click)="initReportGen('DebitNote','list-register-wise')" style="font-size: 11px; width: 100%;">
+          Debit Note
+        </button>
+      </div>
+
+    </div>
+
+</div>
+</div>
+
+<br/>
+
+<!-- party-wise -->
+<div class="card text-center">
+  <div class="card-header">
+    <h3>Party Wise Reports</h3>
+  </div>
+  <div class="card-body">
+
+    <div class="row justify-content-center mb-4">
+
+      <div class="col-md-3">
+        <button type="submit" class="btn btn-dark" (click)="initReportGen('All','party-wise-hamali')" style="font-size: 11px; width: 100%;">
+          Commission and Hamali
+        </button>
+      </div>
+
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-dark" (click)="initReportGen('All','party-wise')" style="font-size: 11px; width: 100%;">
+          Cess Report
+        </button>
+      </div>
+
+    </div>
+
+</div>
+</div>
