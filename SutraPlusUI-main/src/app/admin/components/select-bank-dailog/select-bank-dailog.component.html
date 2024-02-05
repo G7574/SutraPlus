@@ -1,0 +1,163 @@
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h2 class="form-header">Select Bank</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <form>
+        <div class="form-group row">
+          <label for="selectBank" class="col-md-2 col-form-label">Bank</label>
+          <div class="col-md-4">
+            <select class="form-control" id="exampleSelect" (change)="onBankChange($event)">
+              <option value=""> Select Bank </option>
+              <option *ngFor="let bank of banks" [value]="bank">{{ bank }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="RTGS" class="col-md-2 col-form-label">Ac for Bulk RTGS</label>
+          <div class="col-md-4">
+            <input type="number" class="form-control" id="RTGS" (change)="onRTGSValueChange($event)" placeholder="RTGS">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="startDate" class="col-md-2 col-form-label">Cheque Date:</label>
+          <div class="col-md-4">
+            <input type="date" id="startDate" name="startDate" class="form-control"  [value]="defaultDate"(change)="onChequeDateChange($event)">
+          </div>
+
+          <label for="selectBank2" class="col-md-2 col-form-label">Select:</label>
+          <div class="col-md-4">
+            <select class="form-control" id="exampleSelect" (change)="onSelectChange($event)">
+              <option value=""> Select </option>
+              <option value="SBI"> SBI </option>
+              <option value="UNION"> UNION </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-md-4" style="margin-left: 17%;">
+            <button type="submit" class="btn btn-dark" style="font-size: 11px; width: 100%;">
+              Save Bulk Payment
+            </button>
+          </div>
+
+
+          <div class="col-md-2" style="margin-left: 17%;">
+            <button type="submit" class="btn btn-dark" style="font-size: 11px; width: 100%;">
+              Print RTGs List
+            </button>
+          </div>
+
+        </div>
+
+        <div class="form-group row">
+          <label for="selectBank2" class="col-md-2 col-form-label">Bank Short Code:</label>
+          <div class="col-md-4">
+            <select class="form-control" id="exampleSelect" (change)="onSelectCodeChange($event)">
+              <option value=""> Select Code </option>
+              <option value="SBI"> SBI </option>
+              <option value="UNION"> UNION </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-md-4" style="margin-left: 17%;">
+            <button type="submit" class="btn btn-dark" (click)="savePayment()" style="font-size: 11px; width: 100%;">
+              Save Payment
+            </button>
+        </div>
+
+        <div class="col-md-4" style="margin-left: 17%;">
+          <button type="submit" class="btn btn-dark" style="font-size: 11px; width: 100%;">
+            Cheque List
+          </button>
+        </div>
+
+        <div class="form-group row" style="width: 100%;">
+          <div class="col-md-16" style="margin-left: 17%;">
+            <div class="row">
+              <div class="col-md-4">
+                <button type="submit" class="btn btn-dark" style="font-size: 11px; width: 100%;">
+                  Print on Web
+                </button>
+              </div>
+              <div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" id="printAccountPayeeCheckbox">
+                  <label class="form-check-label" for="printAccountPayeeCheckbox">Print Account Payee</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4" style="margin-left: 17%;">
+          <button type="submit" class="btn btn-dark" style="font-size: 11px; width: 100%;">
+            Print on Web
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<style>
+  select.form-control {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px; /* Adjust as needed */
+    border-radius: 4px; /* Rounded corners */
+    margin-bottom: 10px; /* Added margin */
+  }
+
+  /* Hover style for the select dropdown */
+  select.form-control:hover {
+    background-color: #f2f2f2;
+  }
+
+  /* Added margin for form group row */
+  .form-group.row {
+    margin-bottom: 20px; /* Adjust as needed */
+  }
+
+  /* Added margin for buttons */
+  .btn {
+    margin-bottom: 10px; /* Adjust as needed */
+  }
+/*
+  .container {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .form-header {
+    background-color: lightblue;
+    padding: 10px;
+  } */
+
+  .container {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+.form-header {
+  background-color: lightblue;
+  padding: 10px;
+}
+
+</style>

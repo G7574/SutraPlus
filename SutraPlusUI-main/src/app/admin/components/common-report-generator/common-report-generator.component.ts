@@ -11,7 +11,12 @@ import { end } from 'pdfkit';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { DataService } from 'src/app/core/services/data.service';
-import { ca } from 'date-fns/locale';
+import { ca, da } from 'date-fns/locale';
+import { party } from 'src/app/share/models/party';
+import { AdminServicesService } from '../../services/admin-services.service';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { isNil } from 'lodash-es';
+import { Ledger } from '../sales/models/ladger.model';
 
 @Component({
   selector: 'app-common-report-generator',
@@ -33,6 +38,148 @@ export class CommonReportGeneratorComponent implements OnInit {
 
   reportName : string = "";
   reportType : string = "";
+  partySelected: boolean = false;
+  partyList: party[] = [];
+  public editVisible = false;
+  ledgerId!: number;
+  globalCompanyId!: number;
+  invType: any;
+  companySelected: boolean = false;
+  isEinVoice: boolean = false;
+
+  partySelected1: boolean = false;
+  partyList1: party[] = [];
+  public editVisible1 = false;
+  ledgerId1!: number;
+  groupId: number = -1;
+  globalCompanyId1!: number;
+  invType1: any;
+  companySelected1: boolean = false;
+  isEinVoice1: boolean = false;
+
+  groups: any[] = [];
+
+  onGroupChange(event : any) {
+    if(event.target.value) {
+      this.groupId = event.target.value;
+    } else {
+      this.groupId = -1;
+    }
+
+  }
+
+  getGroups() {
+
+    this.adminService.getAccountGroup(0).subscribe({
+      next: (res: any) => {
+        this.groups = res.GetAccountGroups;
+      },
+      error: (error: any) => {
+        console.error('Error fetching banks:', error);
+      }
+    });
+
+  }
+
+  getPartyList(text: string) {
+
+    if (text.length >= 1) {
+      let partyDetails = {
+        LedgerData: {
+          CompanyId: this.globalCompanyId,
+          LedgerType: 'Sales Ledger',
+          Country: '',
+        },
+        SearchText: text,
+        Page: {
+          Page: '1',
+          PageSize: '10',
+        },
+      };
+      this.adminService.getLedgerList(partyDetails).subscribe({
+        next: (res: any) => {
+          for (let data of res.records) {
+            data.ledgerName = `${data.ledgerName} - ${data.place}`;
+
+
+          }
+
+        this.partyList = res.records;
+
+          this.partyList = res.records;
+
+        },
+        error: (error: any) => {
+          this.spinner.hide();
+          this.toastr.error('Something went wrong');
+        },
+      });
+    } else {
+      this.partyList = [];
+    }
+  }
+
+  getPartyList1(text: string) {
+    if (text.length >= 1) {
+      let partyDetails1 = {
+        LedgerData: {
+          CompanyId: this.globalCompanyId,
+          LedgerType: 'Sales Ledger',
+          Country: '',
+        },
+        SearchText: text,
+        Page: {
+          Page: '1',
+          PageSize: '10',
+        },
+      };
+      this.adminService.getLedgerList(partyDetails1).subscribe({
+        next: (res: any) => {
+          for (let data of res.records) {
+            data.ledgerName = `${data.ledgerName} - ${data.place}`;
+
+
+          }
+
+        this.partyList1 = res.records;
+
+          this.partyList1 = res.records;
+
+        },
+        error: (error: any) => {
+          this.spinner.hide();
+          this.toastr.error('Something went wrong');
+        },
+      });
+    } else {
+      this.partyList1 = [];
+    }
+  }
+
+
+  onSelectParty(event : any) {
+    if(event) {
+      this.ledgerId = event.ledgerId;
+    } else {
+      this.ledgerId = -1;
+    }
+  }
+
+  onSelectParty1(event : any) {
+    if(event) {
+      this.ledgerId1 = event.ledgerId;
+    } else {
+      this.ledgerId1 = -1;
+    }
+  }
+
+  onClickTest($event: any, item: any) {
+
+  }
+
+  onClickTest1($event: any, item: any) {
+
+  }
 
   ngOnInit(): void {
 
@@ -52,9 +199,27 @@ export class CommonReportGeneratorComponent implements OnInit {
     $("#startDate").val(this.startDate);
     $("#endDate").val(this.endDate);
 
+    this.validateEinvoiceEnabled(this.globalCompanyId);
+
+    this.getGroups();
+
     // Additional initialization logic can be added here
   }
 
+  validateEinvoiceEnabled(companyId: Number): void {
+    this.adminService.getSingleCompany(companyId).subscribe({
+      next: (res: any) => {
+        // console.log(res.CompanyList);
+        if (res) {
+          this.companySelected = true;
+          this.isEinVoice = !isNil(res.CompanyList) ? true : false;
+        }
+      },
+      error: (error: any) => {
+        this.toastr.error('Something went wrong');
+      },
+    });
+  }
 
   onStartDateChange(event: any) {
     const startDateValue = event.target.value;
@@ -87,14 +252,18 @@ export class CommonReportGeneratorComponent implements OnInit {
   constructor(
     private toastr: ToastrService,
     private router: Router,
-  ) { }
+    private spinner: NgxSpinnerService,
+    private adminService: AdminServicesService,
+  ) {
+    this.globalCompanyId = Number(sessionStorage.getItem('companyID'));
+  }
 
   yearSelection!: FormGroup
   currentYear!: number
 
 export(format : string) {
 
-  fetch("https://localhost:54688/DXXRD/Export?format=" + format)
+  fetch(environment.Reportingapi + "/DXXRD/Export?format=" + format)
   .then(response => response.blob())
   .then(data => {
       console.log(data);
@@ -104,10 +273,10 @@ export(format : string) {
 
 }
 
-initReportGen(event: string, report: string){
+initReportGen(event: string, report: string,bol : boolean){
   this.onchangeValue = event;
   this.selectedReport = report;
-  this.generateRepo();
+  this.generateRepo(bol);
 }
 
 onMonthChangeListener(event: any){
@@ -131,10 +300,16 @@ onMonthChangeListener(event: any){
   }
 }
 
-generateRepo() {
+generatePPPR(){
+  this.reportName = "Print Party Report"
+  if(this.groupId > 0) {
+    this.openNewTab("PrintPartyReport" + "&StartDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1)) + "&EndDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth()+ 1, 0)) + "&companyidrecord=" + sessionStorage.getItem('companyID') + "&vochtype1=0&vochtype1=99" + "&accountinggroupId=" + this.groupId);
+  } else {
+    this.openNewTab("PrintPartyReport" + "&StartDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1)) + "&EndDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth()+ 1, 0)) + "&companyidrecord=" + sessionStorage.getItem('companyID') + "&vochtype1=0&vochtype1=99");
+  }
+}
 
-  console.log(this.startDate);
-  console.log(this.endDate);
+generateRepo(selected : boolean) {
 
   if (typeof this.startDate === 'undefined' || this.startDate === 'NaN-aN-aN') {
     this.toastr.error("Start Date is not selected");
@@ -170,7 +345,71 @@ generateRepo() {
 
   }
 
-  switch (this.onchangeValue)
+  console.log( "selected -> " + selected);
+  console.log( "ledgerId -> " + this.ledgerId);
+  console.log( "ledgerId1 -> " + this.ledgerId1);
+
+  if(selected) {
+    switch (this.onchangeValue)
+    {
+        case "All":
+            this.reportType = "";
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99");
+            break;
+        case "Purchase":
+            this.reportType = "Purchase";
+            if(this.ledgerId != null && this.ledgerId > 0) {
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4" + "&ledgerId=" + this.ledgerId);
+            } else {
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4");
+            }
+            break;
+        case "Sales":
+            this.reportType = "Sales";
+            if(this.ledgerId != null && this.ledgerId > 0) {
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13" + "&ledgerId=" + this.ledgerId);
+            } else {
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13");
+            }
+            break;
+        case "PurchaseReturn":
+            this.reportType = "Purchare Return";
+            if(this.ledgerId != null && this.ledgerId > 0) {
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14" + "&ledgerId=" + this.ledgerId);
+            } else {
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14");
+            }
+            break;
+        case "SalesReturn":
+            this.reportType = "Sales Return";
+            if(this.ledgerId != null && this.ledgerId > 0) {
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6" + "&ledgerId=" + this.ledgerId);
+            } else {
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6");
+            }
+            break;
+        case "CreditNote":
+            this.reportType = "Credit Note";
+            if(this.ledgerId != null && this.ledgerId > 0) {
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9" + "&ledgerId=" + this.ledgerId);
+            } else {
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9");
+            }
+            break;
+        case "DebitNote":
+            this.reportType = "Debit Note";
+            if(this.ledgerId != null && this.ledgerId > 0) {
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15" + "&ledgerId=" + this.ledgerId);
+            } else {
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15");
+            }
+            break;
+        case "" :
+          this.toastr.error("Report type is not selected");
+          break
+    }
+  } else {
+    switch (this.onchangeValue)
   {
       case "All":
           this.reportType = "";
@@ -178,36 +417,63 @@ generateRepo() {
           break;
       case "Purchase":
           this.reportType = "Purchase";
-          this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4");
+          if(this.ledgerId1 != null && this.ledgerId1 > 0) {
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4" + "&ledgerId=" + this.ledgerId1);
+          } else {
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4");
+          }
           break;
       case "Sales":
           this.reportType = "Sales";
-          this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13");
+          if(this.ledgerId1 != null && this.ledgerId1 > 0) {
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13" + "&ledgerId=" + this.ledgerId1);
+          } else {
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13");
+          }
           break;
       case "PurchaseReturn":
           this.reportType = "Purchare Return";
-          this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14");
+          if(this.ledgerId1 != null && this.ledgerId1 > 0) {
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14" + "&ledgerId=" + this.ledgerId1);
+          } else {
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14");
+          }
           break;
       case "SalesReturn":
           this.reportType = "Sales Return";
-          this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6");
+          if(this.ledgerId1 != null && this.ledgerId1 > 0) {
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6" + "&ledgerId=" + this.ledgerId1);
+          } else {
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6");
+          }
           break;
       case "CreditNote":
           this.reportType = "Credit Note";
-          this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9");
+          if(this.ledgerId1 != null && this.ledgerId1 > 0) {
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9" + "&ledgerId=" + this.ledgerId1);
+          } else {
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9");
+          }
           break;
       case "DebitNote":
           this.reportType = "Debit Note";
-          this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15");
+          if(this.ledgerId1 != null && this.ledgerId1 > 0) {
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15" + "&ledgerId=" + this.ledgerId1);
+          } else {
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15");
+          }
           break;
       case "" :
         this.toastr.error("Report type is not selected");
         break
   }
+  }
+
+
 }
 
 openNewTab(data:any) {
-
+  console.log( "query -> " + data);
   sessionStorage.setItem('query', data);
   sessionStorage.setItem('headerContent', this.reportName + " " + this.reportType + " Report for the period " + this.startDate + " to " + this.endDate);
 

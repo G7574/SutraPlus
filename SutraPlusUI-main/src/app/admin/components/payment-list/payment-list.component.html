@@ -1,69 +1,56 @@
 <c-row>
   <div class="container-fluid">
-  <form class="row justify-content-center align-items-center mb-4">
-
-    <!-- <div class="col-md-2">
+    <form class="row justify-content-center align-items-center mb-4">
+      <!-- <div class="col-md-2">
         <div style="display: flex; ">
             <label for="startDate" style="margin-right: 10px">From:</label>
             <input type="date" id="startDate" name="startDate" class="form-control" [value]="startDate" />
         </div>
     </div> -->
 
-    <div class="col-md-2">
-        <div style="display: flex; align-items: center">
-            <label for="endDate" style="margin-right: 10px">Up&nbsp;To:</label>
+      <div class="col-md-2"></div>
+
+      <div class="container">
+        <div class="row">
+          <div class="col-md-2">
+            <label for="endDate">Up To:</label>
             <input type="date" id="endDate" name="endDate" class="form-control" cFormControl type="date" [ngModel]="endDate" (ngModelChange)="onDate($event)" />
-        </div>
-    </div>
-
-    <div class="col-md-10">
-      <div class="row">
-
-          <div class="col-md-3" style="padding-top: 4px; display: flex; align-items: center;">
-              <label for="searchText" style="margin-right: 10px;">Search Text:</label>
-              <input [ngClass]="{ 'is-invalid': errorMsg }" class="search-input" name="searchText" #Place (keyup)="onPlace(Place.value)" cFormControl type="text" placeholder="Enter text">
-              <span *ngIf="errorMsg" class="is-invalid">Enter at least 3 characters</span>
           </div>
 
-          <div class="col-md-3" style="padding-top: 4px; display: flex; align-items: center;">
-              <label for="balance" style="margin-right: 10px;">Search Balance:</label>
-              <input class="search-input" cFormControl type="number" #Balance (keyup)="onBalance(Balance.value)" name="balance" placeholder="Enter balance">
+          <div class="col-md-3">
+            <label for="searchText">Search Text:</label>
+            <input [ngClass]="{ 'is-invalid': errorMsg }" class="form-control" name="searchText" #Place (keyup)="onPlace(Place.value)" cFormControl type="text" placeholder="Enter text" />
+            <div *ngIf="errorMsg" class="invalid-feedback">Enter at least 3 characters</div>
           </div>
 
-          <div class="col-md-2" style="padding-top: 4px;">
-              <button type="submit" class="btn btn-dark" style="font-size: 11px; width: 100%" (click)="fireQuery()">
-                  Submit
+          <div class="col-md-3">
+            <label for="balance">Search Balance:</label>
+            <input class="form-control" cFormControl type="number" #Balance (keyup)="onBalance(Balance.value)" name="balance" placeholder="Enter balance" />
+          </div>
+
+          <div class="col-md-4" style="padding-top: 4px">
+            <label class="invisible">Actions</label>
+            <div class="btn-group d-flex" role="group">
+              <button type="submit" class="btn btn-dark flex-fill" style="font-size: 11px;" (click)="fireQuery()">
+                Submit
               </button>
+              <button type="submit" class="btn btn-dark flex-fill" style="font-size: 11px;" (click)="exportAsPdf('pdf')">
+                Export as Pdf
+              </button>
+              <button type="submit" class="btn btn-dark flex-fill" style="font-size: 11px;" (click)="exportToExcel()">
+                Export as Excel
+              </button>
+              <button type="submit" class="btn btn-dark flex-fill" style="font-size: 11px;" (click)="selectBank()">
+                Select Bank
+              </button>
+            </div>
           </div>
-
-          <!-- <div class="col-md-2" style="padding-top: 4px;">
-            <button type="submit" class="btn btn-dark" style="font-size: 11px; width: 100%" (click)="generateRepo()">
-                Generate Report
-            </button>
-        </div> -->
-
-        <div class="col-md-2" style="padding-top: 4px;">
-          <button type="submit" class="btn btn-dark" style="font-size: 11px; width: 100%" (click)="exportAsPdf('pdf')">
-              Export as Pdf
-          </button>
+        </div>
       </div>
 
-      <div class="col-md-2" style="padding-top: 4px;">
-        <button type="submit" class="btn btn-dark" style="font-size: 11px; width: 100%" (click)="exportToExcel()">
-          Export as Excel
-        </button>
-    </div>
-
-      </div>
+    </form>
   </div>
-
-
-
-  </form>
-
-</div>
   <div class="dev-express" *ngIf="!isTableViewVisible">
-
     <!-- <dx-report-viewer [reportUrl]="reportName" height="800px" cssClass="myViewer">
       <dxrv-request-options [invokeAction]="invokeAction" [host]="host"></dxrv-request-options>
 
@@ -75,7 +62,7 @@
       </dxrv-callbacks>
       </dx-report-viewer> -->
 
-      <!-- <div class="table-view" *ngIf="!isTableViewVisible">
+    <!-- <div class="table-view" *ngIf="!isTableViewVisible">
         <c-col md="12">
             <c-card class="my-3">
                 <c-card-header>
@@ -112,7 +99,7 @@
         </c-col>
     </div> -->
 
-      <!-- <dx-data-grid
+    <!-- <dx-data-grid
           [dataSource]="invoiceList"
           [columnAutoWidth]="true"
           [showBorders]="true">
@@ -120,68 +107,142 @@
           <dxi-column dataField="AsOnDateBalance" caption="Yadi Balance"></dxi-column>
           <dxi-column dataField="TotalBalance" caption="Amount"></dxi-column>
     </dx-data-grid> -->
-
   </div>
   <!-- *ngIf="isTableViewVisible" -->
-  <div class="table-view" >
-  <c-col md="12">
+  <div class="table-view">
+    <c-col md="12">
       <c-card class="my-3">
-         <c-card-header>
-          <h4 class="mb-0"> Payment List <span
-            class="badge badge-primary">{{totalInvoice}}</span>
-    </h4>
+        <c-card-header>
+          <h4 class="mb-0">
+            Payment List
+            <span class="badge badge-primary">{{ totalInvoice }}</span>
+          </h4>
         </c-card-header>
 
         <c-card-body class="p-3">
           <div class="table-responsive">
-              <table [striped]="true" [responsive]="true" cTable>
-                  <thead>
-                      <tr>
-                          <th scope="col" class="text-center">Sr.&nbsp;No.</th>
-                          <th scope="col">Party&nbsp;Name</th>
-                          <th scope="col" style="text-align: right;">Yadi Balance</th>
-                          <th scope="col" style="text-align: right;">Amount</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      <tr *ngFor="let item of invoiceList; let i = index;">
-                          <td class="text-center">{{10 *(pageNumber-1)+i+1}}</td>
-                          <td>{{item.LedgerName || '-'}} - {{item.Place || '-'}}</td>
-                          <td style="text-align: right;">{{item.AsOnDateBalance || '-'}}</td>
-                          <td style="text-align: right;">{{item.TotalBalance ||
-                              '-'}}</td>
-                      </tr>
-                  </tbody>
-              </table>
+            <table [striped]="true" [responsive]="true" cTable>
+              <thead>
+                <tr>
+                  <th scope="col" class="text-center">Sr.&nbsp;No.</th>
+                  <th scope="col">Party&nbsp;Name</th>
+                  <th scope="col" style="text-align: right">Yadi Balance</th>
+                  <th scope="col" style="text-align: right">Amount</th>
+                  <th scope="col" style="text-align: right">Pay Amount</th>
+                  <th scope="col" style="text-align: right">Cheque No</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of invoiceList; let i = index">
+                  <td class="text-center">
+                    {{ 10 * (pageNumber - 1) + i + 1 }}
+                  </td>
+                  <td>
+                    {{ item.LedgerName || "-" }} - {{ item.Place || "-" }}
+                  </td>
+                  <td style="text-align: right">
+                    {{ item.AsOnDateBalance | currency : "INR" || "-" }}
+                  </td>
+                  <td style="text-align: right">
+                    {{ item.TotalBalance | currency : "INR" || "-" }}
+                  </td>
+
+                  <td style="text-align: right">
+                    <div class="col-md-3" style="
+                        padding-top: 4px;
+                        display: flex;
+                        align-items: center;
+                        width: 100%;
+                      ">
+                      <input class="search-input" name="payAmount" [(ngModel)]="item.payAmount"
+                        (ngModelChange)="onPayAmount($event, i)" cFormControl type="number"
+                        placeholder="Enter amount" />
+                    </div>
+                  </td>
+
+                  <td style="text-align: right">
+                    <div class="col-md-3" style="
+                        padding-top: 4px;
+                        display: flex;
+                        align-items: center;
+                        width: 100%;
+                      ">
+                      <input class="search-input" name="chequeNo" [(ngModel)]="item.chequeNo"
+                        (ngModelChange)="onChequeNumber($event, i)" cFormControl type="number"
+                        placeholder="Enter number" />
+                    </div>
+                  </td>
+
+                  <!-- <td style="text-align: right;">
+
+                            <div class="col-md-3" style="padding-top: 4px; display: flex; align-items: center;width: 100%;">
+                              <input class="search-input" name="payAmount" #payAmount (keyup)="onPayAmount(payAmount.value,i)" cFormControl type="number" placeholder="Enter amount">
+                          </div>
+
+                          </td>
+
+                          <td style="text-align: right;">
+
+                            <div class="col-md-3" style="padding-top: 4px; display: flex; align-items: center;width: 100%;">
+                              <input class="search-input" name="chequeNo" #chequeNo (keyup)="onChequeNumber(item.chequeNo)" cFormControl type="number" placeholder="Enter number">
+                          </div>
+
+                          </td> -->
+                </tr>
+              </tbody>
+            </table>
           </div>
 
-          <div class="text-center text-dark" *ngIf="invoiceList.length===0">
-              No Records Found
+          <div class="text-center text-dark" *ngIf="invoiceList.length === 0">
+            No Records Found
           </div>
 
           <div class="d-flex justify-content-end align-items-center" *ngIf="invoiceList">
-              <ul class="pagination">
-                  <li [ngClass]="[pages[0]===1&&commonService.gettotalPages(totalInvoice)>5 ? 'disabled' : '']"
-                      (click)="pageNumber>1 ? previous() : '' " class="page-item"><a
-                          [ngClass]="[pageNumber===1 ? 'disabled' : '' , pages[0]===1&&commonService.gettotalPages(totalInvoice)>5 ? 'disabled' : '']"
-                          class="page-link">Previous</a></li>
-                  <li (click)="changePage(data)" *ngFor="let data of pages" class="page-item">
-                      <a [ngClass]="[pageNumber===data ? 'active-page' : '']"
-                          class="page-link">{{data}}</a>
-                  </li>
-                  <li [ngClass]="[pageNumber===commonService.gettotalPages(totalInvoice) ? 'disabled' : '', commonService.gettotalPages(totalInvoice)===pages[commonService.getLastIndex(pages)] ? 'disabled' : '']"
-                      (click)="pageNumber<commonService.gettotalPages(totalInvoice) ? next() : '';"
-                      class="page-item"><a
-                          [ngClass]="[pageNumber===commonService.gettotalPages(totalInvoice) ? 'disabled' : '', commonService.gettotalPages(totalInvoice)===pages[commonService.getLastIndex(pages)] ? 'disabled' : '']"
-                          class="page-link">Next</a></li>
-              </ul>
+            <ul class="pagination">
+              <li [ngClass]="[
+                  pages[0] === 1 &&
+                  commonService.gettotalPages(totalInvoice) > 5
+                    ? 'disabled'
+                    : ''
+                ]" (click)="pageNumber > 1 ? previous() : ''" class="page-item">
+                <a [ngClass]="[
+                    pageNumber === 1 ? 'disabled' : '',
+                    pages[0] === 1 &&
+                    commonService.gettotalPages(totalInvoice) > 5
+                      ? 'disabled'
+                      : ''
+                  ]" class="page-link">Previous</a>
+              </li>
+              <li (click)="changePage(data)" *ngFor="let data of pages" class="page-item">
+                <a [ngClass]="[pageNumber === data ? 'active-page' : '']" class="page-link">{{ data }}</a>
+              </li>
+              <li [ngClass]="[
+                  pageNumber === commonService.gettotalPages(totalInvoice)
+                    ? 'disabled'
+                    : '',
+                  commonService.gettotalPages(totalInvoice) ===
+                  pages[commonService.getLastIndex(pages)]
+                    ? 'disabled'
+                    : ''
+                ]" (click)="
+                  pageNumber < commonService.gettotalPages(totalInvoice)
+                    ? next()
+                    : ''
+                " class="page-item">
+                <aAsOnDateBalance [ngClass]="[
+                    pageNumber === commonService.gettotalPages(totalInvoice)
+                      ? 'disabled'
+                      : '',
+                    commonService.gettotalPages(totalInvoice) ===
+                    pages[commonService.getLastIndex(pages)]
+                      ? 'disabled'
+                      : ''
+                  ]" class="page-link">Next</aAsOnDateBalance>
+              </li>
+            </ul>
           </div>
         </c-card-body>
-
       </c-card>
     </c-col>
   </div>
-
-
 </c-row>
-

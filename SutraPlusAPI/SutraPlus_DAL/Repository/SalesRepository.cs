@@ -181,6 +181,138 @@ namespace SutraPlus_DAL.Repository
             }
         }
 
+        public JObject GetBanks(int CompanyId)
+        { 
+            JObject result = new JObject();
+            List<string> bankNames = new List<string>();
+
+           
+                var distinctLedgerNames = _tenantDBContext.Ledgers
+                    .Where(l => l.AccountingGroupId < 4 && l.CompanyId == CompanyId)
+                    .Select(l => l.LedgerName)
+                    .Distinct()
+                    .ToList();
+
+                // Convert the list of bank names to a JArray
+                JArray bankNamesArray = new JArray(distinctLedgerNames);
+
+                // Add the bank names array to the result JObject
+                result["bankNames"] = bankNamesArray;
+            
+            return result;
+        }
+
+        public JObject GetAccountGroups(int temp)
+        {
+            var response = new JObject();
+            try
+            {
+                var result = _tenantDBContext.AccounitngGroups
+                    .Select(l => new { l.AccontingGroupId, l.GroupName })
+                    .Distinct()
+                    .ToList();
+
+                if (result != null)
+                { 
+                    var jsonArray = new JArray();
+                    foreach (var item in result)
+                    {
+                        var jsonObj = new JObject();
+                        jsonObj.Add("AccountId", item.AccontingGroupId);
+                        jsonObj.Add("GroupName", item.GroupName);
+                        jsonArray.Add(jsonObj);
+                    }
+                    response.Add("GetAccountGroups", jsonArray);
+                    return response;
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                throw ex;
+            }
+        }
+         
+        public List<Voucher> SavePayemnts(JObject Data) {
+             
+            dynamic paymentData = JsonConvert.DeserializeObject<dynamic>(Data?["paymentData"]?.ToString());
+            string bankName = paymentData?["bankName"];
+            string RTGS = paymentData?["RTGS"];
+            DateTime chequeDate = paymentData?["Date"];
+            string select = paymentData?["select"];
+            string bankCode = paymentData?["bankCode"];
+            string companyId = paymentData?["CompanyId"];
+            var invoiceList = paymentData?["invoiceList"];
+             
+            var maxVoucherNo = _tenantDBContext.Vouchers
+            .Where(v => v.VoucherId == 23 && v.CompanyId == int.Parse(companyId))
+            .Select(v => v.VoucherNo)
+            .Max();
+
+            var ledgerVal2 = (_tenantDBContext.Ledgers.
+              Where(l => l.LedgerName == bankName && l.CompanyId == int.Parse(companyId)).Select(l => l.LedgerId)).FirstOrDefault();
+
+            List<Voucher> voucherlist = new List<Voucher>();
+
+            foreach (var invoice in invoiceList) {
+
+                string name = invoice["LedgerName"];
+
+                var PartyLedgerID = (_tenantDBContext.Ledgers.
+                     Where(l => l.LedgerName == name && l.CompanyId == int.Parse(companyId)).Select(l => l.LedgerId)).FirstOrDefault();
+
+                string s1 = invoice["payAmount"];
+                string s2 = invoice["chequeNo"];
+
+                long payAmount = long.Parse(s1);
+                long chequeNo = long.Parse(s2);
+
+                Voucher voucherlst1 = new Voucher
+                {
+                    CommodityId = 0,
+                    TranctDate = chequeDate,
+                    VoucherId = 23,
+                    VoucherNo = maxVoucherNo,
+                    Narration = "Payment Against Purchase - " + chequeNo,
+                    LedgerId = ledgerVal2,
+                    CompanyId = int.Parse(companyId),
+                    Credit = payAmount,
+                    Debit = 0,
+                    IsActive = true,
+                    PartyInvoiceNumber = chequeNo.ToString(),
+                    LedgerNameForNarration = "Cheque Payment",
+                    CreatedBy = 1
+                };
+
+
+                Voucher voucherlst2 = new Voucher
+                {
+                    CommodityId = 0,
+                    TranctDate = chequeDate,
+                    VoucherId = 23,
+                    VoucherNo = maxVoucherNo,
+                    Narration = "Payment Agiannst Purchase-" + chequeNo,
+                    LedgerId = PartyLedgerID,
+                    CompanyId = int.Parse(companyId),
+                    Credit = 0,
+                    Debit = payAmount,
+                    IsActive = true,
+                    PartyInvoiceNumber = chequeNo.ToString(),
+                    LedgerNameForNarration = bankName,
+                    CreatedBy = 1
+                };
+
+                voucherlist.Add(voucherlst1);
+                voucherlist.Add(voucherlst2);
+
+            }
+
+            _tenantDBContext.Vouchers.AddRange(voucherlist);
+            _tenantDBContext.SaveChanges();
+
+            return voucherlist;
+        }
 
 
         public InvoiceDetails GetInvoiceResponse(string InvoiceNumber, int CompnayId, string TYP = "Single")
@@ -3271,7 +3403,7 @@ namespace SutraPlus_DAL.Repository
 
                     if (balance != null && balance > -1)
                     {
-                        ledgerInfoList = ledgerInfoList.Where(n => n.TotalBalance > balance).ToList();
+                        ledgerInfoList = ledgerInfoList.Where(n => n.AsOnDateBalance > balance).ToList();
                     }
 
                     if (!string.IsNullOrEmpty(Date))

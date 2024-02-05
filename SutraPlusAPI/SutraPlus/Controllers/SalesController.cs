@@ -382,5 +382,53 @@ namespace SutraPlus.Controllers
             }
         }
 
+        [HttpPost("GetBanks")]
+        [AllowAnonymous]
+        public IActionResult GetBanks([FromBody] int companyId)
+        {
+            try
+            {
+                var result = _salesService.GetBanks(companyId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("GetAccountGroups")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetAccountGroups(int temp)
+        {
+            try
+            {
+                var result = _salesService.GetAccountGroups(temp);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("SavePayemnts")]
+        [AllowAnonymous]
+        public IActionResult SavePayemnts([FromBody] JObject Data)
+        {
+            try
+            {
+                var result = _salesService.SavePayemnts(Data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

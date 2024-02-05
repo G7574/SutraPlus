@@ -1,4 +1,7 @@
 ﻿
+using PassParameterExample.Services;
+using System;
+
 namespace SutraPlusReportApi.PredefinedReports
 {
 
@@ -67,6 +70,7 @@ namespace SutraPlusReportApi.PredefinedReports
             DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo20 = new DevExpress.DataAccess.Sql.ColumnInfo();
             DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo21 = new DevExpress.DataAccess.Sql.ColumnInfo();
             DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo22 = new DevExpress.DataAccess.Sql.ColumnInfo();
+            DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo51 = new DevExpress.DataAccess.Sql.ColumnInfo();
             DevExpress.DataAccess.Sql.TableInfo TableInfo4 = new DevExpress.DataAccess.Sql.TableInfo();
             DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo23 = new DevExpress.DataAccess.Sql.ColumnInfo();
             DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo24 = new DevExpress.DataAccess.Sql.ColumnInfo();
@@ -230,12 +234,27 @@ namespace SutraPlusReportApi.PredefinedReports
             this.XrTableCell5.StylePriority.UseTextAlignment = false;
             this.XrTableCell5.TextAlignment = DevExpress.XtraPrinting.TextAlignment.TopRight;
             this.XrTableCell5.Weight = 0.68708282520869957D;
-           
+
             //this.Report.FilterString = "(GetDate([TranctDate]) Between(?StartDate,?EndDate) or GetDate([TranctDate]) = ?StartDate or GetDate([TranctDate]) = ?EndDate)";
             //this.Report.FilterString = "CompanyId=?companyidrecord";
 
             //this.Report.FilterString = "(GetDate([TranctDate]) Between(?StartDate,?EndDate) or GetDate([TranctDate]) = ?StartDate or GetDate([TranctDate]) = ?EndDate)";
-            this.Report.FilterString = "(GetDate([TranctDate]) Between(?StartDate,?EndDate) or GetDate([TranctDate]) = ?StartDate or GetDate([TranctDate]) = ?EndDate) and (VochType Between(?vochtype1,?vochtype2) or (VochType = ?vochtype1) or (VochType = ?vochtype2) ) and CompanyId=?companyidrecord";
+          
+            
+            //this.Report.FilterString = "(GetDate([TranctDate]) Between(?StartDate,?EndDate) or GetDate([TranctDate]) = ?StartDate or GetDate([TranctDate]) = ?EndDate) and (VochType Between(?vochtype1,?vochtype2) or (VochType = ?vochtype1) or (VochType = ?vochtype2) ) and CompanyId=?companyidrecord and (LedgerId=?ledgerId)";
+
+
+
+            if (CustomReportStorageWebExtension.doWeHaveLedgerId)
+            {
+                this.Report.FilterString = "(GetDate([TranctDate]) Between(?StartDate,?EndDate) or GetDate([TranctDate]) = ?StartDate or GetDate([TranctDate]) = ?EndDate) and (VochType Between(?vochtype1,?vochtype2) or (VochType = ?vochtype1) or (VochType = ?vochtype2) ) and CompanyId=?companyidrecord and (LedgerId=?ledgerId)";
+            }
+            else
+            {
+                this.Report.FilterString = "(GetDate([TranctDate]) Between(?StartDate,?EndDate) or GetDate([TranctDate]) = ?StartDate or GetDate([TranctDate]) = ?EndDate) and (VochType Between(?vochtype1,?vochtype2) or (VochType = ?vochtype1) or (VochType = ?vochtype2) ) and CompanyId=?companyidrecord";
+            }
+             
+
             //
             //hidezeroweight
             //
@@ -465,7 +484,8 @@ namespace SutraPlusReportApi.PredefinedReports
             ColumnInfo21.Name = "Place";
             ColumnInfo22.Alias = "Ledger_GSTIN";
             ColumnInfo22.Name = "GSTIN";
-            TableInfo3.SelectedColumns.AddRange(new DevExpress.DataAccess.Sql.ColumnInfo[] { ColumnInfo20, ColumnInfo21, ColumnInfo22 });
+            ColumnInfo51.Name = "LedgerId";
+            TableInfo3.SelectedColumns.AddRange(new DevExpress.DataAccess.Sql.ColumnInfo[] { ColumnInfo20, ColumnInfo21, ColumnInfo22, ColumnInfo51 });
             TableInfo4.Name = "VoucherTypes";
             ColumnInfo23.Name = "VoucherId";
             ColumnInfo24.Name = "VoucherName";
@@ -497,7 +517,7 @@ namespace SutraPlusReportApi.PredefinedReports
             this.lblHeader.Padding = new DevExpress.XtraPrinting.PaddingInfo(2, 2, 0, 0, 100.0F);
             this.lblHeader.SizeF = new System.Drawing.SizeF(856.6251F, 23.0F);
             this.lblHeader.StylePriority.UseTextAlignment = false;
-            this.lblHeader.Text = "lblHeader";
+            this.lblHeader.Text = "List and Register Report";
             this.lblHeader.TextAlignment = DevExpress.XtraPrinting.TextAlignment.TopCenter;
             //
             //XrLabel4

@@ -20,6 +20,8 @@ import { ca } from 'date-fns/locale';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { Ledger } from '../sales/models/ladger.model';
 import * as XLSX from 'xlsx';
+import { constant } from 'lodash-es';
+import { SelectBankDailogComponent } from '../select-bank-dailog/select-bank-dailog.component';
 
 
 @Component({
@@ -46,6 +48,8 @@ export class PaymentListComponent implements OnInit {
   endDate: any;
   balance: any;
   data$: Observable<any>;
+  payAmount : Number;
+  chequeNo : Number;
 
   @ViewChild('invoiceDialog') invoiceDialog!: TemplateRef<any>;
 
@@ -90,6 +94,73 @@ export class PaymentListComponent implements OnInit {
     const day = ('0' + date.getDate()).slice(-2);
     return `${year}-${month}-${day}`;
     // return `2022-04-01`;
+  }
+
+  onPayAmount(amount:string, index : number) {
+    this.payAmount = Number(amount);
+    this.invoiceList[index].PayAmount = amount;
+
+   //if(this.invoiceList[index].chequeNo != "undefined") {
+     this.onChequeNumber(this.invoiceList[index].chequeNo, index);
+    //}
+
+  }
+
+  onChequeNumber(chequeNumber:number, index : number) : Number {
+
+
+    let enteredChequeNumber;
+
+    if(String(chequeNumber).length > 4 && this.invoiceList[index].payAmount != "undefined" && this.invoiceList[index].payAmount > 0) {
+      this.chequeNo = chequeNumber;
+
+      for(var i = 0 ; i < this.invoiceList.length; i++){
+        if(this.invoiceList[i].chequeNo != null) {
+          if(this.invoiceList[i].chequeNo > 0) {
+            enteredChequeNumber = this.invoiceList[i].chequeNo;
+            break;
+          }
+        }
+      }
+
+      for(var i = 0 ; i < this.invoiceList.length; i++){
+        if(this.invoiceList[i].PayAmount != null) {
+          if(this.invoiceList[i].PayAmount > 0 && enteredChequeNumber != null && enteredChequeNumber != "undefined") {
+            this.invoiceList[i].chequeNo = enteredChequeNumber;
+            enteredChequeNumber = enteredChequeNumber + 1;
+          }
+        }
+      }
+
+      return Number(chequeNumber) + 1;
+    } else {
+      console.log("index -> " + index);
+      this.onChequeNumber(this.invoiceList[index].chequeNo, index);
+      return 0;
+    }
+  }
+
+  storeList() {
+    let sending: any[] = [];
+
+    for (let i = 0; i < this.invoiceList.length; i++) {
+      if (this.invoiceList[i].PayAmount > 0) {
+        sending.push(this.invoiceList[i]);
+      }
+    }
+
+    const sendingString = JSON.stringify(sending);
+
+    sessionStorage.setItem('invoiceList', sendingString);
+  }
+
+
+  selectBank() {
+    this.storeList();
+    this.dialog.open(SelectBankDailogComponent, {
+      width: '800px',
+      disableClose: false,
+    });
   }
 
   onPlace(text: string) {

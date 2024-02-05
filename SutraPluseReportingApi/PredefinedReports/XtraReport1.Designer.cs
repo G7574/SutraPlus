@@ -1,5 +1,7 @@
-﻿using DevExpress.XtraReports.Expressions;
+﻿using DevExpress.XtraReports;
+using DevExpress.XtraReports.Expressions;
 using DevExpress.XtraReports.Parameters;
+using PassParameterExample.Services;
 using System;
 using System.Linq;
 
@@ -82,6 +84,7 @@ namespace SutraPlusReportApi.PredefinedReports
             DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo25 = new DevExpress.DataAccess.Sql.ColumnInfo();
             DevExpress.DataAccess.Sql.TableInfo TableInfo5 = new DevExpress.DataAccess.Sql.TableInfo();
             DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo26 = new DevExpress.DataAccess.Sql.ColumnInfo();
+            DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo51 = new DevExpress.DataAccess.Sql.ColumnInfo();
             DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo27 = new DevExpress.DataAccess.Sql.ColumnInfo();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(XtraReport1));
             DevExpress.XtraReports.UI.XRSummary XrSummary7 = new DevExpress.XtraReports.UI.XRSummary();
@@ -200,9 +203,26 @@ namespace SutraPlusReportApi.PredefinedReports
             // Specify the start date and end date parameters.
 
 
-            //dateRangeSettings.StartParameter.Name = "StartDate";            //dateRangeSettings.StartParameter.Value = new System.DateTime(2022, 4, 1).ToString();            //dateRangeSettings.EndParameter.Name = "EndDate";            //dateRangeSettings.EndParameter.Value = new System.DateTime(2022, 5, 1).ToString();            this.Report.FilterString = "(GetDate([TranctDate]) Between(?StartDate,?EndDate) or GetDate([TranctDate]) = ?StartDate or GetDate([TranctDate]) = ?EndDate) and (VochType Between(?vochtype1,?vochtype2) or (VochType = ?vochtype1) or (VochType = ?vochtype2) ) and CompanyId=?companyidrecord";
-            //this.Report.FilterString = "Query";
+            //dateRangeSettings.StartParameter.Name = "StartDate";
+            //dateRangeSettings.StartParameter.Value = new System.DateTime(2022, 4, 1).ToString();
 
+
+            //dateRangeSettings.EndParameter.Name = "EndDate";
+            //dateRangeSettings.EndParameter.Value = new System.DateTime(2022, 5, 1).ToString();
+
+            Console.WriteLine("_____________________" + CustomReportStorageWebExtension.doWeHaveLedgerId + "____________________"); 
+
+            if(CustomReportStorageWebExtension.doWeHaveLedgerId)
+            {
+                this.Report.FilterString = "(GetDate([TranctDate]) Between(?StartDate,?EndDate) or GetDate([TranctDate]) = ?StartDate or GetDate([TranctDate]) = ?EndDate) and (VochType Between(?vochtype1,?vochtype2) or (VochType = ?vochtype1) or (VochType = ?vochtype2) ) and CompanyId=?companyidrecord and LedgerId=?ledgerId";
+            }
+            else
+            {
+                this.Report.FilterString = "(GetDate([TranctDate]) Between(?StartDate,?EndDate) or GetDate([TranctDate]) = ?StartDate or GetDate([TranctDate]) = ?EndDate) and (VochType Between(?vochtype1,?vochtype2) or (VochType = ?vochtype1) or (VochType = ?vochtype2) ) and CompanyId=?companyidrecord";
+            }
+
+                
+            //this.Report.FilterString = "Query"; 
 
             //
             //Detail
@@ -406,7 +426,8 @@ namespace SutraPlusReportApi.PredefinedReports
             ColumnInfo24.Name = "Place";
             ColumnInfo25.Alias = "Ledger_GSTIN";
             ColumnInfo25.Name = "GSTIN";
-            TableInfo4.SelectedColumns.AddRange(new DevExpress.DataAccess.Sql.ColumnInfo[] { ColumnInfo23, ColumnInfo24, ColumnInfo25 });
+            ColumnInfo51.Name = "LedgerId";
+            TableInfo4.SelectedColumns.AddRange(new DevExpress.DataAccess.Sql.ColumnInfo[] { ColumnInfo23, ColumnInfo24, ColumnInfo25, ColumnInfo51 });
             TableInfo5.Name = "VoucherTypes";
             ColumnInfo26.Name = "VoucherId";
             ColumnInfo27.Name = "VoucherName";
@@ -430,7 +451,7 @@ namespace SutraPlusReportApi.PredefinedReports
             this.lblHeader.SizeF = new System.Drawing.SizeF(902.6667F, 15.0F);
             this.lblHeader.StylePriority.UseFont = false;
             this.lblHeader.StylePriority.UseTextAlignment = false;
-            this.lblHeader.Text = "lblHeader";
+            this.lblHeader.Text = "Print Register Purchase Report";
             this.lblHeader.TextAlignment = DevExpress.XtraPrinting.TextAlignment.TopCenter;
             //
             //XrLabel5

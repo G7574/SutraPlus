@@ -1,5 +1,6 @@
 ﻿
 using DevExpress.XtraReports.Parameters;
+using PassParameterExample.Services;
 
 namespace SutraPlusReportApi.PredefinedReports
 {
@@ -47,6 +48,7 @@ namespace SutraPlusReportApi.PredefinedReports
             DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo13 = new DevExpress.DataAccess.Sql.ColumnInfo();
             DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo14 = new DevExpress.DataAccess.Sql.ColumnInfo();
             DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo15 = new DevExpress.DataAccess.Sql.ColumnInfo();
+            DevExpress.DataAccess.Sql.ColumnInfo ColumnInfo51 = new DevExpress.DataAccess.Sql.ColumnInfo();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PrintPartyReport));
             DevExpress.XtraReports.UI.XRSummary XrSummary1 = new DevExpress.XtraReports.UI.XRSummary();
             this.Detail = new DevExpress.XtraReports.UI.DetailBand();
@@ -96,8 +98,14 @@ namespace SutraPlusReportApi.PredefinedReports
             dateRangeParam.Type = typeof(System.DateTime);
             var dateRangeSettings = new RangeParametersSettings();
 
-
-            this.Report.FilterString = "CompanyId=?companyidrecord";
+            if (CustomReportStorageWebExtension.doWeHaveLedgerId)
+            {
+                this.Report.FilterString = "CompanyId=?companyidrecord and AccountingGroupId=?accountinggroupId";
+            }
+            else
+            {
+                this.Report.FilterString = "CompanyId=?companyidrecord";
+            }
 
             //this.Report.FilterString = "(GetDate([TranctDate]) Between(?StartDate,?EndDate) or GetDate([TranctDate]) = ?StartDate or GetDate([TranctDate]) = ?EndDate) and (VochType Between(?vochtype1,?vochtype2) or (VochType = ?vochtype1) or (VochType = ?vochtype2) ) and CompanyId=?companyidrecord";
             //
@@ -163,8 +171,9 @@ namespace SutraPlusReportApi.PredefinedReports
             ColumnInfo13.Name = "PIN";
             ColumnInfo14.Name = "PAN";
             ColumnInfo15.Name = "CompanyId";
+            ColumnInfo51.Name = "AccountingGroupId";
 
-            TableInfo2.SelectedColumns.AddRange(new DevExpress.DataAccess.Sql.ColumnInfo[] { ColumnInfo5, ColumnInfo6, ColumnInfo7, ColumnInfo8, ColumnInfo9, ColumnInfo10, ColumnInfo11, ColumnInfo12, ColumnInfo13, ColumnInfo14 , ColumnInfo15 });
+            TableInfo2.SelectedColumns.AddRange(new DevExpress.DataAccess.Sql.ColumnInfo[] { ColumnInfo5, ColumnInfo6, ColumnInfo7, ColumnInfo8, ColumnInfo9, ColumnInfo10, ColumnInfo11, ColumnInfo12, ColumnInfo13, ColumnInfo14 , ColumnInfo15, ColumnInfo51 });
             TableQuery1.Tables.AddRange(new DevExpress.DataAccess.Sql.TableInfo[] { TableInfo1, TableInfo2 });
             this.SqlDataSource1.Queries.AddRange(new DevExpress.DataAccess.Sql.SqlQuery[] { TableQuery1 });
             this.SqlDataSource1.ResultSchemaSerializable = resources.GetString("SqlDataSource1.ResultSchemaSerializable");

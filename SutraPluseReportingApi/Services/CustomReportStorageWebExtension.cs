@@ -27,6 +27,7 @@ namespace PassParameterExample.Services
         readonly string ReportDirectory;
         const string FileExtension = ".resx";
         public static XtraReport report = new XtraReport();
+        public static bool doWeHaveLedgerId = false;
 
         public CustomReportStorageWebExtension(IWebHostEnvironment env)
         {
@@ -47,6 +48,8 @@ namespace PassParameterExample.Services
 
         public override byte[] GetData(string url)
         {
+            CustomReportStorageWebExtension.doWeHaveLedgerId = false;
+
             try
             {
                 string[] parts = url.Split("&");
@@ -74,7 +77,14 @@ namespace PassParameterExample.Services
                 if (parts.Length > 5)
                     if (parts[5].Split("=")[1] != "")
                         vochtype2 = parts.Length > 5 ? Convert.ToInt32(parts[5].Split("=")[1]) : 0;
-                 
+
+                int ledgerId= 0;
+                if (parts.Length > 6)
+                {
+                    CustomReportStorageWebExtension.doWeHaveLedgerId = true;
+                    if (parts[6].Split("=")[1] != "")
+                        ledgerId = parts.Length > 6 ? Convert.ToInt32(parts[6].Split("=")[1]) : 0;
+                }
 
                 using var ms = new MemoryStream();
                 XtraReport report = new XtraReport();
@@ -108,6 +118,23 @@ namespace PassParameterExample.Services
                     {
                         report.Parameters["companyidrecord"].Value = companyid;
                     }
+                    
+                    if (report.Parameters["accountinggroupId"] == null)
+                    {
+                        var dateParameter = new Parameter()
+                        {
+                            Name = "accountinggroupId",
+                            Description = "accountinggroupId",
+                            Value = ledgerId,
+                        };
+                        report.Parameters.Add(dateParameter);
+                    }
+                    else
+                    {
+                        report.Parameters["accountinggroupId"].Value = ledgerId;
+                    }
+                     
+
                 }
                 else
                 {
@@ -185,6 +212,27 @@ namespace PassParameterExample.Services
                     {
                         report.Parameters["vochtype2"].Value = vochtype2;
                     }
+
+                   
+                    if (parts.Length > 6)
+                    {
+                
+                        if (report.Parameters["ledgerId"] == null)
+                        {
+                            var dateParameter = new Parameter()
+                            {
+                                Name = "ledgerId",
+                                Description = "ledgerId",
+                                Value = ledgerId,
+                            };
+                            report.Parameters.Add(dateParameter);
+                        }
+                        else
+                        {
+                            report.Parameters["ledgerId"].Value = ledgerId;
+                        }
+                    }
+
                 }
                 //string Querystring = "";
                 //if (StartDate != new DateTime() && EndDate != new DateTime())
@@ -223,9 +271,11 @@ namespace PassParameterExample.Services
 
                 report.RequestParameters = false;
                 report.CreateDocument();
-                 
+                  
                 report.SaveLayoutToXml(ms);
                 CustomReportStorageWebExtension.report = report;
+
+                CustomReportStorageWebExtension.doWeHaveLedgerId = false;
 
                 return ms.ToArray();
 

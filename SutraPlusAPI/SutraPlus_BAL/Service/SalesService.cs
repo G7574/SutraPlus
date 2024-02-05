@@ -327,6 +327,18 @@ namespace SutraPlus_BAL.Service
         }
 
 
+        public List<Voucher> SavePayemnts(JObject Data)
+        {
+            try
+            {
+                 return _salesRepository.SavePayemnts(Data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                throw ex;
+            }
+        }
 
         public bool GetInvoiceResponse(JObject Data)
         {
@@ -353,6 +365,33 @@ namespace SutraPlus_BAL.Service
 
                 return true;
 
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                throw ex;
+            }
+        }
+
+        public JObject GetBanks(int companyId)
+        {
+            try
+            {    
+                return _salesRepository.GetBanks(companyId);
+                 
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                throw ex;
+            }
+        }
+        public JObject GetAccountGroups(int temp)
+        {
+            try
+            {    
+                return _salesRepository.GetAccountGroups(temp);
+                 
             }
             catch (Exception ex)
             {

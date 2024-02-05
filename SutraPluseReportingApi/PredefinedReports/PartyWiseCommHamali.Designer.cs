@@ -303,7 +303,7 @@ namespace SutraPlusReportApi.PredefinedReports
             this.lblHeader.Padding = new DevExpress.XtraPrinting.PaddingInfo(2, 2, 0, 0, 100.0F);
             this.lblHeader.SizeF = new System.Drawing.SizeF(554.6251F, 15.0F);
             this.lblHeader.StylePriority.UseTextAlignment = false;
-            this.lblHeader.Text = "lblHeader";
+            this.lblHeader.Text = "Party Wise Commission Hamali Report";
             this.lblHeader.TextAlignment = DevExpress.XtraPrinting.TextAlignment.TopCenter;
             //
             //XrLabel4

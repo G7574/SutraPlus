@@ -10,6 +10,7 @@ import { LoginComponent } from './super-admin/components/login/login.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { ForgotPasswordComponent } from './super-admin/components/forgot-password/forgot-password.component';
 import { ItemWiseReportViewComponent } from './admin/components/item-wise-report-view/item-wise-report-view.component';
+import { PaymentListReportViewComponent } from './admin/components/payment-list-report-view/payment-list-report-view.component';
 
 const routes: Routes = [
   // {
@@ -149,6 +150,10 @@ const routes: Routes = [
   {
     path: 'ReportView',
     component: ItemWiseReportViewComponent,
+  },
+  {
+    path: 'PaymentListReportView',
+    component: PaymentListReportViewComponent,
   },
   { path: 'profile', loadChildren: () => import('./share/profile/profile.module').then(m => m.ProfileModule) },
   // { path: 'super-admin', loadChildren: () => import('./super-admin/super-admin.module').then(m => m.SuperAdminModule) },

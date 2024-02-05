@@ -191,6 +191,18 @@ export class AdminServicesService {
     return this.dataService.postAnonymous(`Sales/GetReport`, data);
   }
 
+  getBanksName(data: number): Observable<any> {
+    return this.dataService.postAnonymous(`Sales/GetBanks`, data);
+  }
+
+  getAccountGroup(data: number): Observable<any> {
+    return this.dataService.postAnonymous('Sales/GetAccountGroups',data);
+  }
+
+  saveAndGetPaymentList(data: any): Observable<any> {
+    return this.dataService.postAnonymous(`Sales/SavePayemnts`, data);
+  }
+
   // saveEInvoice(data: any): Observable<any
   saveAkadaEntry(data: any): Observable<any> {
     return this.dataService.postAnonymous('Company/SaveAkadaEntry', data);
@@ -228,7 +240,7 @@ export class AdminServicesService {
   saveDC(data: any): Observable<any> {
     return this.dataService.postAnonymous('Sales/SaveDC', data);
   }
-  
+
   GetBNo(data: any): Observable<any> {
     return this.dataService.postAnonymous('Sales/GetBNo', data);
   }
