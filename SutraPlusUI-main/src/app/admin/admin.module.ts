@@ -78,6 +78,7 @@ import { ItemWiseReportViewComponent } from './components/item-wise-report-view/
 import { CommonReportGeneratorComponent } from './components/common-report-generator/common-report-generator.component';
 import { SelectBankDailogComponent } from './components/select-bank-dailog/select-bank-dailog.component';
 import { PaymentListReportViewComponent } from './components/payment-list-report-view/payment-list-report-view.component';
+import { GoodsInvoicePrintViewComponent } from './components/sales/goods-invoice/goods-invoice-print-view/goods-invoice-print-view.component';
 
 @NgModule({
   declarations: [
@@ -125,8 +126,10 @@ import { PaymentListReportViewComponent } from './components/payment-list-report
     TDSReportComponent,
     ItemWiseReportViewComponent,
     CommonReportGeneratorComponent,
+    GoodsInvoicePrintViewComponent,
     SelectBankDailogComponent,
     PaymentListReportViewComponent,
+    GoodsInvoicePrintViewComponent,
   ],
   imports: [
     CommonModule,

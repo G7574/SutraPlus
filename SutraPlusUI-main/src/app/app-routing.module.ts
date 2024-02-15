@@ -11,6 +11,7 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { ForgotPasswordComponent } from './super-admin/components/forgot-password/forgot-password.component';
 import { ItemWiseReportViewComponent } from './admin/components/item-wise-report-view/item-wise-report-view.component';
 import { PaymentListReportViewComponent } from './admin/components/payment-list-report-view/payment-list-report-view.component';
+import { GoodsInvoicePrintViewComponent } from './admin/components/sales/goods-invoice/goods-invoice-print-view/goods-invoice-print-view.component';
 
 const routes: Routes = [
   // {
@@ -154,6 +155,10 @@ const routes: Routes = [
   {
     path: 'PaymentListReportView',
     component: PaymentListReportViewComponent,
+  },
+  {
+    path: 'GoodsInvoicePrintView',
+    component: GoodsInvoicePrintViewComponent,
   },
   { path: 'profile', loadChildren: () => import('./share/profile/profile.module').then(m => m.ProfileModule) },
   // { path: 'super-admin', loadChildren: () => import('./super-admin/super-admin.module').then(m => m.SuperAdminModule) },

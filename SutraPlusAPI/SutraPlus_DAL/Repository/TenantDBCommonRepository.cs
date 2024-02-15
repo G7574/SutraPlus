@@ -118,8 +118,7 @@ namespace SutraPlus_DAL.Repository
                 _logger.LogError(ex.StackTrace);
                 throw ex;
             }
-        }
-
+        } 
         public JObject OtherAccounitngGroupsDropDown()
         {
             var response = new JObject();
@@ -570,7 +569,7 @@ namespace SutraPlus_DAL.Repository
                     page.TotalCount = _tenantDBContext.Commodities.Where(e => (e.CommodityName.ToLower().Contains(searchText.ToLower()) && e.IsActive == true)).Count();
                 }
                 else
-                {
+                { 
                     objList1 = this._tenantDBContext.Commodities.Where(e => e.IsActive == true).OrderBy(e => e.CommodityName).ToList();
                     page.TotalCount = objList1.Count();
                 }

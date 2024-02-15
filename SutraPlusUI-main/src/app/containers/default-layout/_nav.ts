@@ -242,7 +242,7 @@ export const navItems: INavData[] = [
         url: 'admin/ReportGenerator',
         linkProps: { queryParams: { ReportName: 'ReportGenerator' } },
       },
-      // {  
+      // {
       //   name: 'Item Wise',
       //   url: 'admin/ItemWise',
       //   linkProps: { queryParams: { ReportName: 'Item Wise' } },

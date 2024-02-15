@@ -48,13 +48,21 @@
                                 <td style="text-align: right;">{{item.billAmount?.toFixed(2) ||
                                     '-'}}</td>
                                 <td>
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        <button cButton color="dark" size="sm"
-                                            (click)="onEdit(item)">
-                                            <i class="fa-solid fa-pencil"></i>
+                                  <div class="d-flex justify-content-center align-items-center">
+                                    <div class="mr-2" style="margin-right: 10px;">
+                                        <button cButton color="dark" size="sm" (click)="onEdit(item)">
+                                            Edit
                                         </button>
                                     </div>
+                                    <div>
+                                        <button class="btn btn-dark btn-sm" (click)="onPrint(item)">
+                                            Print
+                                        </button>
+                                    </div>
+                                </div>
+
                                 </td>
+
                             </tr>
                         </tbody>
                     </table>
@@ -85,3 +93,4 @@
         </c-card>
     </c-col>
 </c-row>
+

@@ -47,6 +47,23 @@ namespace SutraPlus.Controllers
             }
         }
 
+        [HttpPost("GetInvtype")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetGetInvtype([FromBody] JObject Data)
+        {
+            try
+            {
+                var result = _salesService.GetInvtype(Data);
+                return Ok(result);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
 
         /// <summary>
         /// Get Voucher Type & next Invoice No (max+1)

@@ -83,6 +83,7 @@ export class PaymentListComponent implements OnInit {
     });
   }
 
+
   @ViewChild(DxReportViewerComponent, { static: false }) viewer: DxReportViewerComponent;
   reportUrl: string = "rptPaymentList";
   // The built-in controller in the back-end ASP.NET Core Reporting application.
@@ -177,7 +178,7 @@ export class PaymentListComponent implements OnInit {
   }
 
   getInvoiceList() {
-
+    console.log("OYEEOYEEE");
     if(this.SearchText){
     }
     else

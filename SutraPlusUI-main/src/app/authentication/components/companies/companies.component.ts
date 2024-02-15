@@ -37,9 +37,9 @@ export class CompaniesComponent implements OnInit {
     this.userDetails = sessionStorage.getItem('userDetails')
     this.userDetails = JSON.parse(this.userDetails);
     this.userType = this.userDetails['result'].UserType;
-    
 
-    
+
+
 
     this.userEmail = this.userDetails?.result?.UserEmailId;
     this.getData();
@@ -50,13 +50,14 @@ export class CompaniesComponent implements OnInit {
   }
 
   goToDashboard(data: any): void {
+    this.spinner.show();
     ;
     sessionStorage.setItem('companyName', data.CompanyName);
     sessionStorage.setItem('companyID', data.CompanyId);
     sessionStorage.setItem('logo', data.Logo);
-    sessionStorage.setItem('companyPlace', data.Place);    
-    sessionStorage.setItem('State', data.State);    
-    
+    sessionStorage.setItem('companyPlace', data.Place);
+    sessionStorage.setItem('State', data.State);
+
     this.userDetails = sessionStorage.getItem('userDetails')
     let userObj = JSON.parse(this.userDetails);
 
@@ -65,12 +66,13 @@ export class CompaniesComponent implements OnInit {
     // }else{
     //   this.router.navigate(['/user']);
     // }
+    this.spinner.hide();
     this.router.navigate(['/admin']);
   }
 
   getData(): void {
     this.spinner.show();
-   
+
     this.authenticationService.getCompany('').subscribe({
       next: (res: any) => {
         if (!res.HasErrors && res?.Data !== null) {

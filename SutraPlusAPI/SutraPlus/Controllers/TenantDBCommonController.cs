@@ -131,6 +131,7 @@ namespace SutraPlus.Controllers
                 return BadRequest(ex.Message);
             }
         }
+         
 
         [HttpPost("GetOtherAccGroup")]
         [AllowAnonymous]

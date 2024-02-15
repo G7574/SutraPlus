@@ -78,6 +78,10 @@ export class AdminServicesService {
     );
   }
 
+  getInvType(data:any): Observable<any> {
+    return this.dataService.postAnonymous('Sales/GetInvtype',data);
+  }
+
   createProduct(data: any): Observable<any> {
     return this.dataService.postAnonymous('TenantDBCommon/AddProduct', data);
   }

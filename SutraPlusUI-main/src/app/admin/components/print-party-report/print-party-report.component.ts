@@ -44,9 +44,9 @@ export class PrintPartyReportComponent {
 
   @ViewChild(DxReportViewerComponent, { static: false }) viewer: DxReportViewerComponent;
   reportUrl: string = "PrintPartyReport";
-  // The built-in controller in the back-end ASP.NET Core Reporting application.  
+  // The built-in controller in the back-end ASP.NET Core Reporting application.
   invokeAction: string = '/DXXRDV';
-  
+
 
 
   print() {

@@ -11,6 +11,7 @@ using System.IO;
 using SutraPlusReportApi.PredefinedReports;
 using PassParameterExample.Services;
 using DevExpress.XtraReports;
+using System.Threading.Tasks;
 
 namespace DXWebApplication5.Controllers {
     public class CustomWebDocumentViewerController : WebDocumentViewerController
@@ -31,7 +32,7 @@ namespace DXWebApplication5.Controllers {
             var model = modelGenerator.GetModel(reportUrl, null, ReportDesignerController.DefaultUri, WebDocumentViewerController.DefaultUri, QueryBuilderController.DefaultUri);
             return DesignerModel(model);
         }
-
+         
         [HttpGet("[action]")]
         public ActionResult Export(string format = "pdf")
         { 

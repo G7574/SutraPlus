@@ -53,6 +53,24 @@ namespace SutraPlus_BAL.Service
                 throw ex;
             }
         }
+        
+        public JObject GetInvtype(JObject Data)
+        {
+            try
+            {
+                var response = new JObject();
+                var data = JsonConvert.DeserializeObject<dynamic>(Data["SalesDetails"].ToString());
+                int CompanyId = data["CompanyId"]; 
+                int LedgerId = data["LedgerId"]; 
+                response = _salesRepository.GetInvtype(CompanyId, LedgerId);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                throw ex;
+            }
+        }
 
 
         public JObject CrDrDetails(JObject Data)
@@ -262,7 +280,7 @@ namespace SutraPlus_BAL.Service
         }
 
         public List<JObject> GetReport(JObject Data)
-        {    
+            {    
             try
             {
                 var data = JsonConvert.DeserializeObject<dynamic>(Data?["ReportData"]?.ToString());

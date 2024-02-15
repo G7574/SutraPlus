@@ -287,7 +287,7 @@
   </c-col> -->
 </c-row>
 
-<c-row class="mb-3">
+<c-row class="mb-3" style="width: 110%;">
   <!-- <div style="text-align: right;margin-bottom: 5px;">
     <button class="btn btn-secondary" (click)="toggleEInvoiceModal()" style="float: right; width: 20%;">
       View E-Invoice Details
@@ -310,8 +310,8 @@
             <c-col [sm]="4">
               <label cLabel style="width: 100%">Party
                 <span *ngIf="partySelected" style="margin-left: 1%">
-                  <a (click)="editDemo()">
-                    <i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+                  <!-- <a (click)="editDemo()">
+                    <i class="fa fa-pencil" aria-hidden="true"></i> Edit</a> -->
                 </span>
               </label>
               <ng-select #party (keyup)="getPartyList(party.searchTerm)" [items]="partyList"
@@ -344,17 +344,17 @@
               <input cFormControl type="text" id="invoiceNo" placeholder="Invoice No." formControlName="invoiceNo" />
             </c-col>
 
-            <c-col [sm]="2">
+            <!-- <c-col [sm]="2">
 
               <label cLabel style="visibility: collapse;">Ree.</label>
               <button class="btn btn-secondary" (click)="toggleEInvoiceModal()" style="float: right;">
                 View E-Invoice Details
               </button>
-            </c-col>
+            </c-col> -->
 
           </c-row>
-
-          <c-row class="mb-3" *ngIf="partySelected">
+          <!-- *ngIf="partySelected" -->
+          <c-row class="mb-3" style="visibility: collapse;">
             <c-col [sm]="12">
               <table style="width: 100%" id="tblPartyDetails">
                 <tbody>
@@ -387,7 +387,10 @@
                           padding-bottom: 0% !important;
                           font-size: 12px;
                           font-weight: bold !important;
-                        " type="text" formControlName="gst" />
+                        " type="text" formControlName="gst"
+                           minlength="15"
+                           maxlength="15"
+                           required />
                     </td>
                   </tr>
 
@@ -784,8 +787,8 @@
 
                     <c-row class="mb-3">
                       <!-- First c-col (Other Charges Section) -->
-                      <c-col xs="12" md="6">
-                        <c-card>
+                      <c-col xs="12" md="5">
+                        <c-card *ngIf="showOtherCharges">
                           <c-card-body>
                             <h5> Other Charges </h5>
                             <div style="text-align: right;margin-bottom: 2px;">
@@ -915,7 +918,7 @@
 
 
                       <!-- Second c-col (Payment Details Section) -->
-        <c-col xs="12" md="6">
+        <c-col xs="12" md="7">
                         <c-card>
                           <c-card-body>
                             <h5> Payment Details </h5>
@@ -968,19 +971,19 @@
                                                                 (keyup)="onChangeDiscount(discAmt.value)"
                                                                 (keypress)="commonService.ValidateNumeric($event.keyCode)" /-->
                                       </td>
-                                      <td class="text-end">
+                                      <td class="text-center">
                                         <label cLabel="col" class="text-end" cCol [sm]="6">
                                           Taxable Amount
                                         </label>
                                       </td>
-                                      <td width="12%" class="text-center">
-                                        <input cFormControl type="text" class="text-end" formControlName="taxableAmt"
+                                      <td width="22%" class="text-center">
+                                        <input cFormControl type="text" style="margin-left: -44px;" class="text-end" formControlName="taxableAmt"
                                           class="pe-none bg-gray text-end" [value]="SeperateComma(taxableAmt)" />
                                       </td>
-                                      <td width="13%" colspan="2">
-                                        <input [checked]="false" cFormCheckInput id="checkTwo" type="checkbox"
+                                      <td width="15%" colspan="2">
+                                        <input [checked]="false" style="width: 22px;height: 22px;" cFormCheckInput id="checkTwo" type="checkbox"
                                           formControlName="sezSale" />
-                                        <label cFormCheckLabel for="checkTwo">SEZ Sale</label>
+                                        <label cFormCheckLabel for="checkTwo" style="margin-top: 5px;margin-left: 5px;">SEZ Sale</label>
                                       </td>
                                     </tr>
                                     <tr class="border border-0 border-light">
@@ -1006,13 +1009,13 @@
                                           formControlName="totalcgstAmt"
                                           (keypress)="commonService.ValidateNumeric($event.keyCode)" />
                                       </td>
-                                      <td class="text-end">
+                                      <td class="text-center">
                                         <label cLabel="col" class="text-end" cCol [sm]="6">
                                           Total GST Amount
                                         </label>
                                       </td>
-                                      <td width="12%" class="text-center">
-                                        <input class="text-end" cFormControl type="text" formControlName="totalGstAmt"
+                                      <td width="22%" class="text-center">
+                                        <input class="text-end" style="margin-left: -44px;" cFormControl type="text" formControlName="totalGstAmt"
                                           class="pe-none text-end" />
                                       </td>
                                       <td width="13%" colspan="2"></td>
@@ -1074,26 +1077,26 @@
                                     <tr class="border border-0 border-light">
                                       <td class="text-end"></td>
                                       <td width="15%" class="text-center"></td>
-                                      <td class="text-end">
+                                      <td class="text-center">
                                         <label cLabel="col" class="text-end" cCol [sm]="6">
                                           Round OFF
                                         </label>
                                       </td>
-                                      <td width="15%" class="text-center">
-                                        <input cFormControl type="text" class="text-end" formControlName="roundOff" />
+                                      <td width="22%" class="text-center">
+                                        <input cFormControl type="text" style="margin-left: -44px;" class="text-end" formControlName="roundOff" />
                                       </td>
                                       <td width="12%" colspan="2"></td>
                                     </tr>
                                     <tr class="border border-0 border-light">
                                       <td class="text-end"></td>
                                       <td width="15%" class="text-center"></td>
-                                      <td class="text-end">
+                                      <td class="text-center">
                                         <label cLabel="col" class="text-end fw-bold" cCol [sm]="6">
                                           Grand Total
                                         </label>
                                       </td>
-                                      <td width="15%" class="text-center">
-                                        <input cFormControl type="text" class="pe-none bg-gray text-end"
+                                      <td width="22%" class="text-center">
+                                        <input cFormControl type="text" style="margin-left: -44px;" class="pe-none bg-gray text-end"
                                           formControlName="grandTotal" [(ngModel)]="grandTotalAmount" />
                                       </td>
                                       <td width="12%" colspan="2"></td>
@@ -1114,7 +1117,7 @@
         <!-- start -->
 
         <form [formGroup]="formGroup3">
-          <c-row class="mb-3">
+          <!-- <c-row class="mb-3">
             <label cLabel="col" class="text-end" cCol [sm]="2">
               Address<span class="text-danger">*</span>
             </label>
@@ -1130,20 +1133,20 @@
                 </div>
               </div>
             </c-col>
-          </c-row>
+          </c-row> -->
 
           <c-row class="mb-3">
             <label cLabel="col" class="text-end" cCol [sm]="2">
               From <span class="text-danger">*</span>
             </label>
             <c-col class="align-items-start" [sm]="3">
-              <input cFormControl type="text" formControlName="fromPlace" [ngClass]="{
+              <input cFormControl type="text" formControlName="FromPlace" [ngClass]="{
                   'is-invalid':
-                    submitted && formGroup3.controls['fromPlace'].errors
+                    submitted && formGroup3.controls['FromPlace'].errors
                 }" />
-              <div *ngIf="submitted && formGroup3.controls['fromPlace'].errors"
+              <div *ngIf="submitted && formGroup3.controls['FromPlace'].errors"
                 class="invalid-feedback fw-semibold">
-                <div *ngIf="formGroup3.controls['fromPlace'].errors['required']">
+                <div *ngIf="formGroup3.controls['FromPlace'].errors['required']">
                   Enter From place
                 </div>
               </div>
@@ -1152,13 +1155,13 @@
               To <span class="text-danger">*</span>
             </label>
             <c-col class="align-items-start" [sm]="3">
-              <input cFormControl type="text" formControlName="toPlace" [ngClass]="{
+              <input cFormControl type="text" formControlName="ToPlace" [ngClass]="{
                   'is-invalid':
-                    submitted && formGroup3.controls['toPlace'].errors
+                    submitted && formGroup3.controls['ToPlace'].errors
                 }" />
-              <div *ngIf="submitted && formGroup3.controls['toPlace'].errors"
+              <div *ngIf="submitted && formGroup3.controls['ToPlace'].errors"
                 class="invalid-feedback fw-semibold">
-                <div *ngIf="formGroup3.controls['toPlace'].errors['required']">
+                <div *ngIf="formGroup3.controls['ToPlace'].errors['required']">
                   Enter To place
                 </div>
               </div>
@@ -1183,8 +1186,11 @@
                   E-Invoice
                 </button>
               </ng-container>
-              <button cButton class="btn btn-dark ms-2 px-3" type="submit" (click)="onSave()">
+              <button cButton class="btn btn-dark ms-2 px-3" type="submit" (click)="showConfirmationDialog()">
                 Save
+              </button>
+              <button cButton class="btn btn-dark ms-2 px-3" type="submit" (click)="onPrint()" *ngIf="showPrintButton">
+                Print
               </button>
             </div>
           </c-col>
@@ -1307,7 +1313,7 @@
         <label cLabel="col" class="text-end" cCol [sm]="3">
           Transporter
         </label>
-        <c-col [sm]="3">
+        <!-- <c-col [sm]="3">
           <c-input-group class="mb-3">
             <input aria-label="dropdown button" cFormControl type="text"
               placeholder="Enter transporter" formControlName="transporter" />
@@ -1321,28 +1327,59 @@
                 </a>
               </div>
             </c-dropdown>
+
+
+
           </c-input-group>
+        </c-col> -->
+        <c-col [sm]="3">
+        <ng-select #transporter (keyup)="searching(transporter.searchTerm,'Transporter')" [items]="transporterOptions"
+                         bindLabel="option" bindValue="option" formControlName="transporter"
+                         placeholder="Select Party">
+                <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                  <div class="item">
+                    <div>
+                      {{ item }}
+                    </div>
+                  </div>
+                </ng-template>
+              </ng-select>
         </c-col>
 
         <label cLabel="col" class="text-end" cCol [sm]="3">
           Lorry No.
         </label>
-        <c-col [sm]="3">
+        <!-- <c-col [sm]="3">
           <c-input-group class="mb-3">
             <input aria-label="dropdown button" cFormControl type="text"
-              placeholder="Enter lorry no." formControlName="lorryNo" />
-            <c-dropdown alignment="end" *ngIf="lorryNoOptions && lorryNoOptions.length > 0">
+              placeholder="Enter lorry no." formControlName="LorryNo" />
+            <c-dropdown alignment="end" *ngIf="LorryNoOptions && LorryNoOptions.length > 0">
               <button cButton cDropdownToggle color="secondary" variant="outline">
               </button>
               <div cDropdownMenu class="dropdown-menu-scrollable">
-                <a cDropdownItem *ngFor="let option of lorryNoOptions"
-                  (click)="assignOptionToFormControl('lorryNo', option)">
+                <a cDropdownItem *ngFor="let option of LorryNoOptions"
+                  (click)="assignOptionToFormControl('LorryNo', option)">
                   {{ option }}
                 </a>
               </div>
             </c-dropdown>
           </c-input-group>
-        </c-col>
+        </c-col> -->
+
+        <c-col [sm]="3">
+          <ng-select #transporter (keyup)="searching(transporter.searchTerm,'LorryNo')" [items]="LorryNoOptions"
+                           bindLabel="option" bindValue="option" formControlName="LorryNo"
+                           placeholder="Select Party">
+                  <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                    <div class="item">
+                      <div>
+                        {{ item }}
+                      </div>
+                    </div>
+                  </ng-template>
+                </ng-select>
+          </c-col>
+
       </c-row>
 
 
@@ -1351,7 +1388,7 @@
           Owner
         </label>
 
-        <c-col [sm]="3">
+        <!-- <c-col [sm]="3">
 
           <c-input-group class="mb-3">
             <input aria-label="dropdown button" cFormControl type="text" placeholder="Enter owner"
@@ -1367,12 +1404,26 @@
               </div>
             </c-dropdown>
           </c-input-group>
-        </c-col>
+        </c-col> -->
+
+        <c-col [sm]="3">
+          <ng-select #transporter (keyup)="searching(transporter.searchTerm,'Owner')" [items]="ownerOptions"
+                           bindLabel="option" bindValue="option" formControlName="Owner"
+                           placeholder="Select Party">
+                  <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                    <div class="item">
+                      <div>
+                        {{ item }}
+                      </div>
+                    </div>
+                  </ng-template>
+                </ng-select>
+          </c-col>
 
         <label cLabel="col" class="text-end" cCol [sm]="3">
           Driver
         </label>
-        <c-col [sm]="3">
+        <!-- <c-col [sm]="3">
           <c-input-group class="mb-3">
             <input aria-label="dropdown button" cFormControl type="text" placeholder="Enter driver"
               formControlName="driver" />
@@ -1387,7 +1438,22 @@
               </div>
             </c-dropdown>
           </c-input-group>
-        </c-col>
+        </c-col> -->
+
+        <c-col [sm]="3">
+          <ng-select #transporter (keyup)="searching(transporter.searchTerm,'Driver')" [items]="driverOptions"
+                           bindLabel="option" bindValue="option" formControlName="Driver"
+                           placeholder="Select Party">
+                  <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                    <div class="item">
+                      <div>
+                        {{ item }}
+                      </div>
+                    </div>
+                  </ng-template>
+                </ng-select>
+          </c-col>
+
       </c-row>
 
       <c-row class="mb-3">
@@ -1581,9 +1647,12 @@
                 lorrySubmitted && formGroup4.controls['state'].errors
             }">
             <option value="" selected>-- Select --</option>
-            <option *ngFor="let item of stateList" [value]="item.Statename">
+            <option *ngFor="let item of stateList" [value]="item.Statename" [selected]="defaultState === item.Statename">
               {{ item.Statename }}
             </option>
+            <!-- <option *ngFor="let item of stateList" [value]="item.Statename">
+              {{ item.Statename }}
+            </option> -->
           </select>
 
           <div *ngIf="lorrySubmitted && formGroup4.controls['state'].errors"
@@ -1605,9 +1674,15 @@
 
       <c-row class="mb-3">
         <label cLabel="col" class="text-end" cCol [sm]="3">
-          Distance <span class="text-danger">*</span>
+          Distance
         </label>
         <c-col [sm]="3">
+          <input cFormControl type="text" placeholder="Enter distance" formControlName="distance"
+           />
+
+        </c-col>
+
+        <!-- <c-col [sm]="3">
           <input cFormControl type="text" placeholder="Enter distance" formControlName="distance"
             [ngClass]="{
               'is-invalid':
@@ -1619,12 +1694,18 @@
               Enter distance
             </div>
           </div>
-        </c-col>
+        </c-col> -->
 
         <label cLabel="col" class="text-end" cCol [sm]="3">
-          Note <span class="text-danger">*</span>
+          Note
         </label>
+
         <c-col [sm]="3">
+          <input cFormControl type="text" placeholder="Enter note" formControlName="note" />
+
+        </c-col>
+
+        <!-- <c-col [sm]="3">
           <input cFormControl type="text" placeholder="Enter note" formControlName="note" [ngClass]="{
               'is-invalid': lorrySubmitted && formGroup4.controls['note'].errors
             }" />
@@ -1634,7 +1715,7 @@
               Enter note
             </div>
           </div>
-        </c-col>
+        </c-col> -->
       </c-row>
     </form>
   </c-modal-body>
@@ -1670,6 +1751,53 @@
     <form [formGroup]="getParty">
       <c-row class="mb-3">
         <label cLabel="col" class="text-end" cCol [sm]="3">
+          Dealer Type <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="6">
+          <input cFormControl  [ngClass]="{
+            'is-invalid': submitted && getParty.controls['dealerType'].errors
+          }" type="text" placeholder="Dealer Type"
+            formControlName="dealerType" />
+
+            <div *ngIf="submitted && getParty.controls['dealerType'].errors"
+            class="invalid-feedback fw-semibold">
+            <div *ngIf="getParty.controls['dealerType'].errors['required']">
+              Enter dealerType
+            </div>
+          </div>
+
+        </c-col>
+      </c-row>
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          GSTTIN <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="6">
+          <input cFormControl [ngClass]="{
+            'is-invalid': submitted && getParty.controls['gst'].errors
+          }" type="text" type="text" placeholder="GSTTIN"
+            formControlName="gst" />
+            <div *ngIf="submitted && getParty.controls['gst'].errors"
+            class="invalid-feedback fw-semibold">
+            <div *ngIf="getParty.controls['gst'].errors['required']">
+              Enter GSTTIN
+            </div>
+          </div>
+        </c-col>
+      </c-row>
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          VoucherType
+        </label>
+        <c-col [sm]="6">
+          <input cFormControl  type="text" placeholder="VoucherType"
+            formControlName="voucherType" />
+
+        </c-col>
+      </c-row>
+
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
           Party Name <span class="text-danger">*</span>
         </label>
         <c-col [sm]="6">
@@ -1677,6 +1805,23 @@
             formControlName="ledgerName" />
 
           <input cFormControl class="pe-none" type="hidden" formControlName="ledgerId" />
+        </c-col>
+      </c-row>
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Place <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="6">
+          <input cFormControl [ngClass]="{
+            'is-invalid': submitted && getParty.controls['place'].errors
+          }" type="text" type="text" placeholder="Place"
+            formControlName="place" />
+            <div *ngIf="submitted && getParty.controls['place'].errors"
+            class="invalid-feedback fw-semibold">
+            <div *ngIf="getParty.controls['place'].errors['required']">
+              Enter place
+            </div>
+          </div>
         </c-col>
       </c-row>
 
@@ -1750,6 +1895,22 @@
             class="invalid-feedback fw-semibold">
             <div *ngIf="getParty.controls['state'].errors['required']">
               Enter State
+            </div>
+          </div>
+        </c-col>
+      </c-row>
+      <c-row class="mb-3">
+        <label cLabel="col" class="text-end" cCol [sm]="3">
+          Country <span class="text-danger">*</span>
+        </label>
+        <c-col [sm]="6">
+          <input cFormControl type="text" placeholder="Country" formControlName="country" [ngClass]="{
+              'is-invalid': submitted && getParty.controls['country'].errors
+            }" />
+          <div *ngIf="submitted && getParty.controls['country'].errors"
+            class="invalid-feedback fw-semibold">
+            <div *ngIf="getParty.controls['country'].errors['required']">
+              Enter Country
             </div>
           </div>
         </c-col>
@@ -2024,12 +2185,12 @@
       </div>
     </form>
   </c-modal-body>
-  <c-modal-footer>
+  <!-- <c-modal-footer>
     <button class="btn btn-outline-dark me-2 px-3" type="reset">
       Clear
     </button>
     <button cButton class="btn btn-dark ms-2 px-3" type="submit" (click)="saveDispatcherDetails()">
       Save
     </button>
-  </c-modal-footer>
+  </c-modal-footer> -->
 </c-modal>

@@ -1,4 +1,5 @@
 ﻿using Azure;
+using iTextSharp.text;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.qrcode;
 using Microsoft.Data.SqlClient;
@@ -27,6 +28,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Drawing.Printing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -69,6 +71,42 @@ namespace SutraPlus_DAL.Repository
         /// <param name="LedgerId"></param>
         /// <param name="DealerType"></param>
         /// <returns></returns>
+        
+
+        public JObject GetInvtype(int companyId,int LedgerId)
+        {
+            var response = new JObject();
+            int EinvReq = 0;
+
+            try
+            {
+                var query = _tenantDBContext.Companies.Where(n=>n.CompanyId == companyId).FirstOrDefault();
+
+                if(query == null)
+                {
+                    EinvReq = 1;
+                } else
+                {
+                    EinvReq = 0;
+                }
+
+                var ch = _tenantDBContext.BillSummaries.Where(n => n.LedgerId == LedgerId).FirstOrDefault();
+               
+                response.Add("einvreq", EinvReq);
+                if(ch != null)
+                {
+                    response.Add("frieghtPlus", ch.frieghtPlus);
+                }
+ 
+                return response;
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+             
+        }
+
         public JObject Get(int CompanyId, int LedgerId, string DealerType, string InvoiceType)
         {
             var response = new JObject();
@@ -81,54 +119,57 @@ namespace SutraPlus_DAL.Repository
 
                 if (InvoiceType == "GoodsInvoice" || InvoiceType == "GinningInvoice" || InvoiceType == "ProfarmaInvoice" || InvoiceType == "ExportInvoice")
                 {
-                    if (companyState.ToLower() == ledgerState.ToLower() && dealer_type == "Registered Dealer" && country_name == "India" && (InvoiceType == "GoodsInvoice" || InvoiceType == "GinningInvoice"))
+                    if (ledgerState != null)
                     {
-                        var voucherId = _tenantDBContext.VoucherTypes.Where(v => v.VoucherName == "Local Sale").Select(x => x.VoucherId).SingleOrDefault();
-                        response.Add("VoucherType", new JValue("Local Sale"));
-                        response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType > 8 && x.VochType < 12 && x.CompanyId == CompanyId).Select(x => x.VochNo).ToList().Max()) + 1));
-                        response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
-                    }
-                    else if (companyState.ToLower() != ledgerState.ToLower() && dealer_type == "Registered Dealer" && country_name == "India" && (InvoiceType == "GoodsInvoice" || InvoiceType == "GinningInvoice"))
-                    {
-                        var voucherId = _tenantDBContext.VoucherTypes.Where(v => v.VoucherName == "Interstate Sale").Select(x => x.VoucherId).SingleOrDefault();
-                        response.Add("VoucherType", new JValue("Interstate Sale"));
-                        response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType > 8 && x.VochType < 12 && x.CompanyId == CompanyId).Select(x => x.VochNo).ToList().Max()) + 1));
-                        response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
-                    }
-                    else if (dealer_type != "Register Dealer" && country_name == "India" && (InvoiceType == "GoodsInvoice" || InvoiceType == "GinningInvoice"))
-                    {
-                        var voucherId = _tenantDBContext.VoucherTypes.Where(v => v.VoucherName == "URD Sale").Select(x => x.VoucherId).SingleOrDefault();
-                        response.Add("VoucherType", new JValue("URD Sale"));
-                        response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType > 8 && x.VochType < 12 && x.CompanyId == CompanyId).Select(x => x.VochNo).ToList().Max()) + 1));
-                        response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
-                    }
-                    else if (country_name != "India" && InvoiceType == "ExportInvoice")
-                    {
-                        var voucherId = _tenantDBContext.VoucherTypes.Where(v => v.VoucherName == "Export Sale").Select(x => x.VoucherId).SingleOrDefault();
-                        response.Add("VoucherType", new JValue("Export Sale"));
-                        response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType == 12 && x.CompanyId == CompanyId).Select(x => x.VochNo).ToList().Max()) + 1));
-                        response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
-                    }
-                    else if (country_name == "India" && InvoiceType == "DeemedExport")
-                    {
-                        var voucherId = _tenantDBContext.VoucherTypes.Where(v => v.VoucherName == "Deemed Export").Select(x => x.VoucherId).SingleOrDefault();
-                        response.Add("VoucherType", new JValue("Deemed Export"));
-                        response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType == 13 && x.CompanyId == CompanyId).Select(x => x.VochNo).ToList().Max()) + 1));
-                        response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
-                    }
-                    else if (country_name == "India" && InvoiceType == "PurchaseReturn")
-                    {
-                        var voucherId = _tenantDBContext.VoucherTypes.Where(v => v.VoucherName == "Purchase Return").Select(x => x.VoucherId).SingleOrDefault();
-                        response.Add("VoucherType", new JValue("Purchase Return"));
-                        response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType == 8 && x.CompanyId == CompanyId).Select(x => x.VochNo).ToList().Max()) + 1));
-                        response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
-                    }
-                    else if (country_name == "India" && InvoiceType == "ProfarmaInvoice")
-                    {
-                        var voucherId = _tenantDBContext.VoucherTypes.Where(v => v.VoucherName == "Profarma Invoice").Select(x => x.VoucherId).SingleOrDefault();
-                        response.Add("VoucherType", new JValue("Profarma Invoice"));
-                        response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType == 16 && x.CompanyId == CompanyId).Select(x => x.VochNo).ToList().Max()) + 1));
-                        response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
+                        if (companyState.ToLower() == ledgerState.ToLower() && dealer_type == "Registered Dealer" && country_name == "India" && (InvoiceType == "GoodsInvoice" || InvoiceType == "GinningInvoice"))
+                        {
+                            var voucherId = _tenantDBContext.VoucherTypes.Where(v => v.VoucherName == "Local Sale").Select(x => x.VoucherId).SingleOrDefault();
+                            response.Add("VoucherType", new JValue("Local Sale"));
+                            response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType > 8 && x.VochType < 12 && x.CompanyId == CompanyId).Select(x => x.VochNo).ToList().Max()) + 1));
+                            response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
+                        }
+                        else if (companyState.ToLower() != ledgerState.ToLower() && dealer_type == "Registered Dealer" && country_name == "India" && (InvoiceType == "GoodsInvoice" || InvoiceType == "GinningInvoice"))
+                        {
+                            var voucherId = _tenantDBContext.VoucherTypes.Where(v => v.VoucherName == "Interstate Sale").Select(x => x.VoucherId).SingleOrDefault();
+                            response.Add("VoucherType", new JValue("Interstate Sale"));
+                            response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType > 8 && x.VochType < 12 && x.CompanyId == CompanyId).Select(x => x.VochNo).ToList().Max()) + 1));
+                            response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
+                        }
+                        else if (dealer_type != "Register Dealer" && country_name == "India" && (InvoiceType == "GoodsInvoice" || InvoiceType == "GinningInvoice"))
+                        {
+                            var voucherId = _tenantDBContext.VoucherTypes.Where(v => v.VoucherName == "URD Sale").Select(x => x.VoucherId).SingleOrDefault();
+                            response.Add("VoucherType", new JValue("URD Sale"));
+                            response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType > 8 && x.VochType < 12 && x.CompanyId == CompanyId).Select(x => x.VochNo).ToList().Max()) + 1));
+                            response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
+                        }
+                        else if (country_name != "India" && InvoiceType == "ExportInvoice")
+                        {
+                            var voucherId = _tenantDBContext.VoucherTypes.Where(v => v.VoucherName == "Export Sale").Select(x => x.VoucherId).SingleOrDefault();
+                            response.Add("VoucherType", new JValue("Export Sale"));
+                            response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType == 12 && x.CompanyId == CompanyId).Select(x => x.VochNo).ToList().Max()) + 1));
+                            response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
+                        }
+                        else if (country_name == "India" && InvoiceType == "DeemedExport")
+                        {
+                            var voucherId = _tenantDBContext.VoucherTypes.Where(v => v.VoucherName == "Deemed Export").Select(x => x.VoucherId).SingleOrDefault();
+                            response.Add("VoucherType", new JValue("Deemed Export"));
+                            response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType == 13 && x.CompanyId == CompanyId).Select(x => x.VochNo).ToList().Max()) + 1));
+                            response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
+                        }
+                        else if (country_name == "India" && InvoiceType == "PurchaseReturn")
+                        {
+                            var voucherId = _tenantDBContext.VoucherTypes.Where(v => v.VoucherName == "Purchase Return").Select(x => x.VoucherId).SingleOrDefault();
+                            response.Add("VoucherType", new JValue("Purchase Return"));
+                            response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType == 8 && x.CompanyId == CompanyId).Select(x => x.VochNo).ToList().Max()) + 1));
+                            response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
+                        }
+                        else if (country_name == "India" && InvoiceType == "ProfarmaInvoice")
+                        {
+                            var voucherId = _tenantDBContext.VoucherTypes.Where(v => v.VoucherName == "Profarma Invoice").Select(x => x.VoucherId).SingleOrDefault();
+                            response.Add("VoucherType", new JValue("Profarma Invoice"));
+                            response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType == 16 && x.CompanyId == CompanyId).Select(x => x.VochNo).ToList().Max()) + 1));
+                            response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
+                        }
                     }
                 }
 
@@ -141,6 +182,17 @@ namespace SutraPlus_DAL.Repository
                         response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType == 15 && x.CompanyId == CompanyId).Select(x => x.VochNo).ToList().Max()) + 1));
                         response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
                     }
+                }
+
+                var ch = _tenantDBContext.BillSummaries.Where(n => n.LedgerId == LedgerId).FirstOrDefault();
+                if(ch != null)
+                {
+
+                    response.Add("Transporter", new JValue(ch.Transporter));
+                    response.Add("LorryNo", new JValue(ch.LorryNo));
+                    response.Add("Owner", new JValue(ch.LorryOwnerName));
+                    response.Add("Driver", new JValue(ch.DriverName));
+
                 }
                 return response;
             }
@@ -958,6 +1010,8 @@ namespace SutraPlus_DAL.Repository
             }
             return sb.ToString().TrimEnd() + " Rupees only";
         }
+
+  
         /// <summary>
         /// Add sales  for the Invoicedat ,LorryData And Item data 
         /// </summary>
@@ -976,6 +1030,7 @@ namespace SutraPlus_DAL.Repository
                 int invoiceNo = data["InoviceNo"];
                 int ledgerid = data["LedgerId"];
                 int VochType = data["VochType"];
+                string CurrentFinanceYear = data["CurrentFinanceYear"];
 
 
                 var ledgerName = (_tenantDBContext.Ledgers.
@@ -983,8 +1038,29 @@ namespace SutraPlus_DAL.Repository
                 var ledgerplace = (_tenantDBContext.Ledgers.
                                    Where(l => l.LedgerId == ledgerid && l.LedgerName == ledgerName).Select(l => l.Place)).FirstOrDefault();
 
+                var InvoiceNo = new List<Inventory>();
 
-                var InvoiceNo = _tenantDBContext.Inventory.Where(x => x.VochType > 8 && x.VochType < 14 && x.VochNo == invoiceNo && x.CompanyId == companyid).ToList();
+                if (VochType == 9 || VochType == 10 || VochType == 11)
+                {
+                    InvoiceNo = _tenantDBContext.Inventory.Where(x => x.VochType > 8 && x.VochType < 12 && x.VochNo == invoiceNo && x.CompanyId == companyid).ToList();
+
+                } else if(VochType == 12)
+                {
+                    InvoiceNo = _tenantDBContext.Inventory.Where(x => x.VochType == 12 && x.VochNo == invoiceNo && x.CompanyId == companyid).ToList();
+                } else if(VochType == 15)
+                {
+                    InvoiceNo = _tenantDBContext.Inventory.Where(x => x.VochType == 15 && x.VochNo == invoiceNo && x.CompanyId == companyid).ToList();
+                }  else if(VochType == 8)
+                {
+                    InvoiceNo = _tenantDBContext.Inventory.Where(x => x.VochType == 8 && x.VochNo == invoiceNo && x.CompanyId == companyid).ToList();
+                }  else if(VochType == 13)
+                {
+                    InvoiceNo = _tenantDBContext.Inventory.Where(x => x.VochType == 13 && x.VochNo == invoiceNo && x.CompanyId == companyid).ToList();
+                }   else if(VochType == 16)
+                {
+                    InvoiceNo = _tenantDBContext.Inventory.Where(x => x.VochType == 16 && x.VochNo == invoiceNo && x.CompanyId == companyid).ToList();
+                } 
+
                 if (InvoiceNo.Count > 0)
                 {
                     var entityBls = _tenantDBContext.BillSummaries.FirstOrDefault(item => item.VochNo == Convert.ToInt64(invoiceNo) && item.VochType == VochType);
@@ -1033,10 +1109,7 @@ namespace SutraPlus_DAL.Repository
                     }
 
 
-
-
-
-
+                     
 
 
 
@@ -1046,6 +1119,89 @@ namespace SutraPlus_DAL.Repository
                 var InvoiceString = (_tenantDBContext.Companies.
                                 Where(c => c.CompanyId == companyid).Select(c => c.InvoiceString)).FirstOrDefault();
 
+                var ShipBillDatevalue = LorryData["ShipBillDate"];
+                if(ShipBillDatevalue == " ")
+                {
+                    LorryData["ShipBillDate"] = null;
+                }
+
+                string stateCode2value = data["GST"];
+                stateCode2value = stateCode2value.Substring(0, 2).ToString();
+
+                var RartyInvoiceNumber = "";
+
+                var companyData = _tenantDBContext.Companies.Where(c => c.CompanyId == companyid).FirstOrDefault();
+
+                if (VochType == 9 || VochType == 10 || VochType == 11)
+                { 
+                    if(invoiceNo.ToString().Length > 3)
+                    {
+                        RartyInvoiceNumber = companyData.FirmCode + "/" + CurrentFinanceYear.Substring(2, 2) + CurrentFinanceYear.Substring(7, 2) + "/" + invoiceNo;
+
+                    } else
+                    {
+                        RartyInvoiceNumber = companyData.FirmCode + "/" + CurrentFinanceYear.Substring(2, 2) + CurrentFinanceYear.Substring(7, 2) + "/" + invoiceNo.ToString().PadLeft(3, '0');
+
+                    }
+
+                } else if(VochType == 6 || VochType == 8)
+                {
+
+                    if (invoiceNo.ToString().Length > 3)
+                    {
+                        RartyInvoiceNumber = companyData.FirmCode + "/" + CurrentFinanceYear.Substring(2, 2) + CurrentFinanceYear.Substring(7, 2) + "/" + invoiceNo;
+
+                    }
+                    else
+                    {
+                        RartyInvoiceNumber = companyData.FirmCode + "/" + CurrentFinanceYear.Substring(2, 2) + CurrentFinanceYear.Substring(7, 2) + "/CN" + invoiceNo.ToString().PadLeft(3, '0');
+
+                    }
+
+                } else if(VochType == 12)
+                {
+
+                    if (invoiceNo.ToString().Length > 3)
+                    {
+                        RartyInvoiceNumber = companyData.FirmCode + "/" + CurrentFinanceYear.Substring(2, 2) + CurrentFinanceYear.Substring(7, 2) + "/" + invoiceNo;
+
+                    }
+                    else
+                    {
+                        RartyInvoiceNumber = companyData.FirmCode + "/" + CurrentFinanceYear.Substring(2, 2) + CurrentFinanceYear.Substring(7, 2) + "/EXP" + invoiceNo.ToString().PadLeft(3, '0');
+
+                    }
+
+                } else if(VochType == 13)
+                {
+
+                    if (invoiceNo.ToString().Length > 3)
+                    {
+                        RartyInvoiceNumber = companyData.FirmCode + "/" + CurrentFinanceYear.Substring(2, 2) + CurrentFinanceYear.Substring(7, 2) + "/" + invoiceNo;
+
+                    }
+                    else
+                    {
+                        RartyInvoiceNumber = companyData.FirmCode + "/" + CurrentFinanceYear.Substring(2, 2) + CurrentFinanceYear.Substring(7, 2) + "/DMD" + invoiceNo.ToString().PadLeft(3, '0');
+
+                    }
+
+                } else if(VochType == 14 || VochType == 15)
+                {
+
+                    if (invoiceNo.ToString().Length > 3)
+                    {
+                        RartyInvoiceNumber = companyData.FirmCode + "/" + CurrentFinanceYear.Substring(2, 2) + CurrentFinanceYear.Substring(7, 2) + "/" + invoiceNo;
+
+                    }
+                    else
+                    {
+                        RartyInvoiceNumber = companyData.FirmCode + "/" + CurrentFinanceYear.Substring(2, 2) + CurrentFinanceYear.Substring(7, 2) + "/DN" + invoiceNo.ToString().PadLeft(3, '0');
+
+                    }
+
+                } 
+
                 BillSummary billsummary = new BillSummary
                 {
                     CompanyId = data["CompanyId"], //selling party
@@ -1053,8 +1209,8 @@ namespace SutraPlus_DAL.Repository
                     LedgerName = ledgerName + "-" + ledgerplace,
                     TranctDate = data["OriginalInvDate"],
                     // CommodityID = itemdata["CommodityId"],
-                    DisplayinvNo = InvoiceString + '/' + invoiceNo,
-                    PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                    DisplayinvNo = RartyInvoiceNumber,
+                    PartyInvoiceNumber = RartyInvoiceNumber,
                     VochType = data["VochType"],
                     VoucherName = data["VoucherName"],
                     DealerType = data["DealerType"],
@@ -1082,6 +1238,7 @@ namespace SutraPlus_DAL.Repository
                     RoundOff = data["RoundOff"],
                     TotalAmount = data["TotalAmount"],
                     BillAmount = data["BillAmount"],
+                    StateCode2 = stateCode2value,
                     INWords = AmountToWord(Convert.ToDouble(TotalAmount)),// call amt here (write method to which pass amt & get return amt in words like Ruppes One Hundred & Fifty Five Only)                                                                     
                                                                           //DispatcherAddress1 = data["Address"],
                     FromPlace = data["FromPlace"],
@@ -1128,6 +1285,8 @@ namespace SutraPlus_DAL.Repository
                     ShipBillDate = LorryData["ShipBillDate"],
                     ExpDuty = LorryData["ExpDuty"],
 
+                    IsServiceInvoice = data["IsServiceInvoice"],
+
                 };
                 //Item Details
                 //add List of Itemdata
@@ -1142,7 +1301,16 @@ namespace SutraPlus_DAL.Repository
                         ItemNameForVoucherInsert = item["CommodityName"];
                     }
 
+                    var NoOfDocradata = Convert.ToString(item["NoOfDocra"].Value);
+                    if (NoOfDocradata == "")
+                        item["NoOfDocra"] = 0;
 
+                    var weight = 0;
+                    if(item["TotalWeight"] != "")
+                    {
+                        weight = Convert.ToDouble(item["TotalWeight"]);
+                    }
+                    
                     string commodityid = item["CommodityId"];
                     var commodityname = _tenantDBContext.Commodities
                     .Where(c => c.CommodityId == Int32.Parse(commodityid)).Select(c => c.CommodityName).FirstOrDefault();
@@ -1160,11 +1328,11 @@ namespace SutraPlus_DAL.Repository
                         EwaybillNo = LorryData["EwaybillNo"], //from lorry
                         WeightPerBag = item["WeightPerBag"],//1
                         NoOfBags = item["NoOfBags"],//2
-                        TotalWeight = item["TotalWeight"],//3
+                        TotalWeight = weight,//3
                         Rate = item["Rate"],//4
                         Amount = item["Amount"],//5
                         Mark = item["Remark"],//6
-                        PartyInvoiceNumber = InvoiceString + '/' + Convert.ToString(invoiceNo),
+                        PartyInvoiceNumber = RartyInvoiceNumber,
                         Discount = data["Discount"],
                         NetAmount = item["Amount"],
                         SGST = item["SgstAmount"],
@@ -1177,6 +1345,7 @@ namespace SutraPlus_DAL.Repository
                         SGSTRate = item["SgstRate"],
                         CGSTRate = item["CgstRate"],
                         Taxable = item["Taxable"],
+                        
                         IsActive = true
                     };
                     inventorylist.Add(inventory);
@@ -1248,7 +1417,7 @@ namespace SutraPlus_DAL.Repository
                             Credit = Convert.ToDecimal(item.Amount),
                             Debit = 0,
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = LorryData["DeliveryName"],
                             CreatedBy = 1
                         };
@@ -1274,7 +1443,7 @@ namespace SutraPlus_DAL.Repository
                             Credit = Convert.ToDecimal(data["Igstvalue"]),
                             Debit = 0,
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = LorryData["DeliveryName"],
                             CreatedBy = 1
                         };
@@ -1288,6 +1457,9 @@ namespace SutraPlus_DAL.Repository
                         var ledgerVal1 = (_tenantDBContext.Ledgers.
                                       Where(l => l.LedgerName == CommodityAccountName1 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
 
+                        var sgstvalue = data["Sgstvalue"];
+                        if (sgstvalue == null)
+                            data["Sgstvalue"] = 0;
                         Voucher voucherlst = new Voucher
                         {
                             CommodityId = 0,
@@ -1300,7 +1472,7 @@ namespace SutraPlus_DAL.Repository
                             Credit = Convert.ToDecimal(data["Sgstvalue"]),
                             Debit = 0,
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = data["LedgerName"],
                             CreatedBy = 1
                         };
@@ -1310,6 +1482,10 @@ namespace SutraPlus_DAL.Repository
 
                         var ledgerVal2 = (_tenantDBContext.Ledgers.
                                       Where(l => l.LedgerName == CommodityAccountName2 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+                        var Cgstvalue = data["Cgstvalue"];
+                        if (Cgstvalue == null)
+                            data["Cgstvalue"] = 0;
 
                         Voucher voucherlst1 = new Voucher
                         {
@@ -1323,7 +1499,7 @@ namespace SutraPlus_DAL.Repository
                             Credit = Convert.ToDecimal(data["Cgstvalue"]),
                             Debit = 0,
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = data["LedgerName"],
                             CreatedBy = 1
                         };
@@ -1373,7 +1549,7 @@ namespace SutraPlus_DAL.Repository
                             Credit = Convert.ToDecimal(data["ExpenseAmount1"]),
                             Debit = 0,
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = data["LedgerName"],
                             CreatedBy = 1
                         };
@@ -1418,7 +1594,7 @@ namespace SutraPlus_DAL.Repository
                             Credit = Convert.ToDecimal(data["ExpenseAmount2"]),
                             Debit = 0,
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = data["LedgerName"],
                             CreatedBy = 1
                         };
@@ -1464,7 +1640,7 @@ namespace SutraPlus_DAL.Repository
                             Credit = Convert.ToDecimal(data["ExpenseAmount3"]),
                             Debit = 0,
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = data["LedgerName"],
                             CreatedBy = 1
                         };
@@ -1521,7 +1697,7 @@ namespace SutraPlus_DAL.Repository
                                 Credit = Convert.ToDecimal(LorryData["AdvanceFrieght"]),
                                 Debit = 0,
                                 IsActive = true,
-                                PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
                                 LedgerNameForNarration = data["LedgerName"],
                                 CreatedBy = 1
                             };
@@ -1553,7 +1729,7 @@ namespace SutraPlus_DAL.Repository
                                 Credit = 0,
                                 Debit = Convert.ToDecimal(LorryData["TotalFrieght"]),
                                 IsActive = true,
-                                PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
                                 LedgerNameForNarration = data["LedgerName"],
                                 CreatedBy = 1
                             };
@@ -1608,7 +1784,7 @@ namespace SutraPlus_DAL.Repository
                                 Credit = Convert.ToDecimal(LorryData["AdvanceFrieght"]),
                                 Debit = 0,
                                 IsActive = true,
-                                PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
                                 LedgerNameForNarration = data["LedgerName"],
                                 CreatedBy = 1
                             };
@@ -1616,6 +1792,9 @@ namespace SutraPlus_DAL.Repository
                         }
                     }
 
+                    var RoundOff = data["RoundOff"];
+                    if (RoundOff == null)
+                        data["RoundOff"] = 0;
 
                     if (Convert.ToDecimal(data["RoundOff"]) != 0)
                     {
@@ -1635,7 +1814,7 @@ namespace SutraPlus_DAL.Repository
                             Credit = Convert.ToDecimal(data["RoundOff"]) > 0 ? Convert.ToDecimal(data["RoundOff"]) : 0,
                             Debit = (Convert.ToDecimal(data["RoundOff"]) < 0 ? Convert.ToDecimal(data["RoundOff"]) : 0) * -1,
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = data["LedgerName"],
                             CreatedBy = 1
                         };
@@ -1683,7 +1862,7 @@ namespace SutraPlus_DAL.Repository
                             Credit = TDSAmount,
                             Debit = 0,
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = data["LedgerName"],
                             CreatedBy = 1
                         };
@@ -1724,7 +1903,7 @@ namespace SutraPlus_DAL.Repository
                             Credit = 0,
                             Debit = TDSAmount,
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = data["LedgerName"],
                             CreatedBy = 1
                         };
@@ -1735,7 +1914,9 @@ namespace SutraPlus_DAL.Repository
 
 
 
-
+                    var BillAmount = data["BillAmount"];
+                    if (BillAmount == null)
+                        data["BillAmount"] = 0;
 
                     if (Convert.ToDecimal(data["BillAmount"]) != 0)
                     {
@@ -1752,7 +1933,7 @@ namespace SutraPlus_DAL.Repository
                             Credit = 0,
                             Debit = Convert.ToDecimal(data["BillAmount"]),
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = ItemNameForVoucherInsert + " Account",
                             CreatedBy = 1
                         };
@@ -1822,13 +2003,16 @@ namespace SutraPlus_DAL.Repository
                             Credit = 0,
                             Debit = Convert.ToDecimal(item.Amount),
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = LorryData["DeliveryName"],
                             CreatedBy = 1
                         };
                         voucherlist.Add(voucherlst);
                     }
 
+                    var Igstvalue = data["Igstvalue"];
+                    if (Igstvalue == null)
+                        data["Igstvalue"] = 0;
 
                     if (Convert.ToDecimal(data["Igstvalue"]) > 0)
                     {
@@ -1848,7 +2032,7 @@ namespace SutraPlus_DAL.Repository
                             Credit = 0,
                             Debit = Convert.ToDecimal(data["Igstvalue"]),
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = LorryData["DeliveryName"],
                             CreatedBy = 1
                         };
@@ -1874,7 +2058,7 @@ namespace SutraPlus_DAL.Repository
                             Credit = 0,
                             Debit = Convert.ToDecimal(data["Sgstvalue"]),
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = data["LedgerName"],
                             CreatedBy = 1
                         };
@@ -1897,7 +2081,7 @@ namespace SutraPlus_DAL.Repository
                             Credit = 0,
                             Debit = Convert.ToDecimal(data["Cgstvalue"]),
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = data["LedgerName"],
                             CreatedBy = 1
                         };
@@ -1947,7 +2131,7 @@ namespace SutraPlus_DAL.Repository
                             Credit = 0,
                             Debit = Convert.ToDecimal(data["ExpenseAmount1"]),
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = data["LedgerName"],
                             CreatedBy = 1
                         };
@@ -1992,7 +2176,7 @@ namespace SutraPlus_DAL.Repository
                             Credit = 0,
                             Debit = Convert.ToDecimal(data["ExpenseAmount2"]),
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = data["LedgerName"],
                             CreatedBy = 1
                         };
@@ -2038,7 +2222,7 @@ namespace SutraPlus_DAL.Repository
                             Credit = 0,
                             Debit = Convert.ToDecimal(data["ExpenseAmount3"]),
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = data["LedgerName"],
                             CreatedBy = 1
                         };
@@ -2095,7 +2279,7 @@ namespace SutraPlus_DAL.Repository
                                 Credit = 0,
                                 Debit = Convert.ToDecimal(LorryData["AdvanceFrieght"]),
                                 IsActive = true,
-                                PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
                                 LedgerNameForNarration = data["LedgerName"],
                                 CreatedBy = 1
                             };
@@ -2127,7 +2311,7 @@ namespace SutraPlus_DAL.Repository
                                 Credit = Convert.ToDecimal(LorryData["TotalFrieght"]),
                                 Debit = 0,
                                 IsActive = true,
-                                PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
                                 LedgerNameForNarration = data["LedgerName"],
                                 CreatedBy = 1
                             };
@@ -2182,7 +2366,7 @@ namespace SutraPlus_DAL.Repository
                                 Debit = Convert.ToDecimal(LorryData["AdvanceFrieght"]),
                                 Credit = 0,
                                 IsActive = true,
-                                PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
                                 LedgerNameForNarration = data["LedgerName"],
                                 CreatedBy = 1
                             };
@@ -2209,7 +2393,7 @@ namespace SutraPlus_DAL.Repository
                             Debit = Convert.ToDecimal(data["RoundOff"]) > 0 ? Convert.ToDecimal(data["RoundOff"]) : 0,
                             Credit = (Convert.ToDecimal(data["RoundOff"]) < 0 ? Convert.ToDecimal(data["RoundOff"]) : 0) * -1,
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = data["LedgerName"],
                             CreatedBy = 1
                         };
@@ -2257,7 +2441,7 @@ namespace SutraPlus_DAL.Repository
                             Credit = 0,
                             Debit = TDSAmount,
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = data["LedgerName"],
                             CreatedBy = 1
                         };
@@ -2298,7 +2482,7 @@ namespace SutraPlus_DAL.Repository
                             Credit = TDSAmount,
                             Debit = 0,
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = data["LedgerName"],
                             CreatedBy = 1
                         };
@@ -2326,7 +2510,7 @@ namespace SutraPlus_DAL.Repository
                             Credit = Convert.ToDecimal(data["BillAmount"]),
                             Debit = 0,
                             IsActive = true,
-                            PartyInvoiceNumber = InvoiceString + '/' + invoiceNo,
+                            PartyInvoiceNumber = RartyInvoiceNumber,
                             LedgerNameForNarration = ItemNameForVoucherInsert + " Account",
                             CreatedBy = 1
                         };
@@ -2434,14 +2618,48 @@ namespace SutraPlus_DAL.Repository
                                     && bls.CompanyId == companyid_Invoice && bls.VochNo == vochNo_Invoice && bls.VochType == 9
                                     select new
                                     {
+                                        tcsValue = bls.TCSValue,
                                         LedgerID = bls.LedgerId,
                                         LedgerName = led.LedgerName,
                                         LegalName = led.LegalName,
+                                        lineItemQty = inv.TotalWeight,
+                                        place = led.Place,
+                                        frieghtinBill = bls.FrieghtinBill,
+                                        billAmount = bls.BillAmount,
+                                        TotalWeight = bls.TotalWeight,
+                                        sgstLabel = "Add SGST",
+                                        cgstLabel = "Add CGST",
+                                        igstLabel = "Add IGST",
+                                        frieghtLabel = "Add Frieght",
+                                        totalWeightInString = bls.WeightInString,
+                                        totalBags = bls.TotalBags,
                                         Address1 = led.Address1,
                                         Address2 = led.Address2,
+                                        weightInString = inv.WeightInString,
+                                        ledgerCELLNO = led.CellNo,
+                                        ledgerfssai = led.Fssai,
+                                        ledgerPAN = led.Pan,
                                         VoucherName = VochType.VoucherName,
                                         VoucherTypeID = bls.VochType,
                                         DealerType = led.DealerType,
+                                        companyName = cpn.CompanyName,
+                                        companyGSTIN = cpn.Gstin,
+                                        companyDistrict = cpn.District,
+                                        companyPlace = cpn.Place,
+                                        bank1 = cpn.Bank1,
+                                        jurisLine = cpn.JurisLine,
+                                        ifsC1 = cpn.Ifsc1,
+                                        accountNo1 = cpn.AccountNo1,
+                                        bank2 = cpn.Bank2,
+                                        ifsC2 = cpn.Ifsc2,
+                                        accountNo2 = cpn.AccountNo2,
+                                        bank3 = cpn.Bank3,
+                                        ifsC3 = cpn.Ifsc3,
+                                        account3 = cpn.Account3,
+                                        companyPAN = cpn.Pan,
+                                        secondLineForReport = cpn.SecondLineForReport,
+                                        thirdLineForReport = cpn.ThirdLineForReport,
+                                        companyState = cpn.State,
                                         PAN = led.Pan,
                                         PIN = led.Pin,
                                         GST = led.Gstin,
@@ -2451,11 +2669,16 @@ namespace SutraPlus_DAL.Repository
                                         TrancDate = Convert.ToString(Convert.ToDateTime(bls.TranctDate).ToString("yyyy-MM-dd")),
                                         TDS = bls.tdsperc,
                                         frieghtPlus = bls.frieghtPlus,
+                                        irnNo = bls.IRNNO,
+                                        ackno = bls.ACKNO,
+                                        displayinvNo = bls.DisplayinvNo,
                                         LorryOwnerName = bls.LorryOwnerName,
                                         ExpenseName1 = bls.ExpenseName1,
                                         ExpenseName2 = bls.ExpenseName2,
                                         ExpenseName3 = bls.ExpenseName3,
                                         ExpenseAmount1 = bls.ExpenseAmount1,
+                                        inWords = bls.INWords,
+                                        stateCode2 = bls.StateCode2,
                                         ExpenseAmount2 = bls.ExpenseAmount2,
                                         ExpenseAmount3 = bls.ExpenseAmount3,
                                         TaxableValue = bls.TaxableValue,
@@ -2463,14 +2686,17 @@ namespace SutraPlus_DAL.Repository
                                         SGSTValue = bls.SGSTValue,
                                         CSGSTValue = bls.CSGSTValue,
                                         IGSTValue = bls.IGSTValue,
-
+                                        paymentterms = "",
+                                        deliveryterms = "",
                                         CGSTRate = inv.CGSTRate,
                                         IGSTRate = inv.IGSTRate,
                                         SGSTRate = inv.SGSTRate,
-
+                                        hsn = comdty.HSN,
+                                        mou = comdty.Mou,
                                         IsSEZ = bls.IsSEZ,
                                         RoundOff = bls.RoundOff,
                                         TotalAmount = bls.TotalAmount,
+                                        note1 = bls.Note1,
                                         FromPlace = bls.FromPlace,
                                         ToPlace = bls.ToPlace,
                                         Ponumber = bls.Ponumber,
@@ -2505,6 +2731,10 @@ namespace SutraPlus_DAL.Repository
                                   {
                                       id = t1 != null ? t1.Id : 0,
                                       CompanyId = t1 != null ? t1.CompanyId : 0,
+                                      lineItemQty = t1.TotalWeight??0,
+                                      hsn = t2.HSN ?? "",
+                                      mou = t2.Mou ?? "",
+                                      weightInString = t1.WeightInString ?? "",
                                       VochType = t1 != null ? t1.VochType : 0,
                                       InvoiceType = t1 != null ? t1.InvoiceType : "",
                                       VochNo = t1 != null ? t1.VochNo : 0,
@@ -2534,6 +2764,156 @@ namespace SutraPlus_DAL.Repository
 
 
 
+                // Create an instance of CombinedData and populate it with values from SingleBill_P and Itemresult
+                var combinedDataaa = new
+                {
+                    Itemresult = Itemresult,
+                    LedgerID = SingleBill_P.LedgerID,
+                    lineItemQty = SingleBill_P.lineItemQty,
+                    bank1 = SingleBill_P.bank1 ?? "",
+                    tcsValue = SingleBill_P.tcsValue ?? 0,
+                    jurisLine = SingleBill_P.jurisLine ?? "",
+                    LedgerName = SingleBill_P.LedgerName ?? "",
+                    frieghtinBill = SingleBill_P.frieghtinBill,
+                    cgstLabel = SingleBill_P.cgstLabel ?? "",
+                    sgstLabel = SingleBill_P.sgstLabel ?? "",
+                    igstLabel = SingleBill_P.igstLabel ?? "",
+                    frieghtLabel = SingleBill_P.frieghtLabel ?? "",
+                    ifsC1 = SingleBill_P.ifsC1 ?? "",
+                    billAmount = SingleBill_P.billAmount,
+                    accountNo1 = SingleBill_P.accountNo1 ?? "",
+                    bank2 = SingleBill_P.bank2 ?? "",
+                    ifsC2 = SingleBill_P.ifsC2 ?? "",
+                    accountNo2 = SingleBill_P.accountNo2 ?? "",
+                    bank3 = SingleBill_P.bank3 ?? "",
+                    ifsC3 = SingleBill_P.ifsC3 ?? "",
+                    stateCode2 = SingleBill_P.stateCode2 ?? "0",
+                    account3 = SingleBill_P.account3 ?? "",
+
+                    note1 = SingleBill_P.note1 ?? "",
+                    ledgerPAN = SingleBill_P.ledgerPAN ?? "",
+                    inWords = SingleBill_P.inWords ?? "",
+                    totalBags = SingleBill_P.totalBags ?? 0,
+                    companyPAN = SingleBill_P.companyPAN ?? "",
+                    totalWeightInString = SingleBill_P.totalWeightInString ?? "",
+                    weightInString = SingleBill_P.weightInString ?? "",
+                    TotalWeight = SingleBill_P.TotalWeight ?? 0,
+                    mou = SingleBill_P.mou ?? "",
+                    hsn = SingleBill_P.hsn ?? "",
+                    LegalName = SingleBill_P.LegalName ?? "",
+                    Address1 = SingleBill_P.Address1 ?? "",
+                    Address2 = SingleBill_P.Address2 ?? "",
+                    VoucherName = SingleBill_P.VoucherName ?? "",
+                    VoucherTypeID = SingleBill_P.VoucherTypeID ?? 0,
+                    DealerType = SingleBill_P.DealerType ?? "",
+                    PAN = SingleBill_P.PAN ?? "",
+                    companyName = SingleBill_P.companyName ?? "",
+                    companyGSTIN = SingleBill_P.companyGSTIN ?? "",
+                    place = SingleBill_P.place ?? "",
+                    PIN = SingleBill_P.PIN ?? "",
+                    companyDistrict = SingleBill_P.companyDistrict ?? "",
+                    companyPlace = SingleBill_P.companyPlace ?? "",
+                    companyState = SingleBill_P.companyState ?? "",
+                    GST = SingleBill_P.GST ?? "",
+                    ledgerfssai = SingleBill_P.ledgerfssai ?? "",
+                    ledgerCELLNO = SingleBill_P.ledgerCELLNO ?? "",
+                    State = SingleBill_P.State ?? "",
+                    CellNo = SingleBill_P.CellNo ?? "",
+                    VochNo = SingleBill_P.VochNo ?? 0,
+                    irnNo = SingleBill_P.irnNo ?? "",
+                    TrancDate = SingleBill_P.TrancDate ?? "",
+                    TDS = SingleBill_P.TDS ?? 0,
+                    frieghtPlus = SingleBill_P.frieghtPlus ?? 0,
+                    LorryOwnerName = SingleBill_P.LorryOwnerName ?? "",
+                    thirdLineForReport = SingleBill_P.thirdLineForReport ?? "",
+                    ackno = SingleBill_P.ackno ?? "",
+                    ExpenseName1 = SingleBill_P.ExpenseName1 ?? "",
+                    ExpenseName2 = SingleBill_P.ExpenseName2 ?? "",
+                    ExpenseName3 = SingleBill_P.ExpenseName3 ?? "",
+                    ExpenseAmount1 = SingleBill_P.ExpenseAmount1 ?? 0,
+                    ExpenseAmount2 = SingleBill_P.ExpenseAmount2 ?? 0,
+                    ExpenseAmount3 = SingleBill_P.ExpenseAmount3 ?? 0,
+                    TaxableValue = SingleBill_P.TaxableValue ?? 0,
+                    Discount = SingleBill_P.Discount ?? 0,
+                    SGSTValue = SingleBill_P.SGSTValue ?? 0,
+                    CSGSTValue = SingleBill_P.CSGSTValue ?? 0,
+                    IGSTValue = SingleBill_P.IGSTValue ?? 0,
+                    CGSTRate = SingleBill_P.CGSTRate ?? 0,
+                    IGSTRate = SingleBill_P.IGSTRate ?? 0,
+                    SGSTRate = SingleBill_P.SGSTRate ?? 0,
+                    IsSEZ = SingleBill_P.IsSEZ ?? 0,
+                    RoundOff = SingleBill_P.RoundOff ?? 0,
+                    displayinvNo = SingleBill_P.displayinvNo ?? "",
+                    secondLineForReport = SingleBill_P.secondLineForReport ?? "",
+                    TotalAmount = SingleBill_P.TotalAmount ?? 0,
+                    FromPlace = SingleBill_P.FromPlace ?? "",
+                    ToPlace = SingleBill_P.ToPlace ?? "",
+                    Ponumber = SingleBill_P.Ponumber ?? "",
+                    EwayBillNo = SingleBill_P.EwayBillNo ?? "",
+                    Transporter = SingleBill_P.Transporter ?? "",
+                    LorryNo = SingleBill_P.LorryNo ?? "",
+                    DriverName = SingleBill_P.DriverName ?? "",
+                    Dlno = SingleBill_P.Dlno ?? "",
+                    paymentterms = SingleBill_P.paymentterms ?? "",
+                    deliveryterms = SingleBill_P.deliveryterms ?? "",
+                    CheckPost = SingleBill_P.CheckPost ?? "",
+                    FrieghtPerBag = SingleBill_P.FrieghtPerBag ?? 0,
+                    TotalFrieght = SingleBill_P.TotalFrieght ?? 0,
+                    Advance = SingleBill_P.Advance ?? 0,
+                    Balance = SingleBill_P.Balance ?? 0,
+                    IsLessOrPlus = SingleBill_P.IsLessOrPlus ?? false,
+                    tdsperc = SingleBill_P.tdsperc ?? 0,
+                    DeliveryName = SingleBill_P.DeliveryName ?? "",
+                    DeliveryAddress1 = SingleBill_P.DeliveryAddress1 ?? "",
+                    DeliveryAddress2 = SingleBill_P.DeliveryAddress2 ?? "",
+                    DeliveryPlace = SingleBill_P.DeliveryPlace ?? "",
+                    DelPinCode = SingleBill_P.DelPinCode ?? "",
+                    DeliveryState = SingleBill_P.DeliveryState ?? "",
+                    DeliveryStateCode = SingleBill_P.DeliveryStateCode ?? "",
+                    DeliveryDistance = SingleBill_P.DeliveryDistance ?? 0,
+                    DeliveryNote = SingleBill_P.DeliveryNote ?? "",
+
+                    Id = Itemresult.FirstOrDefault()?.id ?? 0,
+                    CompanyId = Itemresult.FirstOrDefault()?.CompanyId ?? 0,
+                    VochType = Itemresult.FirstOrDefault()?.VochType ?? 0,
+                    InvoiceType = Itemresult.FirstOrDefault()?.InvoiceType ?? "",
+                    //VochNo = Itemresult.FirstOrDefault().VochNo ,
+                    LedgerId = Itemresult.FirstOrDefault()?.LedgerId ?? 0,
+                    CommodityId = Itemresult.FirstOrDefault()?.CommodityId ?? 0,
+                    CommodityName = Itemresult.FirstOrDefault()?.CommodityName ?? "",
+                    TranctDate = Itemresult.FirstOrDefault()?.TranctDate ?? DateTime.MinValue,
+                    WeightPerBag = Itemresult.FirstOrDefault()?.WeightPerBag ?? 0,
+                    NoOfBags = Itemresult.FirstOrDefault()?.NoOfBags ?? 0,
+                    /*TotalWeight = Itemresult.FirstOrDefault()?.TotalWeight ?? 0,*/
+                    Rate = Itemresult.FirstOrDefault()?.Rate ?? 0,
+                    Amount = Itemresult.FirstOrDefault()?.Amount ?? 0,
+                    Mark = Itemresult.FirstOrDefault()?.Mark ?? "",
+                    NetAmount = Itemresult.FirstOrDefault()?.NetAmount ?? 0,
+                    SGST = Itemresult.FirstOrDefault()?.SGST ?? 0,
+                    CGST = Itemresult.FirstOrDefault()?.CGST ?? 0,
+                    IGST = Itemresult.FirstOrDefault()?.IGST ?? 0,
+                    CreatedDate = Itemresult.FirstOrDefault()?.CreatedDate ?? DateTime.MinValue,
+                    FreeQty = Itemresult.FirstOrDefault()?.FreeQty ?? 0,
+                    //IGSTRate = Itemresult.FirstOrDefault()?.IGSTRate ?? 0,
+                    //CGSTRate = Itemresult.FirstOrDefault()?.CGSTRate ?? 0,
+                    //SGSTRate = Itemresult.FirstOrDefault()?.SGSTRate ?? 0,
+                    Taxable = Itemresult.FirstOrDefault()?.Taxable ?? 0,
+                    IsActive = Itemresult.FirstOrDefault()?.IsActive ?? false
+                };
+
+  
+                var listdata = new List<object>();
+                listdata.Add(combinedDataaa);
+                // Serialize the combined object
+                var serializedData = JsonConvert.SerializeObject(listdata);
+
+                // Add the serialized data to the response
+                response.Add("combinedDataaa", serializedData);
+
+
+
+
+
                 if (SingleBill_P != null && Itemresult != null)
                 {
                     response.Add("InvoiceData", JsonConvert.SerializeObject(SingleBill_P));
@@ -2551,6 +2931,7 @@ namespace SutraPlus_DAL.Repository
                 {
                     // Handle the case where Itemresult is null
                 }
+                 
 
                 return response;
 
@@ -3248,6 +3629,7 @@ namespace SutraPlus_DAL.Repository
                 DateTime dateTime = DateTime.Today;
                 //DateTime dateTime = DateTime.ParseExact(dateString, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
+                _tenantDBContext.Database.SetCommandTimeout(220);
                 var ledgerInfoList = _tenantDBContext.Ledgers
                     .Where(led => led.CompanyId == companyId && led.AccountingGroupId == 21)
                     .OrderBy(led => led.LedgerName)
@@ -3278,10 +3660,10 @@ namespace SutraPlus_DAL.Repository
                             (_tenantDBContext.Vouchers
                             .Where(voucher => voucher.LedgerId == ledger.LedgerId && voucher.CompanyId == companyId && voucher.Tdstype == 1)
                             .Sum(voucher => (decimal?)voucher.Debit) ?? 0), 2)
-                    })
+                    }) 
                     .Where(n => n.TDSBalance > 0 && n.TotalCommission > 0)
                     .ToList();
-   
+
                 var page = new pagination<TDSReportEntry>
                 {
                     TotalCount = ledgerInfoList.Count(),
@@ -3296,21 +3678,24 @@ namespace SutraPlus_DAL.Repository
                 throw;
             }
         }
-         
+
 
         public pagination<LedgerInfo> GetPaymentList(JObject Data)
         {
             try
-            { 
+            {
                 var searchText = Convert.ToString(Data?["SearchText"]);
                 var balance = Convert.ToDecimal(Data?["Balance"]);
                 var Date = Convert.ToString(Data?["Date"]);
+
+                var pageNumber = Convert.ToInt32(Data?["Page"]?["PageNumber"]);
+                var pageSize = Convert.ToInt32(Data?["Page"]?["PageSize"]);
 
                 if (Convert.ToString(Data?["Balance"]) == null || Convert.ToString(Data?["Balance"]).Equals(""))
                 {
                     balance = -1;
                 }
-                 
+
                 var data = JsonConvert.DeserializeObject<dynamic>(Data?["ReportData"]?.ToString());
 
                 if (data == null)
@@ -3323,32 +3708,8 @@ namespace SutraPlus_DAL.Repository
                 DateTime? endDate = data?["EndDate"];
                 string reportType = data?["ReportType"];
 
-                /*first*/
-                /*   var query = from ledger in _tenantDBContext.Ledgers
-                               join voucher in _tenantDBContext.Vouchers on ledger.LedgerId equals voucher.LedgerId
-                               where voucher.CompanyId == companyId && ledger.AccountingGroupId == 21
-                               select new
-                               {
-                                   ledger.LedgerId,
-                                   ledger.LedgerName,
-                                   ledger.Place,
-                                   voucher.Credit,
-                                   voucher.TranctDate
-                               };*/
-                /*
-                                var ledgerInfoList = query
-                                    .GroupBy(result => new { result.LedgerName, result.Place, result.TranctDate })
-                                    .Select(group => new LedgerInfo
-                                    {
-                                        LedgerName = group.Key.LedgerName,
-                                        Place = group.Key.Place,
-                                        AsOnDateBalance = group.Sum(x => x.Credit),
-                                        TotalBalance = group.Sum(x => x.Credit),
-                                        TranctDate = group.Key.TranctDate ?? new DateTime()
-                                    })
-                                    .ToList();*/
-                /**/
-                  
+
+
                 var ledgerQuery = from led in _tenantDBContext.Ledgers
                                   where led.CompanyId == companyId && led.AccountingGroupId == 21
                                   orderby led.LedgerName
@@ -3357,41 +3718,48 @@ namespace SutraPlus_DAL.Repository
                                       led.LedgerId,
                                       led.LedgerName,
                                       led.Place,
-                                      TotalBalance = 0m, 
-                                      AsOnDateBalance = 0m,  
+                                      TotalBalance = 0m,
+                                      AsOnDateBalance = 0m,
                                       Sno = 0
                                   };
 
 
                 string dateString = Date;
                 DateTime dateTime = DateTime.ParseExact(dateString, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+                _tenantDBContext.Database.SetCommandTimeout(220);
+
+                int skipCount = (pageNumber - 1) * pageSize;
+
                 var ledgerInfoList = _tenantDBContext.Ledgers
-                .Where(led => led.CompanyId == companyId && led.AccountingGroupId == 21)
-                .OrderBy(led => led.LedgerName) 
-                .Select(led => new
-                {
-                    led.LedgerId,
-                    led.LedgerName,
-                    led.Place,
-                    AsOnDateCredit = _tenantDBContext.Vouchers
-                        .Where(v => v.LedgerId == led.LedgerId && v.CompanyId == companyId && v.TranctDate <= dateTime)
-                        .Sum(v => (decimal?)v.Credit) ?? 0,
-                    TotalDebit = _tenantDBContext.Vouchers
-                        .Where(v => v.LedgerId == led.LedgerId && v.CompanyId == companyId)
-                        .Sum(v => (decimal?)v.Debit) ?? 0
-                })
-                .Where(ledger => (ledger.AsOnDateCredit - ledger.TotalDebit) > 1000)
-                .Select(ledger => new LedgerInfo
-                {
-                    LedgerId = Convert.ToInt32(ledger.LedgerId),
-                    LedgerName = ledger.LedgerName,
-                    Place = ledger.Place,
-                    TotalBalance = _tenantDBContext.Vouchers
-                        .Where(v => v.LedgerId == ledger.LedgerId && v.CompanyId == companyId)
-                        .Sum(v => (decimal?)v.Credit - v.Debit) ?? 0,
-                    AsOnDateBalance = ledger.AsOnDateCredit - ledger.TotalDebit
-                })
-                .ToList();
+                                    .Where(led => led.CompanyId == companyId && led.AccountingGroupId == 21)
+                                    .OrderBy(led => led.LedgerName)
+                                    .Select(led => new
+                                    {
+                                        led.LedgerId,
+                                        led.LedgerName,
+                                        led.Place,
+                                        AsOnDateCredit = _tenantDBContext.Vouchers
+                                            .Where(v => v.LedgerId == led.LedgerId && v.CompanyId == companyId && v.TranctDate <= dateTime)
+                                            .Sum(v => (decimal?)v.Credit) ?? 0,
+                                        TotalDebit = _tenantDBContext.Vouchers
+                                            .Where(v => v.LedgerId == led.LedgerId && v.CompanyId == companyId)
+                                            .Sum(v => (decimal?)v.Debit) ?? 0
+                                    })
+                                    .Where(ledger => (ledger.AsOnDateCredit - ledger.TotalDebit) > 1000)
+                                    .Select(ledger => new LedgerInfo
+                                    {
+                                        LedgerId = Convert.ToInt32(ledger.LedgerId),
+                                        LedgerName = ledger.LedgerName,
+                                        Place = ledger.Place,
+                                        TotalBalance = _tenantDBContext.Vouchers
+                                            .Where(v => v.LedgerId == ledger.LedgerId && v.CompanyId == companyId)
+                                            .Sum(v => (decimal?)v.Credit - v.Debit) ?? 0,
+                                        AsOnDateBalance = ledger.AsOnDateCredit - ledger.TotalDebit
+                                    })
+                                    .Skip(skipCount)
+                                    .Take(pageSize)
+                                    .ToList();
 
                 if (!string.IsNullOrEmpty(searchText) || balance != null || !string.IsNullOrEmpty(Date))
                 {
@@ -3429,7 +3797,7 @@ namespace SutraPlus_DAL.Repository
                 throw;
             }
         }
-  
+
         private decimal CalculateAsOnDateBalance(int companyId,int ledgerId, DateTime? tranctDate)
         {
             var asOnDateCredit = _tenantDBContext.Vouchers
