@@ -51,6 +51,8 @@ import { TDSReportComponent } from './components/tdsreport/tdsreport.component';
 import { ItemWiseReportViewComponent } from './components/item-wise-report-view/item-wise-report-view.component';
 import { CommonReportGeneratorComponent } from './components/common-report-generator/common-report-generator.component';
 import { GoodsInvoicePrintViewComponent } from './components/sales/goods-invoice/goods-invoice-print-view/goods-invoice-print-view.component';
+import { VerifyBillsComponent } from './components/purchase/verify-bills/verify-bills.component';
+import { EditVerifyBillComponent } from './components/purchase/edit-verify-bill/edit-verify-bill.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent },
@@ -96,6 +98,8 @@ const routes: Routes = [
   { path: 'MonthWise', component: MonthWiseReportComponent },
   { path: 'BankJournal', component: BankJournalEntriesComponent },
   { path: 'akada-entry', component: AkadaEntryComponent },
+  { path: 'verifyBills', component: VerifyBillsComponent },
+  { path: 'EditVerifyBill', component: EditVerifyBillComponent },
   { path: 'BankJournal', component: BankJournalEntriesComponent },
   { path: 'CashEntry', component: CashEntryComponent },
   { path: 'Production-Entry', component: ProductionEntryComponent },

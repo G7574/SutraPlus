@@ -303,9 +303,19 @@ onMonthChangeListener(event: any){
 generatePPPR(){
   this.reportName = "Print Party Report"
   if(this.groupId > 0) {
-    this.openNewTab("PrintPartyReport" + "&StartDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1)) + "&EndDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth()+ 1, 0)) + "&companyidrecord=" + sessionStorage.getItem('companyID') + "&vochtype1=0&vochtype1=99" + "&accountinggroupId=" + this.groupId);
+    this.openNewTab("PrintPartyReport" + "&StartDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1)) + "&EndDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth()+ 1, 0)) + "&companyidrecord=" + sessionStorage.getItem('companyID') + "&vochtype1=0&vochtype1=99" + "&accountinggroupId=" + this.groupId+
+    "|" +
+    "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+    "&DataSource=" + sessionStorage.getItem("DataSource") +
+    "&UserID=" + sessionStorage.getItem("UserID") +
+    "&Password=" + sessionStorage.getItem("Password"));
   } else {
-    this.openNewTab("PrintPartyReport" + "&StartDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1)) + "&EndDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth()+ 1, 0)) + "&companyidrecord=" + sessionStorage.getItem('companyID') + "&vochtype1=0&vochtype1=99");
+    this.openNewTab("PrintPartyReport" + "&StartDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1)) + "&EndDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth()+ 1, 0)) + "&companyidrecord=" + sessionStorage.getItem('companyID') + "&vochtype1=0&vochtype1=99"+
+    "|" +
+    "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+    "&DataSource=" + sessionStorage.getItem("DataSource") +
+    "&UserID=" + sessionStorage.getItem("UserID") +
+    "&Password=" + sessionStorage.getItem("Password"));
   }
 }
 
@@ -354,54 +364,119 @@ generateRepo(selected : boolean) {
     {
         case "All":
             this.reportType = "";
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99");
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99"+
+            "|" +
+            "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+            "&DataSource=" + sessionStorage.getItem("DataSource") +
+            "&UserID=" + sessionStorage.getItem("UserID") +
+            "&Password=" + sessionStorage.getItem("Password"));
             break;
         case "Purchase":
             this.reportType = "Purchase";
             if(this.ledgerId != null && this.ledgerId > 0) {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4" + "&ledgerId=" + this.ledgerId);
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4" + "&ledgerId=" + this.ledgerId+
+              "|" +
+              "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+              "&DataSource=" + sessionStorage.getItem("DataSource") +
+              "&UserID=" + sessionStorage.getItem("UserID") +
+              "&Password=" + sessionStorage.getItem("Password"));
             } else {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4");
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4"+
+              "|" +
+              "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+              "&DataSource=" + sessionStorage.getItem("DataSource") +
+              "&UserID=" + sessionStorage.getItem("UserID") +
+              "&Password=" + sessionStorage.getItem("Password"));
             }
             break;
         case "Sales":
             this.reportType = "Sales";
             if(this.ledgerId != null && this.ledgerId > 0) {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13" + "&ledgerId=" + this.ledgerId);
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13" + "&ledgerId=" + this.ledgerId+
+              "|" +
+              "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+              "&DataSource=" + sessionStorage.getItem("DataSource") +
+              "&UserID=" + sessionStorage.getItem("UserID") +
+              "&Password=" + sessionStorage.getItem("Password"));
             } else {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13");
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13"+
+              "|" +
+              "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+              "&DataSource=" + sessionStorage.getItem("DataSource") +
+              "&UserID=" + sessionStorage.getItem("UserID") +
+              "&Password=" + sessionStorage.getItem("Password"));
             }
             break;
         case "PurchaseReturn":
             this.reportType = "Purchare Return";
             if(this.ledgerId != null && this.ledgerId > 0) {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14" + "&ledgerId=" + this.ledgerId);
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14" + "&ledgerId=" + this.ledgerId+
+              "|" +
+              "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+              "&DataSource=" + sessionStorage.getItem("DataSource") +
+              "&UserID=" + sessionStorage.getItem("UserID") +
+              "&Password=" + sessionStorage.getItem("Password"));
             } else {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14");
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14"+
+              "|" +
+              "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+              "&DataSource=" + sessionStorage.getItem("DataSource") +
+              "&UserID=" + sessionStorage.getItem("UserID") +
+              "&Password=" + sessionStorage.getItem("Password"));
             }
             break;
         case "SalesReturn":
             this.reportType = "Sales Return";
             if(this.ledgerId != null && this.ledgerId > 0) {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6" + "&ledgerId=" + this.ledgerId);
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6" + "&ledgerId=" + this.ledgerId+
+              "|" +
+              "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+              "&DataSource=" + sessionStorage.getItem("DataSource") +
+              "&UserID=" + sessionStorage.getItem("UserID") +
+              "&Password=" + sessionStorage.getItem("Password"));
             } else {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6");
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6"+
+              "|" +
+              "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+              "&DataSource=" + sessionStorage.getItem("DataSource") +
+              "&UserID=" + sessionStorage.getItem("UserID") +
+              "&Password=" + sessionStorage.getItem("Password"));
             }
             break;
         case "CreditNote":
             this.reportType = "Credit Note";
             if(this.ledgerId != null && this.ledgerId > 0) {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9" + "&ledgerId=" + this.ledgerId);
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9" + "&ledgerId=" + this.ledgerId+
+              "|" +
+              "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+              "&DataSource=" + sessionStorage.getItem("DataSource") +
+              "&UserID=" + sessionStorage.getItem("UserID") +
+              "&Password=" + sessionStorage.getItem("Password"));
             } else {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9");
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9"+
+              "|" +
+              "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+              "&DataSource=" + sessionStorage.getItem("DataSource") +
+              "&UserID=" + sessionStorage.getItem("UserID") +
+              "&Password=" + sessionStorage.getItem("Password"));
             }
             break;
         case "DebitNote":
             this.reportType = "Debit Note";
             if(this.ledgerId != null && this.ledgerId > 0) {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15" + "&ledgerId=" + this.ledgerId);
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15" + "&ledgerId=" + this.ledgerId+
+              "|" +
+              "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+              "&DataSource=" + sessionStorage.getItem("DataSource") +
+              "&UserID=" + sessionStorage.getItem("UserID") +
+              "&Password=" + sessionStorage.getItem("Password"));
             } else {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15");
+              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15"+
+              "|" +
+              "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+              "&DataSource=" + sessionStorage.getItem("DataSource") +
+              "&UserID=" + sessionStorage.getItem("UserID") +
+              "&Password=" + sessionStorage.getItem("Password"));
             }
             break;
         case "" :
@@ -413,54 +488,119 @@ generateRepo(selected : boolean) {
   {
       case "All":
           this.reportType = "";
-          this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99");
+          this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99"+
+          "|" +
+          "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+          "&DataSource=" + sessionStorage.getItem("DataSource") +
+          "&UserID=" + sessionStorage.getItem("UserID") +
+          "&Password=" + sessionStorage.getItem("Password"));
           break;
       case "Purchase":
           this.reportType = "Purchase";
           if(this.ledgerId1 != null && this.ledgerId1 > 0) {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4" + "&ledgerId=" + this.ledgerId1);
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4" + "&ledgerId=" + this.ledgerId1+
+            "|" +
+            "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+            "&DataSource=" + sessionStorage.getItem("DataSource") +
+            "&UserID=" + sessionStorage.getItem("UserID") +
+            "&Password=" + sessionStorage.getItem("Password"));
           } else {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4");
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4"+
+            "|" +
+            "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+            "&DataSource=" + sessionStorage.getItem("DataSource") +
+            "&UserID=" + sessionStorage.getItem("UserID") +
+            "&Password=" + sessionStorage.getItem("Password"));
           }
           break;
       case "Sales":
           this.reportType = "Sales";
           if(this.ledgerId1 != null && this.ledgerId1 > 0) {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13" + "&ledgerId=" + this.ledgerId1);
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13" + "&ledgerId=" + this.ledgerId1+
+            "|" +
+            "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+            "&DataSource=" + sessionStorage.getItem("DataSource") +
+            "&UserID=" + sessionStorage.getItem("UserID") +
+            "&Password=" + sessionStorage.getItem("Password"));
           } else {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13");
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13"+
+            "|" +
+            "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+            "&DataSource=" + sessionStorage.getItem("DataSource") +
+            "&UserID=" + sessionStorage.getItem("UserID") +
+            "&Password=" + sessionStorage.getItem("Password"));
           }
           break;
       case "PurchaseReturn":
           this.reportType = "Purchare Return";
           if(this.ledgerId1 != null && this.ledgerId1 > 0) {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14" + "&ledgerId=" + this.ledgerId1);
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14" + "&ledgerId=" + this.ledgerId1+
+            "|" +
+            "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+            "&DataSource=" + sessionStorage.getItem("DataSource") +
+            "&UserID=" + sessionStorage.getItem("UserID") +
+            "&Password=" + sessionStorage.getItem("Password"));
           } else {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14");
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14"+
+            "|" +
+            "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+            "&DataSource=" + sessionStorage.getItem("DataSource") +
+            "&UserID=" + sessionStorage.getItem("UserID") +
+            "&Password=" + sessionStorage.getItem("Password"));
           }
           break;
       case "SalesReturn":
           this.reportType = "Sales Return";
           if(this.ledgerId1 != null && this.ledgerId1 > 0) {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6" + "&ledgerId=" + this.ledgerId1);
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6" + "&ledgerId=" + this.ledgerId1+
+            "|" +
+            "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+            "&DataSource=" + sessionStorage.getItem("DataSource") +
+            "&UserID=" + sessionStorage.getItem("UserID") +
+            "&Password=" + sessionStorage.getItem("Password"));
           } else {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6");
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6"+
+            "|" +
+            "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+            "&DataSource=" + sessionStorage.getItem("DataSource") +
+            "&UserID=" + sessionStorage.getItem("UserID") +
+            "&Password=" + sessionStorage.getItem("Password"));
           }
           break;
       case "CreditNote":
           this.reportType = "Credit Note";
           if(this.ledgerId1 != null && this.ledgerId1 > 0) {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9" + "&ledgerId=" + this.ledgerId1);
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9" + "&ledgerId=" + this.ledgerId1+
+            "|" +
+            "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+            "&DataSource=" + sessionStorage.getItem("DataSource") +
+            "&UserID=" + sessionStorage.getItem("UserID") +
+            "&Password=" + sessionStorage.getItem("Password"));
           } else {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9");
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9"+
+            "|" +
+            "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+            "&DataSource=" + sessionStorage.getItem("DataSource") +
+            "&UserID=" + sessionStorage.getItem("UserID") +
+            "&Password=" + sessionStorage.getItem("Password"));
           }
           break;
       case "DebitNote":
           this.reportType = "Debit Note";
           if(this.ledgerId1 != null && this.ledgerId1 > 0) {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15" + "&ledgerId=" + this.ledgerId1);
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15" + "&ledgerId=" + this.ledgerId1+
+            "|" +
+            "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+            "&DataSource=" + sessionStorage.getItem("DataSource") +
+            "&UserID=" + sessionStorage.getItem("UserID") +
+            "&Password=" + sessionStorage.getItem("Password"));
           } else {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15");
+            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15"+
+            "|" +
+            "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+            "&DataSource=" + sessionStorage.getItem("DataSource") +
+            "&UserID=" + sessionStorage.getItem("UserID") +
+            "&Password=" + sessionStorage.getItem("Password"));
           }
           break;
       case "" :
@@ -473,7 +613,7 @@ generateRepo(selected : boolean) {
 }
 
 openNewTab(data:any) {
-  console.log( "query -> " + data);
+
   sessionStorage.setItem('query', data);
   sessionStorage.setItem('headerContent', this.reportName + " " + this.reportType + " Report for the period " + this.startDate + " to " + this.endDate);
 

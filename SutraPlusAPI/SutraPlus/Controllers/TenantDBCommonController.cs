@@ -226,6 +226,54 @@ namespace SutraPlus.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost("GetLedgerListForPartyMaster")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetLedgerListForPartyMaster([FromBody] JObject data)
+        {
+            try
+            {
+                var result = _tenantDBCommonService.GetLedgerListForPartyMaster(data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("GetLedgerListForOtherAccounts")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetLedgerListForOtherAccounts([FromBody] JObject data)
+        {
+            try
+            {
+                var result = _tenantDBCommonService.GetLedgerListForOtherAccounts(data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("updateData")]
+        [AllowAnonymous]
+        public async Task<ActionResult> updateData([FromBody] JObject data)
+        {
+            try
+            {
+                var result = _tenantDBCommonService.updateData(data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
         /// <summary>
         /// Get List of ledger based on company id  
         /// </summary>

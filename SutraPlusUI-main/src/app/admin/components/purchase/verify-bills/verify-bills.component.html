@@ -1,0 +1,89 @@
+<form class="row justify-content-center mb-4">
+ <!-- From Date -->
+ <div class="col-md-2">
+  <div style="display: flex; align-items: center;">
+    <label for="startDate" style="margin-right: 10px">From:</label>
+    <input type="date" id="startDate" name="startDate" class="form-control" [value]="startDate" (change)="onStartDateChange($event)" />
+  </div>
+</div>
+
+<!-- To Date -->
+<div class="col-md-2">
+  <div style="display: flex; align-items: center;">
+    <label for="endDate" style="margin-right: 10px">To:</label>
+    <input type="date" id="endDate" name="endDate" class="form-control" [value]="endDate" (change)="onEndChange($event)" />
+  </div>
+</div>
+
+<div class="col-md-2">
+  <div style="display: flex; align-items: center;">
+    <button type="submit" (click)="filterData()" class="btn btn-dark" style="font-size: 11px; width: 100%;">
+      Filter
+    </button>
+  </div>
+</div>
+
+<div class="col-md-2">
+  <div style="display: flex; align-items: center;">
+    <button type="submit" class="btn btn-dark" style="font-size: 11px; width: 100%;" (click)="onPost()" >
+      Post
+    </button>
+  </div>
+</div>
+
+</form>
+
+<div class="card text-center">
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">S.no</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Party Name</th>
+                    <th scope="col">Total Bags</th>
+                    <th scope="col">Total Weight</th>
+                    <th scope="col">Bastani</th>
+                    <th scope="col">Bill Amount</th>
+                    <th scope="col">Bill Number</th>
+                    <th scope="col">GSTIN</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let entry of filteredEntries; let i = index">
+                    <td>{{i + 1}}</td>
+                    <td>{{entry.tranctdate | slice:0:10}}</td>
+                    <td>{{entry.ledger_name}}</td>
+                    <td>{{entry.total_no_of_bags}}</td>
+                    <td>{{entry.total_weight}}</td>
+                    <td>{{entry.total_amount | number:'1.2-2'}}</td>
+                    <td>{{entry.total_inclusive_amount | number:'1.2-2'}}</td>
+                    <td>
+                      <div class="col-md-9">
+                        <input type="text" class="form-control"placeholder="Enter Bill Number" [(ngModel)]="entry.billNumber">
+                    </div>
+                    </td>
+                    <td>{{entry.gstin}}</td>
+                    <td>
+                      <div class="row">
+                        <div class="col-md-2">
+                          <button type="submit" class="btn btn-dark" style="font-size: 11px;" (click)="onEditClick(i)">
+                            Edit
+                          </button>
+                        </div>
+                        <div class="col-md-2" style="margin-left: 30px;">
+                        <button type="submit" class="btn btn-dark" style="font-size: 11px;" (click)="onUpdateClick(i)">
+                          Update
+                        </button>
+                      </div>
+                      </div>
+
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+
+
+</div>

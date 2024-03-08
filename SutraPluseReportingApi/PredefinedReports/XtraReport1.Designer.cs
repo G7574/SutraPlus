@@ -359,10 +359,17 @@ namespace SutraPlusReportApi.PredefinedReports
             this.SqlDataSource1.ConnectionName = ".\\SQLEXPRESS_K2122_Connection 2";
             MsSqlConnectionParameters1.AuthorizationType = DevExpress.DataAccess.ConnectionParameters.MsSqlAuthorizationType.SqlServer;
             //MsSqlConnectionParameters1.DatabaseName = "K2223RGP";
-            MsSqlConnectionParameters1.DatabaseName = "K2223RGP";
-            MsSqlConnectionParameters1.UserName = "sa";
-            MsSqlConnectionParameters1.Password = "root@123";
-            MsSqlConnectionParameters1.ServerName = "103.50.212.163";
+            //MsSqlConnectionParameters1.DatabaseName = "K2223RGP"; 
+            /* MsSqlConnectionParameters1.UserName = "sa";
+             MsSqlConnectionParameters1.Password = "root@123";
+             MsSqlConnectionParameters1.ServerName = "103.50.212.163";*/
+
+
+            MsSqlConnectionParameters1.DatabaseName = CustomReportStorageWebExtension.databaseName;
+            MsSqlConnectionParameters1.UserName = CustomReportStorageWebExtension.UserID;
+            MsSqlConnectionParameters1.Password = CustomReportStorageWebExtension.Password;
+            MsSqlConnectionParameters1.ServerName = CustomReportStorageWebExtension.DataSource;
+
             this.SqlDataSource1.ConnectionParameters = MsSqlConnectionParameters1;
             this.SqlDataSource1.Name = "SqlDataSource1";
             TableQuery1.Name = "Company";

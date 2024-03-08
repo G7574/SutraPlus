@@ -12,7 +12,7 @@ import { Location } from '@angular/common';
   styleUrls: ['./add-user-master.component.scss']
 })
 export class AddUserMasterComponent implements OnInit {
-  
+
   financialYear!: string | null;
   customerCode!: string | null;
   userDetails!: any;
@@ -30,7 +30,7 @@ export class AddUserMasterComponent implements OnInit {
   accessModuleEnabled:boolean=false;
   constructor(private location: Location,private router: Router,private adminService: AdminServicesService,private spinner: NgxSpinnerService,private fb: FormBuilder,private toastr: ToastrService) {}
 
-  ngOnInit(): void { 
+  ngOnInit(): void {
 
     this.addUser = new FormGroup({
       firstName: new FormControl(''),
@@ -98,11 +98,11 @@ export class AddUserMasterComponent implements OnInit {
           if (!this.groupNames.includes(groupName)) {
             this.groupNames.push(groupName);
           }
-        } 
-     
+        }
+
         console.log(this.groupNames);
         for(let data of this.groupNames)
-        {  
+        {
           this.getFormsNames(data);
         }
         this.spinner.hide()
@@ -114,31 +114,31 @@ export class AddUserMasterComponent implements OnInit {
   }
 
    getFormsNames(groupName:string)
-  { 
+  {
     let arrayofFormName: {"formId":number,"formName":string} [] = [];
     for(let data of this.formList)
     {
       if(groupName===data.GroupName)
-      { 
-        arrayofFormName.push({"formId":data.FormId,"formName":data.FormName}); 
+      {
+        arrayofFormName.push({"formId":data.FormId,"formName":data.FormName});
       }
     }
     this.groupingData.push({"groupName":groupName,"formData":arrayofFormName,"accessId":[]});
-  } 
-  
-  onSelectItems(event:any,item:number,index:number) 
+  }
+
+  onSelectItems(event:any,item:number,index:number)
   {
     if(event.target.checked)
     {
      this.groupingData[index].accessId.push(item);
     }
-    else 
+    else
     {
       let indexofaccessId = this.groupingData[index].accessId.indexOf(item);
       this.groupingData[index].accessId.splice(indexofaccessId, 1);
     }
    }
-   
+
    selectAll(event: any,items:any,index:number)
   {
     if(event.target.checked)
@@ -149,11 +149,11 @@ export class AddUserMasterComponent implements OnInit {
         this.groupingData[index].accessId.push(item.formId);
       }
       }
-    else 
-    { 
+    else
+    {
       this.groupingData[index].accessId = [];
     }
-   } 
+   }
 
   get add(): { [key: string]: AbstractControl } {
     return this.addUser.controls;
@@ -165,7 +165,7 @@ export class AddUserMasterComponent implements OnInit {
     if (this.addUser.valid) {
 
       this.accessId = [];
-      if(this.accessModuleEnabled) 
+      if(this.accessModuleEnabled)
       {
       for(let data of this.groupingData)
       {
@@ -175,7 +175,7 @@ export class AddUserMasterComponent implements OnInit {
         }
       }
     }
-    else 
+    else
     {
       for(let data of this.formList)
       {
@@ -198,9 +198,10 @@ export class AddUserMasterComponent implements OnInit {
         next: (res: any) => {
           if (res === 'User Added Successfully...!') {
             this.toastr.success('User Added Successfully!');
-            this.location.back();           
+            this.location.back();
             this.spinner.hide();
           }
+          this.spinner.hide();
         },
         error: (error: any) => {
           this.spinner.hide();
@@ -233,5 +234,5 @@ export class AddUserMasterComponent implements OnInit {
     this.accessId = [];
     this.getUserList();
   }
-  
+
 }

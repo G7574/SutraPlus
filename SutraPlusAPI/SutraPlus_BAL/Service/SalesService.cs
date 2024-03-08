@@ -62,7 +62,25 @@ namespace SutraPlus_BAL.Service
                 var data = JsonConvert.DeserializeObject<dynamic>(Data["SalesDetails"].ToString());
                 int CompanyId = data["CompanyId"]; 
                 int LedgerId = data["LedgerId"]; 
-                response = _salesRepository.GetInvtype(CompanyId, LedgerId);
+                int VoucherNumber = data["VoucherNumber"]; 
+                int VoucherType = data["VoucherType"]; 
+                response = _salesRepository.GetInvtype(CompanyId, LedgerId, VoucherNumber, VoucherType);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                throw ex;
+            }
+        }
+        public JObject GetEinvoiceKey(JObject Data)
+        {
+            try
+            {
+                var response = new JObject();
+                var data = JsonConvert.DeserializeObject<dynamic>(Data["SalesDetails"].ToString());
+                int CompanyId = data["CompanyId"]; 
+                response = _salesRepository.GetEinvoiceKey(CompanyId);
                 return response;
             }
             catch (Exception ex)
@@ -215,6 +233,18 @@ namespace SutraPlus_BAL.Service
                 throw ex;
             }
         }
+        public void UpdateInvoice(JObject Data)
+        {
+            try
+            {
+                _salesRepository.UpdateInvoice(Data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                throw ex;
+            }
+        }
         public JObject GetDispatcherDetails(JObject Data)
         {
             try
@@ -358,7 +388,7 @@ namespace SutraPlus_BAL.Service
             }
         }
 
-        public bool GetInvoiceResponse(JObject Data)
+        public InvoiceDetails GetInvoiceResponse(JObject Data)
         {
             try
             {
@@ -371,17 +401,17 @@ namespace SutraPlus_BAL.Service
                 {
                     // Now 'parsedCompanyId' holds the integer value of 'companyId'
                     // You can use 'parsedCompanyId' in your code
-                    _salesRepository.GetInvoiceResponse(InvoiceNumber, parsedCompanyId);
+                    return _salesRepository.GetInvoiceResponse(InvoiceNumber, parsedCompanyId);
                 }
                 else
                 {
                     // Handle the case where 'companyId' is not a valid integer
                     // Maybe show an error message or set a default value
                     // For now, let's set a default value of 0
-                    _salesRepository.GetInvoiceResponse(InvoiceNumber, 0);
+                    return _salesRepository.GetInvoiceResponse(InvoiceNumber, 0);
                 }
 
-                return true;
+                //return true;
 
             }
             catch (Exception ex)

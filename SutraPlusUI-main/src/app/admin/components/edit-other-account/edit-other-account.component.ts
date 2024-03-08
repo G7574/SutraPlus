@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CommonService } from 'src/app/share/services/common.service';
+import { forEach } from 'lodash-es';
 
 @Component({
   selector: 'app-edit-other-account',
@@ -101,23 +102,44 @@ export class EditOtherAccountComponent implements OnInit {
     });
   }
 
+  groupId : any;
   setData(partyDetails: any) {
 
     if (partyDetails) {
       this.addLedger.controls['ledgerName'].setValue(partyDetails[0].LedgerName);
       this.addLedger.controls['place'].setValue(partyDetails[0].Place);
-      this.addLedger.controls['accGroup'].setValue(partyDetails[0].AccountingGroupId);
+      //this.addLedger.controls['accGroup'].setValue(partyDetails[0].AccountingGroupId);
     }
+    this.groupId =partyDetails[0].AccountingGroupId;
+
+    for (let index = 0; index < this.accGroupList.length; index++) {
+      if(this.accGroupList[index].AccontingGroupId == this.groupId) {
+        this.addLedger.get('accGroup')?.setValue(this.accGroupList[index]?.GroupName);
+        break;
+      }
+    }
+
   }
 
   onSubmit(): void {
     this.submitted = true;
     if (this.addLedger.valid) {
+
+      for (let index = 0; index < this.accGroupList.length; index++) {
+        console.log("1" + this.accGroupList[index].GroupName)
+        console.log("1" + this.addLedger.get('accGroup')?.value)
+        if(this.accGroupList[index].GroupName == this.addLedger.get('accGroup')?.value) {
+          this.groupId = this.accGroupList[index].AccontingGroupId;
+          console.log("done" + this.groupId);
+          break;
+        }
+      }
+
       let obj = {
         "LedgerData": {
           "LedgerName": this.addLedger.get('ledgerName')?.value,
           "Place": this.addLedger.get('place')?.value,
-          "AccountingGroupId": this.addLedger.get('accGroup')?.value,
+          "AccountingGroupId": this.groupId,
           "CreatedBy": this.userDetails.result.UserId,
           "CompanyId":this.globalCompanyId,
           "LedgerId" :this.ledgerId
@@ -127,7 +149,7 @@ export class EditOtherAccountComponent implements OnInit {
       this.spinner.show()
       this.adminService.editLedger(obj).subscribe({
         next: (res: any) => {
-          
+
           if (res == true) {
             this.toastr.success('Account Updated Successfully!');
             this.spinner.hide();
@@ -174,6 +196,6 @@ export class EditOtherAccountComponent implements OnInit {
       },
     });
   }
-  
+
 
 }

@@ -8,6 +8,8 @@ import { fetchSetup } from '@devexpress/analytics-core/analytics-utils';
 import * as $ from 'jquery';
 import { formatDate } from '@angular/common';
 import { saveAs } from 'file-saver';
+import { HttpClient } from '@angular/common/http';
+import { AdminServicesService } from '../../services/admin-services.service';
 
 @Component({
   selector: 'app-month-wise-report',
@@ -15,17 +17,22 @@ import { saveAs } from 'file-saver';
   styleUrls: ['./month-wise-report.component.scss']
 })
 export class MonthWiseReportComponent implements OnInit {
+
+  constructor(private http: HttpClient,    private adminService: AdminServicesService) {
+
+  }
+
   startDate: any;
   endDate: any;
   onchangeValue: string = "All";
   ngOnInit(): void {
+
     // Additional initialization logic can be added here
     const currentDate = new Date();
     this.startDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1));
     this.endDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0));
     $("#startDate").val(this.startDate);
     $("#endDate").val(this.endDate);
-
   }
 
   private formatDate(date: Date): string {
@@ -41,7 +48,24 @@ export class MonthWiseReportComponent implements OnInit {
   getDesignerModelAction = "/DXXRD/GetDesignerModel";
   // The report name.
   //reportName = "MonthView";
-  reportName = "MonthView" + "&StartDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1)) + "&EndDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth()+ 1, 0)) + "&companyidrecord=" + sessionStorage.getItem('companyID') + "&vochtype1=0&vochtype1=99";
+
+  reportName = "MonthView" +
+  "&StartDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1)) +
+  "&EndDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth()+ 1, 0)) +
+  "&companyidrecord=" + sessionStorage.getItem('companyID') +
+  "&vochtype1=0&vochtype1=99" +
+  "|" +
+  "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+  "&DataSource=" + sessionStorage.getItem("DataSource") +
+  "&UserID=" + sessionStorage.getItem("UserID") +
+  "&Password=" + sessionStorage.getItem("Password");
+
+
+  // reportName = "MonthView" + "&StartDate=" + this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1)) + "&EndDate=" +
+  // this.formatDate(new Date(new Date().getFullYear(), new Date().getMonth()+ 1, 0)) + "&companyidrecord=" + sessionStorage.getItem('companyID') +
+  // "&vochtype1=0&vochtype1=99" + "&dataBaseName=" + sessionStorage.getItem("dataBaseName") + "&DataSource=" + sessionStorage.getItem("DataSource") +
+  // "&UserID=" + sessionStorage.getItem("UserID") + "&Password=" + sessionStorage.getItem("Password");
+
   // The backend application URL.
   host = environment.Reportingapi;
   yearSelection!: FormGroup
@@ -82,24 +106,49 @@ export class MonthWiseReportComponent implements OnInit {
 
 setParameterALL() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport("MonthView" + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99");
+  this.viewer.bindingSender.OpenReport("MonthView" + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99"+
+  "|" +
+  "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+  "&DataSource=" + sessionStorage.getItem("DataSource") +
+  "&UserID=" + sessionStorage.getItem("UserID") +
+  "&Password=" + sessionStorage.getItem("Password"));
 }
 
 setParameterVP() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4");
+  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4"+
+  "|" +
+  "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+  "&DataSource=" + sessionStorage.getItem("DataSource") +
+  "&UserID=" + sessionStorage.getItem("UserID") +
+  "&Password=" + sessionStorage.getItem("Password"));
 }
 setParameterVS() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13");
+  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13"+
+  "|" +
+  "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+  "&DataSource=" + sessionStorage.getItem("DataSource") +
+  "&UserID=" + sessionStorage.getItem("UserID") +
+  "&Password=" + sessionStorage.getItem("Password"));
 }
 setParameterVPR() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14");
+  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14"+
+  "|" +
+  "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+  "&DataSource=" + sessionStorage.getItem("DataSource") +
+  "&UserID=" + sessionStorage.getItem("UserID") +
+  "&Password=" + sessionStorage.getItem("Password"));
 }
 setParameterVSR() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6&vochtype2=6");
+  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6&vochtype2=6"+
+  "|" +
+  "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+  "&DataSource=" + sessionStorage.getItem("DataSource") +
+  "&UserID=" + sessionStorage.getItem("UserID") +
+  "&Password=" + sessionStorage.getItem("Password"));
 }
 
 export(format : string) {
@@ -147,11 +196,21 @@ generateRepo() {
 
 setParameterVCN() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9");
+  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9"+
+  "|" +
+  "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+  "&DataSource=" + sessionStorage.getItem("DataSource") +
+  "&UserID=" + sessionStorage.getItem("UserID") +
+  "&Password=" + sessionStorage.getItem("Password"));
 }
 setParameterVDN() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15");
+  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15"+
+  "|" +
+  "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
+  "&DataSource=" + sessionStorage.getItem("DataSource") +
+  "&UserID=" + sessionStorage.getItem("UserID") +
+  "&Password=" + sessionStorage.getItem("Password"));
 }
 
 

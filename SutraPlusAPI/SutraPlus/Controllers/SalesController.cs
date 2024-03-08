@@ -64,6 +64,23 @@ namespace SutraPlus.Controllers
             }
         }
 
+        [HttpPost("GetEinvoiceKey")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetEinvoiceKey([FromBody] JObject Data)
+        {
+            try
+            {
+                var result = _salesService.GetEinvoiceKey(Data);
+                return Ok(result);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
 
         /// <summary>
         /// Get Voucher Type & next Invoice No (max+1)
@@ -177,6 +194,22 @@ namespace SutraPlus.Controllers
             {
                 var result = _salesService.AddInvoice(Data);
                 return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+
+        }
+        [HttpPost("UpdateInvoice")]
+        [AllowAnonymous]
+        public IActionResult UpdateInvoice([FromBody] JObject Data)
+        {
+            try
+            {
+                _salesService.UpdateInvoice(Data);
+                return Ok();
             }
             catch (Exception ex)
             {

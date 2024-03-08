@@ -16,8 +16,8 @@ namespace WebApplication2.Implementations
     public class Tool
     {
         private static Tool tool;
-        private string AUTH_URL = "https://www.ewaybills.com/MVEINVAuthenticate/EINVAuthentication";
-        //private string AUTH_URL = "https://powergstservice.microvistatech.com/api/MVEINVAuthenticate/EINVAuthentication";
+      private string AUTH_URL = "https://www.ewaybills.com/MVEINVAuthenticate/EINVAuthentication";
+       // private string AUTH_URL = "https://powergstservice.microvistatech.com/api/MVEINVAuthenticate/EINVAuthentication";
         private string INV_GEN_URL = "https://www.ewaybills.com/MVEINVAuthenticate/EINVGeneration";
         //private string INV_GEN_URL = "https://powergstservice.microvistatech.com/api/MVEINVAuthenticate/EINVGeneration";
         private static Authentication Authentication;
@@ -192,16 +192,17 @@ namespace WebApplication2.Implementations
             try
             {
                 string partyInvoice = string.Empty;
-                Ledger buyer = null;
-                Company supplier = null;
-                BillSummary billSummary = null;
+                Ledger buyer = new Ledger();
+                Company supplier = new Company();
+                BillSummary billSummary = new BillSummary();
                 List<Inventory> inventories = new List<Inventory>();
-                using (SqlConnection connection = new SqlConnection("Server=103.50.212.163;Database=SutraPlus;uid=sa;Password=root@123;TrustServerCertificate=True;"))
+                using (SqlConnection connection = new SqlConnection("Server=103.50.212.163;Database=K2223RGP;uid=sa;Password=root@123;TrustServerCertificate=True;"))
                 {
                     connection.Open();
 
                     // Use raw SQL queries to fetch data
-                    using (SqlCommand command = new SqlCommand("SELECT * FROM Inventories WHERE VochNo = @InvoiceNo AND CompanyId = @CompanyId AND VochType = 9", connection))
+
+                    using (SqlCommand command = new SqlCommand("SELECT * FROM Inventory WHERE PartyInvoiceNumber = @InvoiceNo AND CompanyId = @CompanyId AND VochType = 9", connection))
                     {
                         command.Parameters.AddWithValue("@InvoiceNo", invoiceNo);
                         command.Parameters.AddWithValue("@CompanyId", CompanyId);
@@ -295,164 +296,173 @@ namespace WebApplication2.Implementations
                         resString = " Associated Inventory Not Found";
                         return root;
                     }
-
-                    using (SqlCommand command2 = new SqlCommand("SELECT * FROM BillSummaries WHERE VochNo = @InvoiceNo AND CompanyID = @CompanyId AND VochType = 9", connection))
+                    connection.Close();
+                }
+                using (SqlConnection connection = new SqlConnection("Server=103.50.212.163;Database=K2223RGP;uid=sa;Password=root@123;TrustServerCertificate=True;"))
+                {
+                    connection.Open();
+                    using (SqlCommand command2 = new SqlCommand("SELECT * FROM BillSummary WHERE DisplayinvNo = @InvoiceNo AND CompanyID = @CompanyId AND VochType = 9", connection))
                     {
                         command2.Parameters.AddWithValue("@InvoiceNo", invoiceNo);
                         command2.Parameters.AddWithValue("@CompanyId", CompanyId);
 
-                        using (SqlDataReader reader = command2.ExecuteReader())
+                        using (SqlDataReader reader1 = command2.ExecuteReader())
                         {
-                            if (reader.Read())
+                            while (reader1.Read())
                             {
-                                billSummary._Id = reader["Id"] as int?;
-                                billSummary.CompanyId = reader["CompanyId"] as long?;
-                                billSummary.LedgerId = reader["LedgerId"] as long?;
-                                billSummary.LedgerName = reader["LedgerName"] as string;
-                                billSummary.Place = reader["Place"] as string;
-                                billSummary.VochType = reader["VochType"] as long?;
-                                billSummary.VoucherName = reader["VoucherName"] as string;
-                                billSummary.DealerType = reader["DealerType"] as string;
-                                billSummary.PAN = reader["PAN"] as string;
-                                billSummary.GST = reader["GST"] as string;
-                                billSummary.State = reader["State"] as string;
-                                billSummary.InvoiceType = reader["InvoiceType"] as string;
-                                billSummary.VochNo = reader["VochNo"] as long?;
-                                billSummary.EwayBillNo = reader["EwayBillNo"] as string;
-                                billSummary.Ponumber = reader["Ponumber"] as string;
-                                billSummary.Transporter = reader["Transporter"] as string;
-                                billSummary.LorryNo = reader["LorryNo"] as string;
-                                billSummary.LorryOwnerName = reader["LorryOwnerName"] as string;
-                                billSummary.DriverName = reader["DriverName"] as string;
-                                billSummary.Dlno = reader["Dlno"] as string;
-                                billSummary.CheckPost = reader["CheckPost"] as string;
-                                billSummary.FrieghtPerBag = reader["FrieghtPerBag"] as decimal?;
-                                billSummary.TotalFrieght = reader["TotalFrieght"] as decimal?;
-                                billSummary.Advance = reader["Advance"] as decimal?;
-                                billSummary.Balance = reader["Balance"] as decimal?;
-                                billSummary.AREDate = reader["AREDate"] as string;
-                                billSummary.ARENo = reader["ARENo"] as string;
-                                billSummary.IsLessOrPlus = reader["IsLessOrPlus"] as bool?;
-                                billSummary.ExpenseName1 = reader["ExpenseName1"] as string;
-                                billSummary.ExpenseName2 = reader["ExpenseName2"] as string;
-                                billSummary.ExpenseName3 = reader["ExpenseName3"] as string;
-                                billSummary.ExpenseAmount1 = reader["ExpenseAmount1"] as decimal?;
-                                billSummary.ExpenseAmount2 = reader["ExpenseAmount2"] as decimal?;
-                                billSummary.ExpenseAmount3 = reader["ExpenseAmount3"] as decimal?;
-                                billSummary.DeliveryName = reader["DeliveryName"] as string;
-                                billSummary.DeliveryAddress1 = reader["DeliveryAddress1"] as string;
-                                billSummary.DeliveryAddress2 = reader["DeliveryAddress2"] as string;
-                                billSummary.DeliveryPlace = reader["DeliveryPlace"] as string;
-                                billSummary.DeliveryState = reader["DeliveryState"] as string;
-                                billSummary.DeliveryStateCode = reader["DeliveryStateCode"] as string;
-                                billSummary.BillAmount = reader["BillAmount"] as decimal?;
-                                billSummary.INWords = reader["INWords"] as string;
-                                billSummary.FrieghtAmount = reader["FrieghtAmount"] as decimal?;
-                                billSummary.RoundOff = reader["RoundOff"] as decimal?;
-                                billSummary.TotalBags = reader["TotalBags"] as long?;
-                                billSummary.TotalWeight = reader["TotalWeight"] as double?;
-                                billSummary.TotalAmount = reader["TotalAmount"] as decimal?;
-                                billSummary.PackingValue = reader["PackingValue"] as decimal?;
-                                billSummary.HamaliValue = reader["HamaliValue"] as decimal?;
-                                billSummary.WeighnamFeeValue = reader["WeighnamFeeValue"] as decimal?;
-                                billSummary.DalaliValue = reader["DalaliValue"] as decimal?;
-                                billSummary.CessValue = reader["CessValue"] as decimal?;
-                                billSummary.TaxableValue = reader["TaxableValue"] as decimal?;
-                                billSummary.SGSTValue = reader["SGSTValue"] as decimal?;
-                                billSummary.CSGSTValue = reader["CSGSTValue"] as decimal?;
-                                billSummary.IGSTValue = reader["IGSTValue"] as decimal?;
-                                billSummary.UserId = reader["UserId"] as int?;
-                                billSummary.SessionID = reader["SessionID"] as int?;
-                                billSummary.PaymentBy = reader["PaymentBy"] as string;
-                                billSummary.AmountReceived = reader["AmountReceived"] as decimal?;
-                                billSummary.Change = reader["Change"] as decimal?;
-                                billSummary.CardDetails = reader["CardDetails"] as string;
-                                billSummary.BillTime = reader["BillTime"] as DateTime?;
-                                billSummary.TranctDate = reader["TranctDate"] as DateTime?;
-                                billSummary.CustomerName = reader["CustomerName"] as string;
-                                billSummary.CustomerPlace = reader["CustomerPlace"] as string;
-                                billSummary.CustomerContactNo = reader["CustomerContactNo"] as string;
-                                billSummary.PartyInvoiceNumber = reader["PartyInvoiceNumber"] as string;
-                                billSummary.OtherCreated = reader["OtherCreated"] as int?;
-                                billSummary.Recent = reader["Recent"] as int?;
-                                billSummary.PaymentReceived = reader["PaymentReceived"] as int?;
-                                billSummary.TagName = reader["TagName"] as string;
-                                billSummary.TagDate = reader["TagDate"] as DateTime?;
-                                billSummary.ToPrint = reader["ToPrint"] as int?;
-                                billSummary.frieghtPlus = reader["frieghtPlus"] as int?;
-                                billSummary.StateCode1 = reader["StateCode1"] as string;
-                                billSummary.StateCode2 = reader["StateCode2"] as string;
-                                billSummary.ExpenseTax = reader["ExpenseTax"] as decimal?;
-                                billSummary.FrieghtinBill = reader["FrieghtinBill"] as decimal?;
-                                billSummary.LastOpenend = reader["LastOpenend"] as DateTime?;
-                                billSummary.VikriCommission = reader["VikriCommission"] as decimal?;
-                                billSummary.VikriULH = reader["VikriULH"] as decimal?;
-                                billSummary.VikriCashAdvance = reader["VikriCashAdvance"] as decimal?;
-                                billSummary.VikriFrieght = reader["VikriFrieght"] as decimal?;
-                                billSummary.VikriEmpty = reader["VikriEmpty"] as decimal?;
-                                billSummary.VikriNet = reader["VikriNet"] as decimal?;
-                                billSummary.CashToFarmer = reader["CashToFarmer"] as decimal?;
-                                billSummary.VikriOther1 = reader["VikriOther1"] as decimal?;
-                                billSummary.VikriOther2 = reader["VikriOther2"] as decimal?;
-                                billSummary.VikriOther1Name = reader["VikriOther1Name"] as string;
-                                billSummary.VikriOther2Name = reader["VikriOther2Name"] as string;
-                                billSummary.Note1 = reader["Note1"] as string;
-                                billSummary.FromPlace = reader["FromPlace"] as string;
-                                billSummary.ToPlace = reader["ToPlace"] as string;
-                                billSummary.DisplayNo = reader["DisplayNo"] as string;
-                                billSummary.DisplayinvNo = reader["DisplayinvNo"] as string;
-                                billSummary.FrieghtLabel = reader["FrieghtLabel"] as string;
-                                billSummary.FormName = reader["FormName"] as string;
-                                billSummary.DCNote = reader["DCNote"] as string;
-                                billSummary.WeightInString = reader["WeightInString"] as string;
-                                billSummary.SGSTLabel = reader["SGSTLabel"] as string;
-                                billSummary.CGSTLabel = reader["CGSTLabel"] as string;
-                                billSummary.IGSTLabel = reader["IGSTLabel"] as string;
-                                billSummary.TCSLabel = reader["TCSLabel"] as string;
-                                billSummary.tdsperc = reader["tdsperc"] as decimal?;
-                                billSummary.TCSValue = reader["TCSValue"] as decimal?;
-                                billSummary.TCSPerc = reader["TCSPerc"] as decimal?;
-                                billSummary.DelPinCode = reader["DelPinCode"] as string;
-                                billSummary.CommodityID = reader["CommodityID"] as int?;
-                                billSummary.QrCode = reader["QrCode"] as byte[];
-                                billSummary.IsGSTUpload = reader["IsGSTUpload"] as int?;
-                                billSummary.DispatcherName = reader["DispatcherName"] as string;
-                                billSummary.DispatcherAddress1 = reader["DispatcherAddress1"] as string;
-                                billSummary.DispatcherAddress2 = reader["DispatcherAddress2"] as string;
-                                billSummary.DispatcherPlace = reader["DispatcherPlace"] as string;
-                                billSummary.DispatcherPIN = reader["DispatcherPIN"] as string;
-                                billSummary.DispatcherStatecode = reader["DispatcherStatecode"] as string;
-                                billSummary.CountryCode = reader["CountryCode"] as string;
-                                billSummary.ShipBillNo = reader["ShipBillNo"] as string;
-                                billSummary.ForCur = reader["ForCur"] as string;
-                                billSummary.PortName = reader["PortName"] as string;
-                                billSummary.RefClaim = reader["RefClaim"] as string;
-                                billSummary.ShipBillDate = reader["ShipBillDate"] as DateTime?;
-                                billSummary.ExpDuty = reader["ExpDuty"] as string;
-                                billSummary.monthNo = reader["monthNo"] as int?;
-                                billSummary.Distance = reader["Distance"] as int?;
-                                billSummary.GSTR1SectionName = reader["GSTR1SectionName"] as string;
-                                billSummary.GSTR1InvoiceType = reader["GSTR1InvoiceType"] as string;
-                                billSummary.EInvoiceNo = reader["EInvoiceNo"] as string;
-                                billSummary.IsSEZ = reader["IsSEZ"] as int?;
-                                billSummary.id = reader["id"] as int?;
-                                billSummary.OriginalInvNo = reader["OriginalInvNo"] as string;
-                                billSummary.OriginalInvDate = reader["OriginalInvDate"] as DateTime?;
-                                billSummary.AprClosed = reader["AprClosed"] as int?;
-                                billSummary.Discount = reader["Discount"] as decimal?;
-                                billSummary.TwelveValue = reader["TwelveValue"] as decimal?;
-                                billSummary.FiveValue = reader["FiveValue"] as decimal?;
-                                billSummary.EgthValue = reader["EgthValue"] as decimal?;
-                                billSummary.ACKNO = reader["ACKNO"] as string;
-                                billSummary.IRNNO = reader["IRNNO"] as string;
-                                billSummary.SignQRCODE = reader["SignQRCODE"] as string;
-                                billSummary.IsActive = reader["IsActive"] as bool?;
-                                billSummary.IsServiceInvoice = reader["IsServiceInvoice"] as bool?;
+
+                              billSummary = new BillSummary
+                                {
+                                    //_Id = reader["_id"] as int?;
+                                    CompanyId = reader1["CompanyId"] as long?,
+                                LedgerId = reader1["LedgerId"] as long?,
+                                LedgerName = reader1["LedgerName"] as string,
+                                Place = reader1["Place"] as string,
+                                VochType = reader1["VochType"] as long?,
+                                VoucherName = reader1["VoucherName"] as string,
+                                DealerType = reader1["DealerType"] as string,
+                                PAN = reader1["PAN"] as string,
+                                GST = reader1["GST"] as string,
+                                State = reader1["State"] as string,
+                                InvoiceType = reader1["InvoiceType"] as string,
+                                VochNo = reader1["VochNo"] as long?,
+                                EwayBillNo = reader1["EwayBillNo"] as string,
+                                Ponumber = reader1["Ponumber"] as string,
+                                Transporter = reader1["Transporter"] as string,
+                                LorryNo = reader1["LorryNo"] as string,
+                                LorryOwnerName = reader1["LorryOwnerName"] as string,
+                                DriverName = reader1["DriverName"] as string,
+                                Dlno = reader1["Dlno"] as string,
+                                CheckPost = reader1["CheckPost"] as string,
+                                FrieghtPerBag = reader1["FrieghtPerBag"] as decimal?,
+                                TotalFrieght = reader1["TotalFrieght"] as decimal?,
+                                Advance = reader1["Advance"] as decimal?,
+                                Balance = reader1["Balance"] as decimal?,
+                                AREDate = reader1["AREDate"] as string,
+                                ARENo = reader1["ARENo"] as string,
+                                IsLessOrPlus = reader1["IsLessOrPlus"] as bool?,
+                                ExpenseName1 = reader1["ExpenseName1"] as string,
+                                ExpenseName2 = reader1["ExpenseName2"] as string,
+                                ExpenseName3 = reader1["ExpenseName3"] as string,
+                                ExpenseAmount1 = reader1["ExpenseAmount1"] as decimal?,
+                                ExpenseAmount2 = reader1["ExpenseAmount2"] as decimal?,
+                                ExpenseAmount3 = reader1["ExpenseAmount3"] as decimal?,
+                                DeliveryName = reader1["DeliveryName"] as string,
+                                DeliveryAddress1 = reader1["DeliveryAddress1"] as string,
+                                DeliveryAddress2 = reader1["DeliveryAddress2"] as string,
+                                DeliveryPlace = reader1["DeliveryPlace"] as string,
+                                DeliveryState = reader1["DeliveryState"] as string,
+                                DeliveryStateCode = reader1["DeliveryStateCode"] as string,
+                                BillAmount = reader1["BillAmount"] as decimal?,
+                                INWords = reader1["INWords"] as string,
+                                FrieghtAmount = reader1["FrieghtAmount"] as decimal?,
+                                RoundOff = reader1["RoundOff"] as decimal?,
+                                TotalBags = reader1["TotalBags"] as long?,
+                                TotalWeight = reader1["TotalWeight"] as double?,
+                                TotalAmount = reader1["TotalAmount"] as decimal?,
+                                PackingValue = reader1["PackingValue"] as decimal?,
+                                HamaliValue = reader1["HamaliValue"] as decimal?,
+                                WeighnamFeeValue = reader1["WeighnamFeeValue"] as decimal?,
+                                DalaliValue = reader1["DalaliValue"] as decimal?,
+                                CessValue = reader1["CessValue"] as decimal?,
+                                TaxableValue = reader1["TaxableValue"] as decimal?,
+                                SGSTValue = reader1["SGSTValue"] as decimal?,
+                                CSGSTValue = reader1["CSGSTValue"] as decimal?,
+                                IGSTValue = reader1["IGSTValue"] as decimal?,
+                                UserId = reader1["UserId"] as int?,
+                                SessionID = reader1["SessionID"] as int?,
+                                PaymentBy = reader1["PaymentBy"] as string,
+                                AmountReceived = reader1["AmountReceived"] as decimal?,
+                                Change = reader1["Change"] as decimal?,
+                                CardDetails = reader1["CardDetails"] as string,
+                                BillTime = reader1["BillTime"] as DateTime?,
+                                TranctDate = reader1["TranctDate"] as DateTime?,
+                                CustomerName = reader1["CustomerName"] as string,
+                                CustomerPlace = reader1["CustomerPlace"] as string,
+                                CustomerContactNo = reader1["CustomerContactNo"] as string,
+                                PartyInvoiceNumber = reader1["PartyInvoiceNumber"] as string,
+                                OtherCreated = reader1["OtherCreated"] as int?,
+                                Recent = reader1["Recent"] as int?,
+                                PaymentReceived = reader1["PaymentReceived"] as int?,
+                                TagName = reader1["TagName"] as string,
+                                TagDate = reader1["TagDate"] as DateTime?,
+                                ToPrint = reader1["ToPrint"] as int?,
+                                frieghtPlus = reader1["frieghtPlus"] as int?,
+                                StateCode1 = reader1["StateCode1"] as string,
+                                StateCode2 = reader1["StateCode2"] as string,
+                                ExpenseTax = reader1["ExpenseTax"] as decimal?,
+                                FrieghtinBill = reader1["FrieghtinBill"] as decimal?,
+                                LastOpenend = reader1["LastOpenend"] as DateTime?,
+                                VikriCommission = reader1["VikriCommission"] as decimal?,
+                                VikriULH = reader1["VikriULH"] as decimal?,
+                                VikriCashAdvance = reader1["VikriCashAdvance"] as decimal?,
+                                VikriFrieght = reader1["VikriFrieght"] as decimal?,
+                                VikriEmpty = reader1["VikriEmpty"] as decimal?,
+                                VikriNet = reader1["VikriNet"] as decimal?,
+                                CashToFarmer = reader1["CashToFarmer"] as decimal?,
+                                VikriOther1 = reader1["VikriOther1"] as decimal?,
+                                VikriOther2 = reader1["VikriOther2"] as decimal?,
+                                VikriOther1Name = reader1["VikriOther1Name"] as string,
+                                VikriOther2Name = reader1["VikriOther2Name"] as string,
+                                Note1 = reader1["Note1"] as string,
+                                FromPlace = reader1["FromPlace"] as string,
+                                ToPlace = reader1["ToPlace"] as string,
+                                DisplayNo = reader1["DisplayNo"] as string,
+                                DisplayinvNo = reader1["DisplayinvNo"] as string,
+                                FrieghtLabel = reader1["FrieghtLabel"] as string,
+                                FormName = reader1["FormName"] as string,
+                                DCNote = reader1["DCNote"] as string,
+                                WeightInString = reader1["WeightInString"] as string,
+                                SGSTLabel = reader1["SGSTLabel"] as string,
+                                CGSTLabel = reader1["CGSTLabel"] as string,
+                                IGSTLabel = reader1["IGSTLabel"] as string,
+                                TCSLabel = reader1["TCSLabel"] as string,
+                                tdsperc = reader1["tdsperc"] as decimal?,
+                                TCSValue = reader1["TCSValue"] as decimal?,
+                                TCSPerc = reader1["TCSPerc"] as decimal?,
+                                DelPinCode = reader1["DelPinCode"] as string,
+                                CommodityID = reader1["CommodityID"] as int?,
+                                QrCode = reader1["QrCode"] as byte[],
+                                IsGSTUpload = reader1["IsGSTUpload"] as int?,
+                                DispatcherName = reader1["DispatcherName"] as string,
+                                DispatcherAddress1 = reader1["DispatcherAddress1"] as string,
+                                DispatcherAddress2 = reader1["DispatcherAddress2"] as string,
+                                DispatcherPlace = reader1["DispatcherPlace"] as string,
+                                DispatcherPIN = reader1["DispatcherPIN"] as string,
+                                DispatcherStatecode = reader1["DispatcherStatecode"] as string,
+                                CountryCode = reader1["CountryCode"] as string,
+                                ShipBillNo = reader1["ShipBillNo"] as string,
+                                ForCur = reader1["ForCur"] as string,
+                                PortName = reader1["PortName"] as string,
+                                RefClaim = reader1["RefClaim"] as string,
+                                ShipBillDate = reader1["ShipBillDate"] as DateTime?,
+                                ExpDuty = reader1["ExpDuty"] as string,
+                                monthNo = reader1["monthNo"] as int?,
+                                Distance = reader1["Distance"] as int?,
+                                GSTR1SectionName = reader1["GSTR1SectionName"] as string,
+                                GSTR1InvoiceType = reader1["GSTR1InvoiceType"] as string,
+                                EInvoiceNo = reader1["EInvoiceNo"] as string,
+                                IsSEZ = reader1["IsSEZ"] as int?,
+                                id = reader1["id"] as int?,
+                                OriginalInvNo = reader1["OriginalInvNo"] as string,
+                                OriginalInvDate = reader1["OriginalInvDate"] as DateTime?,
+                                AprClosed = reader1["AprClosed"] as int?,
+                                Discount = reader1["Discount"] as decimal?,
+                                TwelveValue = reader1["TwelveValue"] as decimal?,
+                                FiveValue = reader1["FiveValue"] as decimal?,
+                                EgthValue = reader1["EgthValue"] as decimal?,
+                                ACKNO = reader1["ACKNO"] as string,
+                                IRNNO = reader1["IRNNO"] as string,
+                                SignQRCODE = reader1["SignQRCODE"] as string,
+                                IsActive = reader1["IsActive"] as bool?,
+                                IsServiceInvoice = reader1["IsServiceInvoice"] as bool?,
+                            };
+                                 
                             }
                         }
                     }
 
-
+                    connection.Close();
 
                     if (billSummary == null)
                     {
@@ -464,7 +474,9 @@ namespace WebApplication2.Implementations
                     long? companyId = billSummary.CompanyId;
                     if (companyId != null)
                     {
-                        using (SqlCommand command3 = new SqlCommand($"SELECT * FROM Companies WHERE CompanyId = {companyId}", connection))
+                        connection.Open();
+
+                        using (SqlCommand command3 = new SqlCommand($"SELECT * FROM Company WHERE CompanyId = {companyId}", connection))
                         using (SqlDataReader reader = command3.ExecuteReader())
                         {
                             if (reader.Read())
@@ -588,7 +600,7 @@ namespace WebApplication2.Implementations
                                 supplier.InvoiceString = reader["InvoiceString"] as string;
 
                             }
-
+                        }
                             if (supplier != null && supplier.Gstin.Length != 15)
                             {
                                 root.Response += "Please Check Company GSTIN";
@@ -596,104 +608,109 @@ namespace WebApplication2.Implementations
                                 return root;
                             }
 
+                             connection.Close();
+
                             long? ledgerId = billSummary.LedgerId;
                             if (ledgerId != null)
                             {
-                                using (SqlCommand ledgerCommand = new SqlCommand($"SELECT * FROM Ledgers WHERE LedgerId = {ledgerId}", connection))
+
+                                connection.Open();
+                                 
+                                using (SqlCommand ledgerCommand = new SqlCommand($"SELECT * FROM Ledger WHERE LedgerId = {ledgerId}", connection))
                                 using (SqlDataReader ledgerReader = ledgerCommand.ExecuteReader())
                                 {
                                     if (ledgerReader.Read())
                                     {
                                         buyer = new Ledger();
                                         //buyer._Id = reader["Id"] as int?;
-                                        buyer.CompanyId = reader["CompanyId"] as long?;
-                                        buyer.LedgerType = reader["LedgerType"] as string;
-                                        buyer.LedgerId = reader["LedgerId"] as long?;
-                                        buyer.LedgerName = reader["LedgerName"] as string;
-                                        buyer.Address1 = reader["Address1"] as string;
-                                        buyer.Address2 = reader["Address2"] as string;
-                                        buyer.Place = reader["Place"] as string;
-                                        buyer.State = reader["State"] as string;
-                                        buyer.Country = reader["Country"] as string;
-                                        buyer.Gstin = reader["Gstin"] as string;
-                                        buyer.DealerType = reader["DealerType"] as string;
-                                        buyer.KannadaName = reader["KannadaName"] as string;
-                                        buyer.KannadaPlace = reader["KannadaPlace"] as string;
-                                        buyer.LedgerCode = reader["LedgerCode"] as string;
-                                        buyer.ContactDetails = reader["ContactDetails"] as string;
-                                        buyer.Pan = reader["Pan"] as string;
-                                        buyer.BankName = reader["BankName"] as string;
-                                        buyer.Ifsc = reader["Ifsc"] as string;
-                                        buyer.AccountNo = reader["AccountNo"] as string;
-                                        buyer.AccountingGroupId = reader["AccountingGroupId"] as int?;
-                                        buyer.NameAndPlace = reader["NameAndPlace"] as string;
-                                        buyer.PackingRate = reader["PackingRate"] as decimal?;
-                                        buyer.HamaliRate = reader["HamaliRate"] as decimal?;
-                                        buyer.WeighManFeeRate = reader["WeighManFeeRate"] as decimal?;
-                                        buyer.DalaliRate = reader["DalaliRate"] as decimal?;
-                                        buyer.CessRate = reader["CessRate"] as decimal?;
-                                        buyer.DeprPerc = reader["DeprPerc"] as decimal?;
-                                        buyer.CaplPerc = reader["CaplPerc"] as decimal?;
-                                        buyer.ExpiryDate = reader["ExpiryDate"] as DateTime?;
-                                        buyer.RenewDate = reader["RenewDate"] as DateTime?;
-                                        buyer.CreatedDate = reader["CreatedDate"] as DateTime?;
-                                        buyer.UpdatedDate = reader["UpdatedDate"] as DateTime?;
-                                        buyer.CreatedBy = reader["CreatedBy"] as int?;
-                                        buyer.CellNo = reader["CellNo"] as string;
-                                        buyer.OtherCreated = reader["OtherCreated"] as int?;
-                                        buyer.LocalName = reader["LocalName"] as string;
-                                        buyer.LocalAddress = reader["LocalAddress"] as string;
-                                        buyer.UnloadHamaliRate = reader["UnloadHamaliRate"] as decimal?;
-                                        buyer.OldHdid = reader["OldHdid"] as long?;
-                                        buyer.Gstn = reader["Gstn"] as string;
-                                        buyer.Dlr_Type = reader["Dlr_Type"] as long?;
-                                        buyer.Tp = reader["Tp"] as int?;
-                                        buyer.Ist = reader["Ist"] as int?;
-                                        buyer.Bname = reader["Bname"] as string;
-                                        buyer.EmailId = reader["EmailId"] as string;
-                                        buyer.PrintAcpay = reader["PrintAcpay"] as int?;
-                                        buyer.ExclPay = reader["ExclPay"] as int?;
-                                        buyer.OldLedgerId = reader["OldLedgerId"] as long?;
-                                        buyer.AgentCode = reader["AgentCode"] as string;
-                                        buyer.Pin = reader["Pin"] as string;
-                                        buyer.StateCode = reader["StateCode"] as string;
-                                        buyer.LegalName = reader["LegalName"] as string;
-                                        buyer.NeftAcno = reader["NeftAcno"] as string;
-                                        buyer.ChequeNo = reader["ChequeNo"] as string;
-                                        buyer.AskIndtcs = reader["AskIndtcs"] as int?;
-                                        buyer.CommodityAccount = reader["CommodityAccount"] as int?;
-                                        buyer.ApplyTds = reader["ApplyTds"] as int?;
-                                        buyer.Fssai = reader["Fssai"] as string;
-                                        buyer.Dperc = reader["Dperc"] as int?;
-                                        buyer.RentTdsperc = reader["RentTdsperc"] as decimal?;
-                                        buyer.IsSelected = reader["IsSelected"] as int?;
-                                        buyer.ToPrint = reader["ToPrint"] as int?;
-                                        buyer.TotalCommission = reader["TotalCommission"] as decimal?;
-                                        buyer.Tdsdeducted = reader["Tdsdeducted"] as decimal?;
-                                        buyer.IsExported = reader["IsExported"] as int?;
-                                        buyer.DeductFrieghtTds = reader["DeductFrieghtTds"] as int?;
-                                        buyer.TotalForTds2 = reader["TotalForTds2"] as decimal?;
-                                        buyer.Tds2deducted = reader["Tds2deducted"] as decimal?;
-                                        buyer.ManualBookPageNo = reader["ManualBookPageNo"] as int?;
-                                        buyer.QtoBeDeducted = reader["QtoBeDeducted"] as decimal?;
-                                        buyer.Qtdsdeducted = reader["Qtdsdeducted"] as decimal?;
-                                        buyer.TotalTv = reader["TotalTv"] as decimal?;
-                                        buyer.TotalTurnoverforTcs = reader["TotalTurnoverforTcs"] as decimal?;
-                                        buyer.Tcsdeducted = reader["Tcsdeducted"] as decimal?;
-                                        buyer.TcstoBeDeducted = reader["TcstoBeDeducted"] as decimal?;
-                                        buyer.BalanceTcs = reader["BalanceTcs"] as decimal?;
-                                        buyer.BalanceQtds = reader["BalanceQtds"] as decimal?;
-                                        buyer.RentToBeDeducted = reader["RentToBeDeducted"] as decimal?;
-                                        buyer.RentTdsdeducted = reader["RentTdsdeducted"] as decimal?;
-                                        buyer.BalanceRentTds = reader["BalanceRentTds"] as decimal?;
-                                        buyer.ClosingBalanceCr = reader["ClosingBalanceCr"] as decimal?;
-                                        buyer.TotalTransaction = reader["TotalTransaction"] as decimal?;
-                                        buyer.ClosingBalanceDr = reader["ClosingBalanceDr"] as decimal?;
-                                        buyer.TotalContactTv = reader["TotalContactTv"] as decimal?;
-                                        buyer.OpeningBalance = reader["OpeningBalance"] as decimal?;
-                                        buyer.CrDr = reader["CrDr"] as string;
-                                        buyer.IsActive = reader["IsActive"] as bool?;
-                                        buyer.LedType = reader["LedType"] as string;
+                                        buyer.CompanyId = ledgerReader["CompanyId"] as long?;
+                                        buyer.LedgerType = ledgerReader["LedgerType"] as string;
+                                        buyer.LedgerId = ledgerReader["LedgerId"] as long?;
+                                        buyer.LedgerName = ledgerReader["LedgerName"] as string;
+                                        buyer.Address1 = ledgerReader["Address1"] as string;
+                                        buyer.Address2 = ledgerReader["Address2"] as string;
+                                        buyer.Place = ledgerReader["Place"] as string;
+                                        buyer.State = ledgerReader["State"] as string;
+                                        buyer.Country = ledgerReader["Country"] as string;
+                                        buyer.Gstin = ledgerReader["Gstin"] as string;
+                                        buyer.DealerType = ledgerReader["DealerType"] as string;
+                                        buyer.KannadaName = ledgerReader["KannadaName"] as string;
+                                        buyer.KannadaPlace = ledgerReader["KannadaPlace"] as string;
+                                        buyer.LedgerCode = ledgerReader["LedgerCode"] as string;
+                                        buyer.ContactDetails = ledgerReader["ContactDetails"] as string;
+                                        buyer.Pan = ledgerReader["Pan"] as string;
+                                        buyer.BankName = ledgerReader["BankName"] as string;
+                                        buyer.Ifsc = ledgerReader["Ifsc"] as string;
+                                        buyer.AccountNo = ledgerReader["AccountNo"] as string;
+                                        buyer.AccountingGroupId = ledgerReader["AccountingGroupId"] as int?;
+                                        buyer.NameAndPlace = ledgerReader["NameAndPlace"] as string;
+                                        buyer.PackingRate = ledgerReader["PackingRate"] as decimal?;
+                                        buyer.HamaliRate = ledgerReader["HamaliRate"] as decimal?;
+                                        buyer.WeighManFeeRate = ledgerReader["WeighManFeeRate"] as decimal?;
+                                        buyer.DalaliRate = ledgerReader["DalaliRate"] as decimal?;
+                                        buyer.CessRate = ledgerReader["CessRate"] as decimal?;
+                                        buyer.DeprPerc = ledgerReader["DeprPerc"] as decimal?;
+                                        buyer.CaplPerc = ledgerReader["CaplPerc"] as decimal?;
+                                        buyer.ExpiryDate = ledgerReader["ExpiryDate"] as DateTime?;
+                                        buyer.RenewDate = ledgerReader["RenewDate"] as DateTime?;
+                                        buyer.CreatedDate = ledgerReader["CreatedDate"] as DateTime?;
+                                        buyer.UpdatedDate = ledgerReader["UpdatedDate"] as DateTime?;
+                                        buyer.CreatedBy = ledgerReader["CreatedBy"] as int?;
+                                        buyer.CellNo = ledgerReader["CellNo"] as string;
+                                        buyer.OtherCreated = ledgerReader["OtherCreated"] as int?;
+                                        buyer.LocalName = ledgerReader["LocalName"] as string;
+                                        buyer.LocalAddress = ledgerReader["LocalAddress"] as string;
+                                        buyer.UnloadHamaliRate = ledgerReader["UnloadHamaliRate"] as decimal?;
+                                        buyer.OldHdid = ledgerReader["OldHdid"] as long?;
+                                        buyer.Gstn = ledgerReader["Gstn"] as string;
+                                        buyer.Dlr_Type = ledgerReader["Dlr_Type"] as long?;
+                                        buyer.Tp = ledgerReader["Tp"] as int?;
+                                        buyer.Ist = ledgerReader["Ist"] as int?;
+                                        buyer.Bname = ledgerReader["Bname"] as string;
+                                        buyer.EmailId = ledgerReader["EmailId"] as string;
+                                        buyer.PrintAcpay = ledgerReader["PrintAcpay"] as int?;
+                                        buyer.ExclPay = ledgerReader["ExclPay"] as int?;
+                                        buyer.OldLedgerId = ledgerReader["OldLedgerId"] as long?;
+                                        buyer.AgentCode = ledgerReader["AgentCode"] as string;
+                                        buyer.Pin = ledgerReader["Pin"] as string;
+                                        buyer.StateCode = ledgerReader["StateCode"] as string;
+                                        buyer.LegalName = ledgerReader["LegalName"] as string;
+                                        buyer.NeftAcno = ledgerReader["NeftAcno"] as string;
+                                        buyer.ChequeNo = ledgerReader["ChequeNo"] as string;
+                                        buyer.AskIndtcs = ledgerReader["AskIndtcs"] as int?;
+                                        buyer.CommodityAccount = ledgerReader["CommodityAccount"] as int?;
+                                        buyer.ApplyTds = ledgerReader["ApplyTds"] as int?;
+                                        buyer.Fssai = ledgerReader["Fssai"] as string;
+                                        buyer.Dperc = ledgerReader["Dperc"] as int?;
+                                        buyer.RentTdsperc = ledgerReader["RentTdsperc"] as decimal?;
+                                        buyer.IsSelected = ledgerReader["IsSelected"] as int?;
+                                        buyer.ToPrint = ledgerReader["ToPrint"] as int?;
+                                        buyer.TotalCommission = ledgerReader["TotalCommission"] as decimal?;
+                                        buyer.Tdsdeducted = ledgerReader["Tdsdeducted"] as decimal?;
+                                        buyer.IsExported = ledgerReader["IsExported"] as int?;
+                                        buyer.DeductFrieghtTds = ledgerReader["DeductFrieghtTds"] as int?;
+                                        buyer.TotalForTds2 = ledgerReader["TotalForTds2"] as decimal?;
+                                        buyer.Tds2deducted = ledgerReader["Tds2deducted"] as decimal?;
+                                        buyer.ManualBookPageNo = ledgerReader["ManualBookPageNo"] as int?;
+                                        buyer.QtoBeDeducted = ledgerReader["QtoBeDeducted"] as decimal?;
+                                        buyer.Qtdsdeducted = ledgerReader["Qtdsdeducted"] as decimal?;
+                                        buyer.TotalTv = ledgerReader["TotalTv"] as decimal?;
+                                        buyer.TotalTurnoverforTcs = ledgerReader["TotalTurnoverforTcs"] as decimal?;
+                                        buyer.Tcsdeducted = ledgerReader["Tcsdeducted"] as decimal?;
+                                        buyer.TcstoBeDeducted = ledgerReader["TcstoBeDeducted"] as decimal?;
+                                        buyer.BalanceTcs = ledgerReader["BalanceTcs"] as decimal?;
+                                        buyer.BalanceQtds = ledgerReader["BalanceQtds"] as decimal?;
+                                        buyer.RentToBeDeducted = ledgerReader["RentToBeDeducted"] as decimal?;
+                                        buyer.RentTdsdeducted = ledgerReader["RentTdsdeducted"] as decimal?;
+                                        buyer.BalanceRentTds = ledgerReader["BalanceRentTds"] as decimal?;
+                                        buyer.ClosingBalanceCr = ledgerReader["ClosingBalanceCr"] as decimal?;
+                                        buyer.TotalTransaction = ledgerReader["TotalTransaction"] as decimal?;
+                                        buyer.ClosingBalanceDr = ledgerReader["ClosingBalanceDr"] as decimal?;
+                                        buyer.TotalContactTv = ledgerReader["TotalContactTv"] as decimal?;
+                                        buyer.OpeningBalance = ledgerReader["OpeningBalance"] as decimal?;
+                                        buyer.CrDr = ledgerReader["CrDr"] as string;
+                                        buyer.IsActive = ledgerReader["IsActive"] as bool?;
+                                        buyer.LedType = ledgerReader["LedType"] as string;
                                     }
 
                                 }
@@ -704,7 +721,10 @@ namespace WebApplication2.Implementations
                                 resString = " Associated LedgerId in BillSummery Not Found";
                                 return root;
                             }
-                        }
+
+                            connection.Close();
+
+                        
                     }
                     else
                     {
@@ -776,13 +796,35 @@ namespace WebApplication2.Implementations
                     sval.RndOffAmt = Math.Round(billSummary.RoundOff.Value, 2);
 
                     var transDtls = new TranDtls();
+                    if (billSummary.VochType != 12)
+                    {
+                        transDtls.TaxSch = "GST";
+                        if (billSummary.IsSEZ == 0)
+                            transDtls.SupTyp = "B2B";
+                        else if (billSummary.VochType == 25)
+                            transDtls.SupTyp = "B2B";
+                        else
+                            transDtls.SupTyp = "SEZWOP";
+
+                        transDtls.RegRev = "N";
+                        transDtls.EcmGstin = null;
+                        transDtls.IgstOnIntra = "N";
+                    }
+                    else
+                    {
+                        transDtls.TaxSch = "GST";
+                        transDtls.SupTyp = "EXPWOP";
+                        transDtls.RegRev = "N";
+                        transDtls.EcmGstin = null;
+                        transDtls.IgstOnIntra = "N";
+                    }
 
                     // Initialize transDtls properties...
 
                     var docDtls = new DocDtls();
                     docDtls.Typ = GetDocumentType(billSummary.VochType); // Implement a function to get document type based on VochType
                     docDtls.No = billSummary.DisplayinvNo;
-                    docDtls.Dt = billSummary.TranctDate.Value.ToString("dd-MM-yyyy");
+                    docDtls.Dt = String.Format("{0:dd/MM/yyyy}", billSummary.TranctDate).Replace("-", "/");
 
                     // Continue initializing the remaining objects...
 
@@ -791,29 +833,162 @@ namespace WebApplication2.Implementations
                     // Initialize paydetails properties...
 
                     var exportdtls = new ExpDtls();
+                    if (billSummary.VochType == 12)
+                    {
+                        exportdtls.CntCode = null;
+                        exportdtls.ShipBNo = billSummary.ShipBillNo;
+                        exportdtls.ForCur = "INR";
+                        exportdtls.Port = billSummary.PortName;
+                        exportdtls.RefClm = "N";
+                        //exportdtls.ShipBDt = Format(billsummery.ShipBillDate, "dd-MM-yyyy").Replace("-", "/");
+                        //exportdtls.ShipBDt = string.Format(billsummery.ShipBillDate.ToString(), "dd-MM-yyyy").Replace("-", "/").Split(' ')[0];
 
-                    // Initialize exportdtls properties...
+                        exportdtls.ShipBDt = String.Format("{0:dd/MM/yyyy}", billSummary.TranctDate).Replace("-", "/"); ;
+                        exportdtls.ExpDuty = "0";
 
-                    var supp = new SellerDtls();
+                    }
+                    else
+                    {
+                    }
 
-                    // Initialize supp properties...
+ 
+                     var supp = new SellerDtls();
 
+                    supp.LglNm = supplier.CompanyName;
+                    supp.Addr1 = supplier.AddressLine1;
+                    supp.Addr2 = supplier.AddressLine2;
+                    supp.Gstin = supplier.Gstin;
+                    // supp.Pin = System.Convert.ToInt32("390001");
+                    supp.Pin = System.Convert.ToInt32(supplier.Pin);
+                    supp.Em = supplier.Email;
+                    supp.Ph = supplier.CellPhone;
+                    supp.Loc = supplier.Place;
+                    // supp.Stcd = "24";
+                    supp.Stcd = supplier.Gstin?.Substring(0, 2);
+                    supp.TrdNm = supplier.CompanyName;
+                     
                     var dispdet = new DispDtls();
+                    /* '' */
+                    if (billSummary.VochType == 9 | billSummary.VochType == 27 | billSummary.VochType == 13 | billSummary.VochType == 10 | billSummary.VochType == 12 | billSummary.VochType == 13 | billSummary.VochType == 14 | billSummary.VochType == 15)
+                    {
+                        dispdet.Nm = billSummary.DispatcherName;
+                        dispdet.Addr1 = billSummary.DispatcherAddress1;
+                        dispdet.Addr2 = billSummary.DispatcherAddress2;
+                        dispdet.Loc = billSummary.DispatcherPlace;
+                        dispdet.Pin = billSummary.DispatcherPIN;
+                        dispdet.Stcd = billSummary.DispatcherStatecode;
+                    }
+                    else if (billSummary.VochType == 6 | billSummary.VochType == 8)
+                    {
 
-                    // Initialize dispdet properties...
+                        dispdet.Nm = buyer.LedgerName;
+                        dispdet.Addr1 = buyer.Address1;
+                        dispdet.Addr2 = buyer.Address2;
+                        dispdet.Loc = buyer.Place;
+                        dispdet.Pin = buyer.Pin;
+                        dispdet.Stcd = billSummary.StateCode2;
+                    }
 
+ 
                     var EwayBillDetails = new EwbDtls();
+                    /*EwayBillDetails.TransId = null;
+                    EwayBillDetails.TransName = billSummary.Transporter;
+                    EwayBillDetails.Distance = System.Convert.ToInt32(billSummary.Distance);
+                    EwayBillDetails.TransDocNo = null;
+                    EwayBillDetails.VehNo = billSummary.LorryNo;
+                    EwayBillDetails.VehType = "1";
+                    EwayBillDetails.TransMode = "1";*/
 
                     // Initialize EwayBillDetails properties...
 
                     var shipdet = new ShipDtls();
+                    if (billSummary.VochType == 6 | billSummary.VochType == 8)
+                    {
+
+ 
+
+                        shipdet.LglNm = supplier.CompanyName;
+                        shipdet.Addr1 = supplier.AddressLine1;
+                        shipdet.Addr2 = supplier.AddressLine2;
+                        shipdet.Gstin = supplier.Gstin;
+                        shipdet.Loc = supplier.Place;
+                        shipdet.Pin = System.Convert.ToInt32(supplier.Pin);
+                        shipdet.Stcd = "29";
+                        shipdet.TrdNm = supplier.CompanyName;
+                    }
+
+                    else
+                    {
+                        shipdet.LglNm = billSummary.DeliveryName;
+                        shipdet.Addr1 = billSummary.DeliveryAddress1;
+                        shipdet.Addr2 = billSummary.DeliveryAddress2;
+                        shipdet.Gstin = buyer.Gstin;
+                        shipdet.Loc = billSummary.DeliveryPlace;
+                        if (billSummary.VochType == 14 | billSummary.VochType == 15 | billSummary.VochType == 6 | billSummary.VochType == 8)
+                        {
+                            shipdet.Pin = System.Convert.ToInt32(buyer.Pin);
+                        }
+                        else
+                        {
+                            shipdet.Pin = System.Convert.ToInt32((billSummary.DelPinCode == "" ? "0" : billSummary.DelPinCode));
+                        }
+                        shipdet.Stcd = billSummary.DeliveryStateCode;
+                        shipdet.TrdNm = billSummary.DeliveryName;
+                    }
+
+
+                    var buyerdet = new BuyerDtls();
+                    if (billSummary.VochType != 12)
+                    {
+                        if (buyer.LedgerName != null)
+                        {
+                            buyerdet.LglNm = buyer.LedgerName;
+                        }
+                        else
+                        {
+                            buyerdet.LglNm = "..";
+                        }
+
+                        buyerdet.Gstin = buyer.Gstin;
+                        buyerdet.Addr1 = buyer.Address1;
+                        buyerdet.Addr2 = buyer.Address2;
+                        buyerdet.Em = buyer.EmailId;
+                        buyerdet.Ph = buyer.CellNo;
+                        buyerdet.Loc = buyer.Place;
+                        buyerdet.Pin = System.Convert.ToInt32(buyer.Pin);
+                        if (buyer.Gstin != "")
+                        {
+                            buyerdet.Pos = buyer.Gstin?.Substring(0, 2);
+                            buyerdet.Stcd = buyer.Gstin?.Substring(0, 2);
+                        }
+
+                        buyerdet.TrdNm = buyer.LedgerName;
+
+
+                    }
+                    else
+                    {
+                        buyerdet.LglNm = buyer.LedgerName;
+                        buyerdet.Gstin = "URP";
+                        buyerdet.Addr1 = "**********";
+                        buyerdet.Addr2 = "**********";
+                        buyerdet.Em = "xyz@gmail.com";
+
+                        buyerdet.Ph = "99999999";
+                        buyerdet.Loc = "**********";
+                        buyerdet.Pin = 999999;
+                        buyerdet.Pos = "96";
+                        buyerdet.Stcd = "96";
+                        buyerdet.TrdNm = buyer.LedgerName;
+                    }
 
                     // Initialize shipdet properties...
 
                     // Continue initializing the remaining objects...
 
                     root.PayDtls = paydetails;
-                    //root.BuyerDtls = buyerdet;
+                    root.PayDtls = paydetails;
+                    root.BuyerDtls = buyerdet;
                     root.SellerDtls = supp;
                     // root.EwbDtls = EwayBillDetails;
                     root.AddlDocDtls = null;
@@ -832,9 +1007,11 @@ namespace WebApplication2.Implementations
                     // Loop through inventories and initialize ItemList
                     foreach (var item in inventories)
                     {
-                        using (SqlCommand command = new SqlCommand("SELECT TOP 1 * FROM Commodities WHERE CommodityId = @CommodityId", connection))
+                        using (SqlCommand command = new SqlCommand("SELECT TOP 1 * FROM Commodity WHERE CommodityId = @CommodityId", connection))
                         {
                             command.Parameters.AddWithValue("@CommodityId", item.CommodityId);
+
+                            connection.Open();
 
                             using (SqlDataReader reader = command.ExecuteReader())
                             {
@@ -844,6 +1021,13 @@ namespace WebApplication2.Implementations
                                     {
                                         // Map properties from reader to Commodity object
                                         CommodityId = reader["CommodityId"] as long?,
+                                        CommodityName = reader["CommodityName"] as string,
+                                        IGST = reader["IGST"] as long?,
+                                        HSN = reader["HSN"] as string,
+                                        IsService = reader["IsService"] as bool?,
+                                        CGST = reader["CGST"] as long?,
+                                        SGST = reader["SGST"] as long?,
+
                                         // Include other properties as needed
                                     };
 
@@ -886,6 +1070,9 @@ namespace WebApplication2.Implementations
                                     root.ItemList.Add(itemdet);
                                 }
                             }
+
+                            connection.Close();
+
                         }
                     }
                 }

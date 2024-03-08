@@ -489,7 +489,7 @@ export class AddPartyMasterComponent implements OnInit, OnChanges {
   onSubmit(): void {
 
     this.submitted = true;
-    if (this.addParty.valid) {
+    // if (this.addParty.valid) {
       let partyDetails = {
         LedgerData: {
           CompanyId: this.globalCompanyId,
@@ -543,7 +543,7 @@ export class AddPartyMasterComponent implements OnInit, OnChanges {
           this.toastr.error('Something went wrong');
         },
       });
-    }
+    // }
   }
 
   ifopeningBalance() {
@@ -554,6 +554,56 @@ export class AddPartyMasterComponent implements OnInit, OnChanges {
   transform() {
     this.addParty.controls['gstin'].setValue((this.addParty.value.gstin).toUpperCase());
   }
+
+  getAddress1(searchText: string) {
+
+    this.adminService.getAddPartyAutoComplete({ CompanyId: this.globalCompanyId, SearchText: searchText, Type: 'Address1' }).subscribe({
+      next: (res: any) => {
+        if (res && res.AddPartyAutoComplete && res.AddPartyAutoComplete.length > 0) {
+          this.address1Options = res.AddPartyAutoComplete.map((item: any) => item.Address1);
+          this.changeDetectionRef.detectChanges();
+        }
+      },
+      error: (error: any) => {
+        this.address1Options = [];
+      },
+    });
+
+  }
+
+  getAddress2(searchText: string) {
+
+    this.adminService.getAddPartyAutoComplete({ CompanyId: this.globalCompanyId, SearchText: searchText, Type: 'Address2' }).subscribe({
+      next: (res: any) => {
+        if (res && res.AddPartyAutoComplete && res.AddPartyAutoComplete.length > 0) {
+          this.address2Options = res.AddPartyAutoComplete.map((item: any) => item.Address2);
+          this.changeDetectionRef.detectChanges();
+        }
+      },
+      error: (error: any) => {
+        this.address2Options = [];
+      },
+    });
+
+  }
+
+  getPlace(searchText: string) {
+    this.adminService.getAddPartyAutoComplete({ CompanyId: this.globalCompanyId, SearchText: searchText, Type: 'Place' }).subscribe({
+      next: (res: any) => {
+        if (res && res.AddPartyAutoComplete && res.AddPartyAutoComplete.length > 0) {
+          this.placeOptions = res.AddPartyAutoComplete.map((item: any) => item.Place);
+          this.changeDetectionRef.detectChanges();
+        }
+      },
+      error: (error: any) => {
+        // Handle the error
+      },
+    });
+  }
+
+  selectedParty: any;
+  add2: any;
+  place: any;
 
   assignOptionToFormControl(type: string, option: string) {
     switch (type) {

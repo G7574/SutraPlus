@@ -520,6 +520,27 @@ export class AddGoodsInvoiceComponent implements OnInit {
       this.getSingleInvoiceDetails();
     }
 
+    this.GetEinvoiceKey();
+
+  }
+
+  EinvoiceKey : boolean = false;
+
+  GetEinvoiceKey() {
+    let payload = {
+      SalesDetails: {
+        CompanyId: this.globalCompanyId,
+      },
+    };
+
+    this.adminService.getEinvoiceKey(payload).subscribe({
+      next: (res: any) => {
+        this.EinvoiceKey = res.EinvoiceKey;
+      },
+      error: (error: any) => {
+        this.toastr.error('Something went wrong');
+      },
+    });
   }
 
 
@@ -690,7 +711,8 @@ export class AddGoodsInvoiceComponent implements OnInit {
 
 
       this.LineItemTotal(0, 0, 'SaveLorryDetails');
-
+      //lastly added
+      this.GetTotal();
 
 
     } else {
@@ -1278,6 +1300,12 @@ export class AddGoodsInvoiceComponent implements OnInit {
     return new Date().toISOString().split('T')[0];
   }
 
+  isAdvancePaidShow : boolean = false;
+  isAdvancePaidShowFirstOne : boolean = false;
+  advancePaintAmount = "0";
+  payLess = 0
+  advancePaidText: string = 'Advance Paid';
+
   GetTotal(): void {
     debugger;
     this.totalNoOfBags = 0;
@@ -1307,22 +1335,93 @@ export class AddGoodsInvoiceComponent implements OnInit {
 
     this.taxableAmt = parseFloat(this.taxableAmt.toFixed(2));
 
+    if(this.advPaid > 0) {
+
+        if(this.EinvoiceKey && this.formGroup4.controls['frieght_Plus_Less'].value == 'Party Lorry Frieght') {
+
+            this.payLess = this.advPaid;
+            this.advancePaintAmount = this.payLess.toString();
+            this.isAdvancePaidShow = true;
+            this.isAdvancePaidShowFirstOne = false;
+
+        } else if(this.EinvoiceKey && this.formGroup4.controls['frieght_Plus_Less'].value == 'Own Lorry Frieght') {
+
+            this.payLess = this.balanceFr;
+            this.advancePaintAmount = this.payLess.toString();
+            this.isAdvancePaidShow = true;
+            this.isAdvancePaidShowFirstOne = false;
+
+        } else {
+
+          if(this.formGroup4.controls['frieght_Plus_Less'].value == 'Party Lorry Frieght') {
+
+            this.payLess = this.advPaid;
+            this.advancePaintAmount = this.payLess.toString();
+            this.isAdvancePaidShowFirstOne = true;
+
+          } else if(this.formGroup4.controls['frieght_Plus_Less'].value == 'Own Lorry Frieght') {
+
+            this.payLess = this.balanceFr;
+            this.advancePaintAmount = this.payLess.toString();
+            this.isAdvancePaidShowFirstOne = true;
+
+          } else {
+            this.isAdvancePaidShow = false;
+            this.isAdvancePaidShowFirstOne = false;
+          }
+
+        }
+    } else {
+      this.isAdvancePaidShow = false;
+      this.isAdvancePaidShowFirstOne = false;
+    }
 
     this.formGroup2.controls['totalGstAmt'].setValue(this.SeperateComma(TotalGST.toFixed(2)));
 
     debugger;
-    this.grandTotalAmount = (this.totalAmount + TotalGST + (this.formGroup1.controls['otherCharges1'].value == '' ? 0 : parseFloat(this.formGroup1.controls['otherCharges1'].value)) + (this.formGroup1.controls['otherCharges2'].value == '' ? 0 : parseFloat(this.formGroup1.controls['otherCharges2'].value)) + (this.formGroup1.controls['otherCharges3'].value == '' ? 0 : parseFloat(this.formGroup1.controls['otherCharges3'].value)) + (this.formGroup1.controls['otherChargesAnyValue'].value == '' ? 0 : parseFloat(this.formGroup1.controls['otherChargesAnyValue'].value)));
+    console.log("CHECKING -> " + this.isAdvancePaidShow + " and " + this.isAdvancePaidShowFirstOne)
+    if(this.isAdvancePaidShow || this.isAdvancePaidShowFirstOne) {
+
+      if(this.formGroup4.controls['frieght_Plus_Less'].value == 'Party Lorry Frieght') {
+        this.advancePaidText = "Advance Lorry Frieght"
+        this.grandTotalAmount = (this.totalAmount + TotalGST + (this.formGroup1.controls['otherCharges1'].value == '' ? 0 : parseFloat(this.formGroup1.controls['otherCharges1'].value)) +
+        (this.formGroup1.controls['otherCharges2'].value == '' ? 0 : parseFloat(this.formGroup1.controls['otherCharges2'].value)) +
+        (this.formGroup1.controls['otherCharges3'].value == '' ? 0 : parseFloat(this.formGroup1.controls['otherCharges3'].value)) +
+        Number(this.payLess) +
+        (this.formGroup1.controls['otherChargesAnyValue'].value == '' ? 0 : parseFloat(this.formGroup1.controls['otherChargesAnyValue'].value)));
+      } else if(this.formGroup4.controls['frieght_Plus_Less'].value == 'Own Lorry Frieght') {
+        this.advancePaidText = "Less Lorry Frieght"
+        this.grandTotalAmount = (this.totalAmount + TotalGST + (this.formGroup1.controls['otherCharges1'].value == '' ? 0 : parseFloat(this.formGroup1.controls['otherCharges1'].value)) +
+        (this.formGroup1.controls['otherCharges2'].value == '' ? 0 : parseFloat(this.formGroup1.controls['otherCharges2'].value)) +
+        (this.formGroup1.controls['otherCharges3'].value == '' ? 0 : parseFloat(this.formGroup1.controls['otherCharges3'].value)) +
+        (this.formGroup1.controls['otherChargesAnyValue'].value == '' ? 0 : parseFloat(this.formGroup1.controls['otherChargesAnyValue'].value)) -
+        Number(this.balanceFr));
+        this.advancePaintAmount = "-" + this.payLess.toString();
+      } else {
+        this.grandTotalAmount = (this.totalAmount + TotalGST + (this.formGroup1.controls['otherCharges1'].value == '' ? 0 : parseFloat(this.formGroup1.controls['otherCharges1'].value)) +
+        (this.formGroup1.controls['otherCharges2'].value == '' ? 0 : parseFloat(this.formGroup1.controls['otherCharges2'].value)) +
+        (this.formGroup1.controls['otherCharges3'].value == '' ? 0 : parseFloat(this.formGroup1.controls['otherCharges3'].value)) +
+        (this.formGroup1.controls['otherChargesAnyValue'].value == '' ? 0 : parseFloat(this.formGroup1.controls['otherChargesAnyValue'].value)));
+      }
+
+    } else {
+        this.grandTotalAmount = (this.totalAmount + TotalGST + (this.formGroup1.controls['otherCharges1'].value == '' ? 0 : parseFloat(this.formGroup1.controls['otherCharges1'].value)) +
+        (this.formGroup1.controls['otherCharges2'].value == '' ? 0 : parseFloat(this.formGroup1.controls['otherCharges2'].value)) +
+        (this.formGroup1.controls['otherCharges3'].value == '' ? 0 : parseFloat(this.formGroup1.controls['otherCharges3'].value)) +
+        (this.formGroup1.controls['otherChargesAnyValue'].value == '' ? 0 : parseFloat(this.formGroup1.controls['otherChargesAnyValue'].value)));
+    }
 
     this.formGroup2.controls['totalcgstAmt'].setValue(this.SeperateComma(TotalCGSTAmt.toFixed(2)));
     this.formGroup2.controls['totalsgstAmt'].setValue(this.SeperateComma(TotalCGSTAmt.toFixed(2)));
     this.formGroup2.controls['totaligstAmt'].setValue(this.SeperateComma(TotalIGSTAmt.toFixed(2)));
 
     // console.log(this.grandTotalAmount);
-
+    console.log("grandTotalAmount BEFORE -> " + this.grandTotalAmount)
     let roundOff = Math.round(this.grandTotalAmount);
     let roundOffValue = Number(roundOff - this.grandTotalAmount).toFixed(2);
     this.formGroup2.controls['roundOff'].setValue(roundOffValue);
     this.grandTotalAmount = this.SeperateComma(roundOff);
+    console.log("grandTotalAmount AFTER -> " + this.grandTotalAmount)
 
   }
 
@@ -1717,6 +1816,8 @@ export class AddGoodsInvoiceComponent implements OnInit {
       SalesDetails: {
         CompanyId: this.globalCompanyId,
         LedgerId: this.ledgerId,
+        VoucherNumber: this.invoiceNo,
+        VoucherType: this.voucherTypeId,
       },
     };
 
@@ -1755,7 +1856,7 @@ export class AddGoodsInvoiceComponent implements OnInit {
         "CompanyId": this.globalCompanyId,
         "LedgerId": this.ledgerId,
         "InvoiceNO": this.invoiceNo,
-        "VouchType": this.vochType,
+        "VouchType": this.voucherTypeId,
         "InvoiceType": this.invType
       }
       // "SalesInvoice": {
@@ -4612,7 +4713,7 @@ else if(InvoiceType == 'Office Copy')
   showConfirmationDialog(): void {
     Swal.fire({
       title: 'Confirmation',
-      text: 'Are you sure you want to proceed?',
+      text: 'Are you Sure to Create this Invoice ?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -4841,8 +4942,6 @@ else if(InvoiceType == 'Office Copy')
       }
     }
 
-
-
     if (Flag == false) {
       this.toastr.error(ErrorMsg.slice(0, -1));
     }
@@ -4862,6 +4961,7 @@ else if(InvoiceType == 'Office Copy')
           CompanyId: this.globalCompanyId,
           LedgerId: this.ledgerId,
           CurrentFinanceYear: currentFinaYr,
+          advancePaintAmount: this.payLess,
           IsServiceInvoice : this.IsServiceInvoice,
           LedgerName: this.LedgerName,
           OriginalInvDate: this.datePipe.transform(this.getParty.value.BillDate, 'yyyy-MM-dd'),
@@ -4948,6 +5048,7 @@ else if(InvoiceType == 'Office Copy')
             debugger;
             this.getCRDRList(res.split('|||||')[1], res.split('|||||')[2]);
 
+            this.invoiceNoToGetReponse = res.split('|||||')[3];
 
             //this.location.back();
 
@@ -5101,27 +5202,31 @@ else if(InvoiceType == 'Office Copy')
     let adv = this.formGroup4.controls['advancePaid'].value;
     //adv = Number(adv < 0) ? Number(adv * -1) : Number(adv);
     console.log("adv -> " + adv);
-    debugger;
-    if (this.formGroup4.controls['frieght_Plus_Less'].value == 'Own Lorry Frieght') {
-      if (Number(this.formGroup4.controls['totalFrieght'].value) > adv) {
-        this.formGroup1.controls['otherChargesAnyValue'].setValue((Number(this.formGroup4.controls['totalFrieght'].value) - adv) * -1);
-      }
-      else if (adv > 0) {
-        this.formGroup1.controls['otherChargesAnyValue'].setValue(Number(adv));
-      }
-    }
-    this.isThirdParty = false;
-    if (Number(this.formGroup1.controls['otherChargesAnyValue'].value) != 0) {
-      this.isThirdParty = true;
-    }
 
-    if (Number(this.formGroup1.controls['otherChargesAnyValue'].value) > 0) {
-      this.formGroup1.controls['otherChargesAny'].setValue('Advance Lorry Frieght');
-    }
-    else if (Number(this.formGroup1.controls['otherChargesAnyValue'].value) < 0) {
-      this.formGroup1.controls['otherChargesAny'].setValue('Less Lorry Frieght');
-    }
+    // if (this.formGroup4.controls['frieght_Plus_Less'].value == 'Own Lorry Frieght') {
+    //   if (Number(this.formGroup4.controls['totalFrieght'].value) > adv) {
+    //     this.formGroup1.controls['otherChargesAnyValue'].setValue((Number(this.formGroup4.controls['totalFrieght'].value) - adv) * -1);
+    //   }
+    //   else
+    //   if (adv > 0) {
+    //     this.formGroup1.controls['otherChargesAnyValue'].setValue(Number(adv));
+    //   }
+    // }
+    // this.isThirdParty = false;
 
+    // if (Number(this.formGroup1.controls['otherChargesAnyValue'].value) != 0) {
+    //   this.isThirdParty = true;
+    // }
+
+    // if (Number(this.formGroup1.controls['otherChargesAnyValue'].value) > 0) {
+    //   this.formGroup1.controls['otherChargesAny'].setValue('Advance Lorry Frieght');
+    // }
+    // else if (Number(this.formGroup1.controls['otherChargesAnyValue'].value) < 0) {
+    //   this.formGroup1.controls['otherChargesAny'].setValue('Less Lorry Frieght');
+    // }
+
+    //lastly added
+   // this.GetTotal();
 
   }
 
@@ -5309,6 +5414,7 @@ else if(InvoiceType == 'Office Copy')
   // open and close of Lorry popup
   toggleGetinvoiceResponseModal() {
     this.invoiceResponseModelVisible = !this.invoiceResponseModelVisible;
+
   }
 
   openDispatcherDetailModal() {
@@ -5329,7 +5435,29 @@ else if(InvoiceType == 'Office Copy')
     }
     this.adminService.GetInvoiceResponse(payload).subscribe({
       next: (res: any) => {
-        // console.log("Invoice Response:", res);
+
+        const ackNo = res.ackNo;
+        const irn = res.irn;
+        const invoiceNumber = res.inoiceNumber;
+        const signedQR = res.signedQR;
+        const status = res.status;
+
+        this.status = status;
+
+        if(res.status == "0") {
+          this.invoiceNumber = ackNo;
+        } else {
+          this.irn = irn;
+          this.ackNo = ackNo;
+          this.signedQR = signedQR;
+        }
+
+        console.log("Invoice Response 1:", ackNo);
+        console.log("Invoice Response 2:", irn);
+        console.log("Invoice Response 3:", invoiceNumber);
+        console.log("Invoice Response 4:", signedQR);
+        console.log("Invoice Response 5:", status);
+
       },
       error: (error: any) => {
         this.spinner.hide();

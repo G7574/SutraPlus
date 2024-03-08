@@ -11,7 +11,7 @@ namespace SutraPlus_DAL.Models
         public int _Id { get; set; }
         public long? CompanyId { get; set; }
         public long? VochType { get; set; }
-        public string InvoiceType { get; set; }
+        public string? InvoiceType { get; set; }
         public long? VochNo { get; set; }
         public long? LedgerId { get; set; }
         public long? CommodityId { get; set; }

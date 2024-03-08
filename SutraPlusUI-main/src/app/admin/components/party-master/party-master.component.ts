@@ -64,8 +64,8 @@ export class PartyMasterComponent implements OnInit {
         "PageSize": "10"
       }
     }
-    console.log("party details", partyDetails);
-    this.adminService.getLedgerList(partyDetails).subscribe({
+
+    this.adminService.getLedgerListForPartyMaster(partyDetails).subscribe({
       next: (res: any) => {
         this.spinner.show();
         if (!res.HasErrors && res?.Data !== null) {

@@ -1,4 +1,5 @@
 using DevExpress.Data.Filtering;
+using DevExpress.DataAccess.EntityFramework;
 using DevExpress.Utils.CommonDialogs.Internal;
 using DevExpress.Xpo;
 using DevExpress.XtraCharts;
@@ -11,12 +12,14 @@ using DevExpress.XtraRichEdit.Import.Doc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.SqlServer.Server;
+using SutraPlusReportApi;
 using SutraPlusReportApi.PredefinedReports;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Security.AccessControl;
 using System.Web;
 
@@ -28,6 +31,10 @@ namespace PassParameterExample.Services
         const string FileExtension = ".resx";
         public static XtraReport report = new XtraReport();
         public static bool doWeHaveLedgerId = false;
+        public static string databaseName = "";
+        public static string DataSource = "";
+        public static string UserID = "";
+        public static string Password = "";
 
         public CustomReportStorageWebExtension(IWebHostEnvironment env)
         {
@@ -50,9 +57,16 @@ namespace PassParameterExample.Services
         {
             CustomReportStorageWebExtension.doWeHaveLedgerId = false;
 
+            var v = CustomReportStorageWebExtension.databaseName;
+
+
             try
             {
-                string[] parts = url.Split("&");
+
+                string[] reportNameParts = url.Split('|');
+                string oldData = reportNameParts[0];
+
+                string[] parts = oldData.Split("&");
                 string reportName = parts[0];
                 DateTime StartDate = new DateTime();
                 if (parts.Length > 1)
@@ -85,6 +99,19 @@ namespace PassParameterExample.Services
                     if (parts[6].Split("=")[1] != "")
                         ledgerId = parts.Length > 6 ? Convert.ToInt32(parts[6].Split("=")[1]) : 0;
                 }
+
+
+
+                string newData = reportNameParts[1];
+                string[] newDataParts = newData.Split('&');
+                if (newDataParts.Length >= 4)
+                {
+                    CustomReportStorageWebExtension.databaseName= newDataParts[0].Split("=")[1];
+                    CustomReportStorageWebExtension.DataSource= newDataParts[1].Split("=")[1];
+                    CustomReportStorageWebExtension.UserID = newDataParts[2].Split("=")[1];
+                    CustomReportStorageWebExtension.Password = newDataParts[3].Split("=")[1];
+                }
+
 
                 using var ms = new MemoryStream();
                 XtraReport report = new XtraReport();

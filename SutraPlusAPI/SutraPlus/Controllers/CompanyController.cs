@@ -172,8 +172,245 @@ namespace SutraPlus.Controllers
                 _logger.LogError(ex.StackTrace);
                 return BadRequest(ex.Message);
             }
+        }     
+        [HttpPost("GetLastlyAddedRecord")]
+        [AllowAnonymous]
+        public IActionResult GetLastlyAddedRecord([FromBody] JObject Data)
+        {
+            try
+            {
+                var result = _companyService.GetLastlyAddedRecord(Data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+            
+        [HttpPost("GetBills")]
+        [AllowAnonymous]
+        public IActionResult GetBills([FromBody] JObject Data)
+        {
+            try
+            {
+                var result = _companyService.GetBills(Data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+            
+        [HttpPost("GetEditVerifyBillData")]
+        [AllowAnonymous]
+        public IActionResult GetEditVerifyBillData([FromBody] JObject Data)
+        {
+            try
+            {
+                var result = _companyService.GetEditVerifyBillData(Data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+            
+        [HttpPost("UpdatePartyInvoiceNumber")]
+        [AllowAnonymous]
+        public IActionResult UpdatePartyInvoiceNumber([FromBody] JObject Data)
+        {
+            try
+            {   
+                _companyService.UpdatePartyInvoiceNumber(Data);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
         }
         
+        [HttpPost("GetDatabaseNameFromConnectionString")]
+        [AllowAnonymous]
+        public IActionResult GetDatabaseNameFromConnectionString([FromBody] JObject Data)
+        {
+            try
+            {
+               var result = _companyService.GetDatabaseNameFromConnectionString();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+        
+        [HttpPost("GetBagWeight")]
+        [AllowAnonymous]
+        public IActionResult GetBagWeight([FromBody] JObject Data)
+        {
+            try
+            {
+                var result = _companyService.GetBagWeight(Data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPost("UpdateAkadaEntry")]
+        [AllowAnonymous]
+        public IActionResult UpdateAkadaEntry([FromBody] JObject Data)
+        {
+            try
+            {
+                _companyService.UpdateAkadaEntry(Data);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("UpdateAkadaTransDate")]
+        [AllowAnonymous]
+        public IActionResult UpdateAkadaTransDate([FromBody] JObject Data)
+        {
+            try
+            {
+                _companyService.UpdateAkadaTransDate(Data);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPost("UpdateAkadaParty")]
+        [AllowAnonymous]
+        public IActionResult UpdateAkadaParty([FromBody] JObject Data)
+        {
+            try
+            {
+                _companyService.UpdateAkadaParty(Data);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("DeleteAkadaEntry")]
+        [AllowAnonymous]
+        public IActionResult DeleteAkadaEntry([FromBody] JObject Data)
+        {
+            try
+            {
+                _companyService.DeleteAkadaEntry(Data);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("TransferTo")]
+        [AllowAnonymous]
+        public IActionResult TransferTo([FromBody] JObject Data)
+        {
+            try
+            {
+                _companyService.TransferTo(Data);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("DeleteAllAkadaEntry")]
+        [AllowAnonymous]
+        public IActionResult DeleteAllAkadaEntry([FromBody] JObject Data)
+        {
+            try
+            {
+                _companyService.DeleteAllAkadaEntry(Data);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+        
+        [HttpPost("GetOrderByMark")]
+        [AllowAnonymous]
+        public IActionResult GetOrderByMark([FromBody] JObject Data)
+        {
+            try
+            {
+                var result = _companyService.GetOrderByMark(Data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("GetLotNoData")]
+        [AllowAnonymous]
+        public IActionResult GetLotNoData([FromBody] JObject Data)
+        {
+            try
+            {
+                var result = _companyService.GetLotNoData(Data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("GetLotNO")]
+        [AllowAnonymous]
+        public IActionResult GetLotNO([FromBody] JObject Data)
+        {
+            try
+            {
+                var result = _companyService.GetLotNO(Data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost("SaveOptionSettings")]
         [AllowAnonymous]
         public IActionResult SaveOptionSettings([FromBody] JObject Data)

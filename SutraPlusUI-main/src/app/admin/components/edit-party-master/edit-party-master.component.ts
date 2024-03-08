@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
@@ -46,7 +46,8 @@ export class EditPartyMasterComponent implements OnInit {
     private spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private location: Location,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private changeDetectionRef: ChangeDetectorRef
   ) { }
 
   get add(): { [key: string]: AbstractControl } {
@@ -142,6 +143,43 @@ export class EditPartyMasterComponent implements OnInit {
 
   ngAfterViewInit() {
     this.commonService.setTheme();
+  }
+
+  selectedParty: any;
+  assignOptionToFormControl(type: string, option: string) {
+    switch (type) {
+      case 'address1':
+        this.editParty.controls['address1'].setValue(option);
+        break;
+      case 'address2':
+        this.editParty.controls['address2'].setValue(option);
+        break;
+      case 'place':
+        this.editParty.controls['place'].setValue(option);
+        break;
+      case 'bankName':
+
+        break;
+      default:
+        console.log(`No form control found for type ${type}`);
+    }
+  }
+
+  address1Options: string[] = [];
+  getAddress1(searchText: string) {
+
+    this.adminService.getAddPartyAutoComplete({ CompanyId: this.globalCompanyId, SearchText: searchText, Type: 'Address1' }).subscribe({
+      next: (res: any) => {
+        if (res && res.AddPartyAutoComplete && res.AddPartyAutoComplete.length > 0) {
+          this.address1Options = res.AddPartyAutoComplete.map((item: any) => item.Address1);
+          this.changeDetectionRef.detectChanges();
+        }
+      },
+      error: (error: any) => {
+        this.address1Options = [];
+      },
+    });
+
   }
 
   back(): void {
@@ -296,6 +334,39 @@ export class EditPartyMasterComponent implements OnInit {
     });
   }
 
+  address2Options: string[] = [];
+  add2: any;
+  place: any;
+  getAddress2(searchText: string) {
+
+    this.adminService.getAddPartyAutoComplete({ CompanyId: this.globalCompanyId, SearchText: searchText, Type: 'Address2' }).subscribe({
+      next: (res: any) => {
+        if (res && res.AddPartyAutoComplete && res.AddPartyAutoComplete.length > 0) {
+          this.address2Options = res.AddPartyAutoComplete.map((item: any) => item.Address2);
+          this.changeDetectionRef.detectChanges();
+        }
+      },
+      error: (error: any) => {
+        this.address2Options = [];
+      },
+    });
+
+  }
+  placeOptions: string[] = [];
+  getPlace(searchText: string) {
+    this.adminService.getAddPartyAutoComplete({ CompanyId: this.globalCompanyId, SearchText: searchText, Type: 'Place' }).subscribe({
+      next: (res: any) => {
+        if (res && res.AddPartyAutoComplete && res.AddPartyAutoComplete.length > 0) {
+          this.placeOptions = res.AddPartyAutoComplete.map((item: any) => item.Place);
+          this.changeDetectionRef.detectChanges();
+        }
+      },
+      error: (error: any) => {
+        // Handle the error
+      },
+    });
+  }
+
   setData(partyDetails: any) {
     if (partyDetails) {
       this.editParty.controls['ledgerName'].setValue(
@@ -307,6 +378,16 @@ export class EditPartyMasterComponent implements OnInit {
       this.editParty.controls['dealerType'].setValue(
         partyDetails[0].DealerType
       );
+
+      this.getAddress1("");
+      this.selectedParty = partyDetails[0].Address1;
+
+      this.getAddress2("");
+      this.add2 = partyDetails[0].Address2;
+
+      this.getPlace("");
+      this.place = partyDetails[0].Place;
+
       this.editParty.controls['address1'].setValue(partyDetails[0].Address1);
       this.editParty.controls['address2'].setValue(partyDetails[0].Address2);
       this.editParty.controls['place'].setValue(partyDetails[0].Place);
@@ -340,7 +421,59 @@ export class EditPartyMasterComponent implements OnInit {
 
   onSubmit() {
     this.submitted = true;
-    if (this.editParty.valid) {
+    // if (this.editParty.valid) {
+
+
+    if(this.partyId == undefined || this.partyId == "" ) {
+      this.toastr.error('please fill all the fields');
+      return;
+    }
+
+    if(this.editParty.get('ledgerName')?.value == undefined || this.editParty.get('ledgerName')?.value == "" ) {
+      this.toastr.error('please fill all the fields');
+      return;
+    }
+
+    if(this.editParty.get('ledgerType')?.value == undefined || this.editParty.get('ledgerType')?.value == "" ) {
+      this.toastr.error('please fill all the fields');
+      return;
+    }
+
+    if(this.editParty.get('dealerType')?.value == undefined || this.editParty.get('dealerType')?.value == "" ) {
+      this.toastr.error('please fill all the fields');
+      return;
+    }
+
+    if(this.editParty.get('address1')?.value == undefined || this.editParty.get('address1')?.value == "" ) {
+      this.toastr.error('please fill all the fields');
+      return;
+    }
+
+    if(this.editParty.get('place')?.value == undefined || this.editParty.get('place')?.value == "" ) {
+      this.toastr.error('please fill all the fields');
+      return;
+    }
+
+    if(this.editParty.get('state')?.value == undefined || this.editParty.get('state')?.value == "" ) {
+      this.toastr.error('please fill all the fields');
+      return;
+    }
+
+    if(this.editParty.get('country')?.value == undefined || this.editParty.get('country')?.value == "" ) {
+      this.toastr.error('please fill all the fields');
+      return;
+    }
+
+    if(this.editParty.get('contactDetails')?.value == undefined || this.editParty.get('contactDetails')?.value == "" ) {
+      this.toastr.error('please fill all the fields');
+      return;
+    }
+
+    if(this.editParty.get('accGroup')?.value == undefined || this.editParty.get('accGroup')?.value == "" ) {
+      this.toastr.error('please fill all the fields');
+      return;
+    }
+
       let partyDetails = {
         LedgerData: {
           CompanyId: this.globalCompanyId,
@@ -390,6 +523,8 @@ export class EditPartyMasterComponent implements OnInit {
           this.toastr.error('Something went wrong');
         },
       });
-    }
+    // } else {
+    //   this.toastr.error('please fill all the fields');
+    // }
   }
 }

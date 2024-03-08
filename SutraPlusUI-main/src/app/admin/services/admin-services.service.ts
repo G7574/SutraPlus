@@ -78,6 +78,10 @@ export class AdminServicesService {
     );
   }
 
+  getEinvoiceKey(data:any): Observable<any> {
+    return this.dataService.postAnonymous('Sales/GetEinvoiceKey',data);
+  }
+
   getInvType(data:any): Observable<any> {
     return this.dataService.postAnonymous('Sales/GetInvtype',data);
   }
@@ -104,6 +108,18 @@ export class AdminServicesService {
 
   getLedgerList(data: any): Observable<any> {
     return this.dataService.postAnonymous('TenantDBCommon/GetLedgerList', data);
+  }
+
+  getLedgerListForOtherAccounts(data: any): Observable<any> {
+    return this.dataService.postAnonymous('TenantDBCommon/GetLedgerListForOtherAccounts', data);
+  }
+
+  getLedgerListForPartyMaster(data: any): Observable<any> {
+    return this.dataService.postAnonymous('TenantDBCommon/GetLedgerListForPartyMaster', data);
+  }
+
+  updateData(data: any): Observable<any> {
+    return this.dataService.postAnonymous('TenantDBCommon/updateData', data);
   }
 
   getInvoiceList(data: any): Observable<any> {
@@ -210,6 +226,70 @@ export class AdminServicesService {
   // saveEInvoice(data: any): Observable<any
   saveAkadaEntry(data: any): Observable<any> {
     return this.dataService.postAnonymous('Company/SaveAkadaEntry', data);
+  }
+
+  GetLotNoData(data: any): Observable<any> {
+    return this.dataService.postAnonymous('Company/GetLotNoData', data);
+  }
+
+  GetLotNO(data: any): Observable<any> {
+    return this.dataService.postAnonymous('Company/GetLotNO', data);
+  }
+
+  UpdateAkadaEntry(data: any): Observable<any> {
+    return this.dataService.postAnonymous('Company/UpdateAkadaEntry', data);
+  }
+
+  UpdateAkadaTransDate(data: any): Observable<any> {
+    return this.dataService.postAnonymous('Company/UpdateAkadaTransDate', data);
+  }
+
+  UpdateAkadaParty(data: any): Observable<any> {
+    return this.dataService.postAnonymous('Company/UpdateAkadaParty', data);
+  }
+
+  DeleteAkadaEntry(data: any): Observable<any> {
+    return this.dataService.postAnonymous('Company/DeleteAkadaEntry', data);
+  }
+
+  DeleteAllAkadaEntry(data: any): Observable<any> {
+    return this.dataService.postAnonymous('Company/DeleteAllAkadaEntry', data);
+  }
+
+  TransferTo(data: any): Observable<any> {
+    return this.dataService.postAnonymous('Company/TransferTo', data);
+  }
+
+  GetLastlyAddedRecord(data: any): Observable<any> {
+    return this.dataService.postAnonymous('Company/GetLastlyAddedRecord', data);
+  }
+
+  GetBagWeight(data: any): Observable<any> {
+    return this.dataService.postAnonymous('Company/GetBagWeight', data);
+  }
+
+  GetBills(data: any): Observable<any> {
+    return this.dataService.postAnonymous('Company/GetBills', data);
+  }
+
+  UpdatePartyInvoiceNumber(data: any): Observable<any> {
+    return this.dataService.postAnonymous('Company/UpdatePartyInvoiceNumber', data);
+  }
+
+  UpdateInvoice(data: any): Observable<any> {
+    return this.dataService.postAnonymous('Sales/UpdateInvoice', data);
+  }
+
+  GetDatabaseNameFromConnectionString(data: any): Observable<any> {
+    return this.dataService.postAnonymous('Company/GetDatabaseNameFromConnectionString', data);
+  }
+
+  GetEditVerifyBillData(data: any): Observable<any> {
+    return this.dataService.postAnonymous('Company/GetEditVerifyBillData', data);
+  }
+
+  GetOrderByMark(data: any): Observable<any> {
+    return this.dataService.postAnonymous('Company/GetOrderByMark', data);
   }
 
   getAllCommodities(data: any): Observable<any> {

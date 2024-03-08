@@ -92,7 +92,7 @@ import { navItems } from './_nav';
 import { CommonService } from 'src/app/share/services/common.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AdminServicesService } from '../../admin/services/admin-services.service';
-import { get, has, isNil } from 'lodash-es';
+import { forEach, get, has, isNil } from 'lodash-es';
 
 @Component({
   selector: 'app-dashboard',
@@ -141,6 +141,7 @@ export class DefaultLayoutComponent implements OnInit {
         this.formList = res.FormList.filter(
           (i: any) => i.UserId === get(this.userDetails, 'result.UserId')
         );
+        console.log(this.formList);
         this.updtaedNav();
       },
       error: (error: any) => {},

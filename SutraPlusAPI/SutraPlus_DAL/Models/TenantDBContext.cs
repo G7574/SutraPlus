@@ -10,9 +10,11 @@ namespace SutraPlus_DAL.Models
     public partial class TenantDBContext : DbContext, IDisposable
     {
         private string _connectionString = null;
+        public static string staticConnectionString = "";
         public TenantDBContext(string connectionString)
         {
             _connectionString = connectionString;
+            staticConnectionString = connectionString;
         }
 
         public void Dispose()

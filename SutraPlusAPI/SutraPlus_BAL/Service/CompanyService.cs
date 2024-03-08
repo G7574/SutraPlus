@@ -138,9 +138,69 @@ namespace SutraPlus_BAL.Service
             }
         }
 
-        public Boolean SaveAkadaEntry(JObject Data)
+        public JObject SaveAkadaEntry(JObject Data)
         {
             return _companyRepository.SaveAkadaEntry(Data);
+        }
+        public JObject GetLastlyAddedRecord(JObject Data)
+        {
+            return _companyRepository.GetLastlyAddedRecord(Data);
+        }
+        public JObject GetBills(JObject Data)
+        {
+            return _companyRepository.GetBills(Data);
+        }
+        public JObject GetEditVerifyBillData(JObject Data)
+        {
+            return _companyRepository.GetEditVerifyBillData(Data);
+        }
+        public JObject GetDatabaseNameFromConnectionString()
+        {
+            return _companyRepository.GetDatabaseNameFromConnectionString();
+        }
+        public void UpdatePartyInvoiceNumber(JObject Data)
+        {
+            _companyRepository.UpdatePartyInvoiceNumber(Data);
+        }
+        public JObject GetBagWeight(JObject Data)
+        {
+            return _companyRepository.GetBagWeight(Data);
+        }
+        public void UpdateAkadaEntry(JObject Data)
+        {
+            _companyRepository.UpdateAkadaEntry(Data);
+        }
+        public void UpdateAkadaTransDate(JObject Data)
+        {
+            _companyRepository.UpdateAkadaTransDate(Data);
+        }
+        public void UpdateAkadaParty(JObject Data)
+        {
+            _companyRepository.UpdateAkadaParty(Data);
+        }
+        public void DeleteAkadaEntry(JObject Data)
+        {
+            _companyRepository.DeleteAkadaEntry(Data);
+        }
+        public void TransferTo(JObject Data)
+        {
+            _companyRepository.TransferTo(Data);
+        }
+        public void DeleteAllAkadaEntry(JObject Data)
+        {
+            _companyRepository.DeleteAllAkadaEntry(Data);
+        }
+        public JObject GetOrderByMark(JObject Data)
+        {
+            return _companyRepository.GetOrderByMark(Data);
+        }
+        public JObject GetLotNoData(JObject Data)
+        {
+            return _companyRepository.GetLotNoData(Data);
+        }
+        public Boolean GetLotNO(JObject Data)
+        {
+            return _companyRepository.GetLotNO(Data);
         }
          public Boolean SaveOptionSettings(JObject Data)
         {

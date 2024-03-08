@@ -7,7 +7,7 @@ namespace SutraPlus_DAL.Models
 {
     public partial class Ledger
     {
-        [Key]      
+        [Key]           
         public int _Id { get; set; }
         public long? CompanyId { get; set; }
         public string? LedgerType { get; set; }

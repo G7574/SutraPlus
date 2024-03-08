@@ -36,7 +36,7 @@ namespace SutraPlus_DAL.Models
             {
                 //this is not in use
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=43.231.124.151;Database=SutraPlus;User Id=appuser;Password=BBDKar5431@~^%;TrustServerCertificate=True;");
+                optionsBuilder.UseSqlServer("Server=103.50.212.163;Database=SutraPlus;uid=sa;Password=root@123;TrustServerCertificate=True;");
             }
         }
 

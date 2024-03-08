@@ -32,7 +32,7 @@ export class AddOtherAccountComponent implements OnInit {
        private location: Location
   ) { }
 
-  ngOnInit(): void { 
+  ngOnInit(): void {
 
     this.addLedger = new FormGroup({
       ledgerName: new FormControl(''),
@@ -62,7 +62,7 @@ export class AddOtherAccountComponent implements OnInit {
     this.globalCompanyId = sessionStorage.getItem('companyID');
 
     this.getAccGroup();
-    
+
   }
   ngAfterViewInit() {
     this.commonService.setTheme();
@@ -97,7 +97,7 @@ export class AddOtherAccountComponent implements OnInit {
         this.toastr.error('Something went wrong');
       },
     });
-  } 
+  }
 
   onSubmit(): void {
     this.submitted = true;
@@ -132,6 +132,6 @@ export class AddOtherAccountComponent implements OnInit {
 
   back(): void {
     this.router.navigate(['/admin/other-account'])
-  } 
+  }
 
 }

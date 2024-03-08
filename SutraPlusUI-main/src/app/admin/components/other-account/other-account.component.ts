@@ -113,7 +113,7 @@ export class OtherAccountComponent implements OnInit {
     }
 
 
-    this.adminService.getLedgerList(obj).subscribe({
+    this.adminService.getLedgerListForOtherAccounts(obj).subscribe({
       next: (res: any) => {
         this.spinner.show();
 

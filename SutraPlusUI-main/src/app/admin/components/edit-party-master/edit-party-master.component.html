@@ -75,9 +75,23 @@
 							Address 1 <span class="text-danger">*</span>
 						</label>
 						<c-col [sm]="10">
-							<input cFormControl type="text" placeholder="Enter address 1"
+
+              <!-- <input cFormControl type="text" placeholder="Enter address 1"
 								formControlName="address1"
 								[ngClass]="{ 'is-invalid': submitted && add['address1'].errors }" />
+ -->
+
+                <ng-select #party (keyup)="getAddress1(party.searchTerm)" [items]="address1Options"
+                  [(ngModel)]="selectedParty" bindLabel="ledgerName" bindValue="ledgerId" formControlName="address1"
+                  placeholder="Enter address 1" (focus)="address1Options">
+                  <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                      <div class="item" (click)="assignOptionToFormControl('address1',item)">
+                          <div>{{item}}</div>
+                      </div>
+                  </ng-template>
+              </ng-select>
+
+
 							<div *ngIf="submitted && add['address1'].errors"
 								class="invalid-feedback fw-semibold">
 								<div *ngIf="add['address1'].errors['required']">Address is required
@@ -91,8 +105,21 @@
 							Address 2
 						</label>
 						<c-col [sm]="10">
-							<input cFormControl type="text" placeholder="Enter address 2"
-								formControlName="address2" />
+
+							<!-- <input cFormControl type="text" placeholder="Enter address 2"
+								formControlName="address2" /> -->
+
+                <ng-select #party (keyup)="getAddress2(party.searchTerm)" [items]="address2Options"
+                  [(ngModel)]="add2" bindLabel="ledgerName" bindValue="ledgerId" 	formControlName="address2"
+                  placeholder="Enter address 2" (focus)="address2Options">
+                  <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                      <div class="item" (click)="assignOptionToFormControl('address2',item)">
+                          <div>{{item}}</div>
+                        </div>
+                    </ng-template>
+                </ng-select>
+
+
 						</c-col>
 					</c-row>
 
@@ -101,9 +128,22 @@
 							Place <span class="text-danger">*</span>
 						</label>
 						<c-col [sm]="4">
-							<input cFormControl type="text" placeholder="Enter place"
+
+							<!-- <input cFormControl type="text" placeholder="Enter place"
 								formControlName="place"
-								[ngClass]="{ 'is-invalid': submitted && add['place'].errors }" />
+								[ngClass]="{ 'is-invalid': submitted && add['place'].errors }" /> -->
+
+
+                <ng-select #party (keyup)="getPlace(party.searchTerm)" [items]="placeOptions"
+                [(ngModel)]="place" bindLabel="ledgerName" bindValue="ledgerId" formControlName="place"
+                placeholder="Enter address 2" (focus)="placeOptions">
+                <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                    <div class="item" (click)="assignOptionToFormControl('place',item)">
+                        <div>{{item}}</div>
+                      </div>
+                  </ng-template>
+              </ng-select>
+
 							<div *ngIf="submitted && add['place'].errors"
 								class="invalid-feedback fw-semibold">
 								<div *ngIf="add['place'].errors['required']">Place is required</div>

@@ -103,7 +103,14 @@ namespace SutraPlus_BAL.Service
                     string webUrl = "";
                     foreach (var item in yeardata)
                     {
-                        string DbName = "", finyear = "", startYear = "", endYear = "";
+                        //string DbName = "", finyear = "", startYear = "", endYear = "";
+                        string finyear = "", startYear = "", endYear = "";
+                        string DbName = "K" + Convert.ToString(item["FinYear"]).Substring(2, 2) + Convert.ToString(item["FinYear"]).Substring(7, 2) + data["Code"];
+
+                        //CurrentFinanceYear.Substring(2, 2) + CurrentFinanceYear.Substring(7, 2)
+
+                        //if (item["FinYear"])
+
                         string themeCode = "", backCode = "";
                         themeCode = _customerRepository.GetThemeCode(Convert.ToString(item["Year"]), "Theme");
                         backCode = _customerRepository.GetThemeCode(Convert.ToString(item["Year"]), "Back");
@@ -112,7 +119,7 @@ namespace SutraPlus_BAL.Service
                         finyear = item["FinYear"];
                         startYear = finyear.Substring(2, 2);
                         endYear = finyear.Substring(7, 2);
-                        DbName = _configuration.GetSection("TenantServer:DatabaseInitail").Value.ToString() + startYear + endYear + data["Code"];
+                        //DbName = _configuration.GetSection("TenantServer:DatabaseInitail").Value.ToString() + startYear + endYear + data["Code"];
                         DateTime dtfrm, dtto;
                         string startDate = "", endDate = "";
                         startDate = item["Year"] + _configuration.GetSection("TenantServer:StartDate").Value.ToString();
@@ -141,7 +148,7 @@ namespace SutraPlus_BAL.Service
                     //loop each above table & create multi databases in master database
                     //insert admon user login details for each database created above
 
-                    _sender.SendMailMessage(_commonRepository.GetEmailConfig(),Email, "Customer Login Creation...", "", customer, webUrl, Email, Password);
+                    //_sender.SendMailMessage(_commonRepository.GetEmailConfig(),Email, "Customer Login Creation...", "", customer, webUrl, Email, Password);
                     return "Customer Added Successfully...!";
                 }
             }

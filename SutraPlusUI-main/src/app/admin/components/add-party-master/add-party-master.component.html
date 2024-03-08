@@ -81,7 +81,17 @@
                 </mat-option>
               </mat-autocomplete> -->
 
-              <c-input-group class="mb-3">
+              <ng-select #party (keyup)="getAddress1(party.searchTerm)" [items]="address1Options"
+                  [(ngModel)]="selectedParty" bindLabel="ledgerName" bindValue="ledgerId"
+                  placeholder="Enter address 1" (focus)="address1Options">
+                  <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                      <div class="item" (click)="assignOptionToFormControl('address1',item)">
+                          <div>{{item}}</div>
+                      </div>
+                  </ng-template>
+              </ng-select>
+
+              <!-- <c-input-group class="mb-3">
                 <input aria-label="Text input with dropdown button" cFormControl type="text"
                   placeholder="Enter address 1" formControlName="address1" />
                 <c-dropdown alignment="end" *ngIf="address1Options && address1Options.length > 0">
@@ -94,7 +104,7 @@
                     </a>
                   </div>
                 </c-dropdown>
-              </c-input-group>
+              </c-input-group> -->
 
               <!--input cFormControl type="text" placeholder="Enter address 1" formControlName="address1"
                 [ngClass]="{ 'is-invalid': submitted && add['address1'].errors }" /-->
@@ -119,10 +129,21 @@
                 </mat-option>
               </mat-autocomplete> -->
 
-              <c-input-group class="mb-3">
-                <input aria-label="Text input with dropdown button"  [ngClass]="{ 'is-invalid': submitted && add['address2'].errors }" cFormControl type="text"
-                  placeholder="Enter address 2" formControlName="address2" />
-                <c-dropdown alignment="end" *ngIf="address2Options && address2Options.length > 0">
+              <!-- <c-input-group class="mb-3"> -->
+                <!-- <input aria-label="Text input with dropdown button"  [ngClass]="{ 'is-invalid': submitted && add['address2'].errors }" cFormControl type="text"
+                  placeholder="Enter address 2" formControlName="address2" /> -->
+
+                  <ng-select #party (keyup)="getAddress2(party.searchTerm)" [items]="address2Options"
+                  [(ngModel)]="add2" bindLabel="ledgerName" bindValue="ledgerId"
+                  placeholder="Enter address 2" (focus)="address2Options">
+                  <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                      <div class="item" (click)="assignOptionToFormControl('address2',item)">
+                          <div>{{item}}</div>
+                        </div>
+                    </ng-template>
+                </ng-select>
+
+                <!-- <c-dropdown alignment="end" *ngIf="address2Options && address2Options.length > 0">
                   <button cButton cDropdownToggle color="secondary" variant="outline">
                   </button>
                   <div cDropdownMenu class="dropdown-menu-scrollable">
@@ -131,11 +152,11 @@
                       {{ option }}
                     </a>
                   </div>
-                </c-dropdown>
+                </c-dropdown> -->
                 <div *ngIf="submitted && add['address2'].errors" class="invalid-feedback fw-semibold">
                   <div *ngIf="add['address2'].errors['required']">Address 2 is required</div>
                 </div>
-              </c-input-group>
+              <!-- </c-input-group> -->
 
               <!--input cFormControl type="text" placeholder="Enter address 2" formControlName="address2" /-->
             </c-col>
@@ -156,7 +177,17 @@
                 </mat-option>
               </mat-autocomplete> -->
 
-              <c-input-group class="mb-3">
+              <ng-select #party (keyup)="getPlace(party.searchTerm)" [items]="placeOptions"
+              [(ngModel)]="place" bindLabel="ledgerName" bindValue="ledgerId"
+              placeholder="Enter address 2" (focus)="placeOptions">
+              <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                  <div class="item" (click)="assignOptionToFormControl('place',item)">
+                      <div>{{item}}</div>
+                    </div>
+                </ng-template>
+            </ng-select>
+
+              <!-- <c-input-group class="mb-3">
                 <input aria-label="Text input with dropdown button" cFormControl type="text"
                   placeholder="Enter place" formControlName="place" />
                 <c-dropdown alignment="end" *ngIf="placeOptions && placeOptions.length > 0">
@@ -169,7 +200,7 @@
                     </a>
                   </div>
                 </c-dropdown>
-              </c-input-group>
+              </c-input-group> -->
 
               <!--input cFormControl type="text" placeholder="Enter place" formControlName="place"
                 [ngClass]="{ 'is-invalid': submitted && add['place'].errors }" /-->
@@ -355,7 +386,7 @@
                 </c-dropdown>
               </c-input-group>
               <!--ng-select [items]="sampleData1" placeholder="Select bank name" bindLabel="name" bindValue="id"
-              addTagText="Create New" 
+              addTagText="Create New"
               [addTag]="CreateNew">
                 formControlName="bankName">
               </ng-select>

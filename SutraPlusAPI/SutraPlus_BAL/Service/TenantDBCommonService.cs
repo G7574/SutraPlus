@@ -13,6 +13,7 @@ using SutraPlus_DAL.Common;
 using Microsoft.Extensions.Logging;
 using SutraPlus.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 
 namespace SutraPlus_BAL.Service
 {
@@ -219,6 +220,12 @@ namespace SutraPlus_BAL.Service
             }
             //  _logger.LogDebug("TenantDBCommonService : User Exist");
         }
+
+        public Boolean updateData(JObject data)
+        {
+            return _tenantDBCommonRepository.updateData(data);
+        }
+
         public pagination<Ledger> GetLedgerList(JObject Data)
         {
             try
@@ -233,6 +240,67 @@ namespace SutraPlus_BAL.Service
 
 
                 var result = _tenantDBCommonRepository.GetLedger(companyId, page, searchText,LedgerType, Country);
+                if (result != null)
+                {
+                    return result;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                throw ex;
+            }
+
+        }
+        public pagination<Ledger> GetLedgerListForPartyMaster(JObject Data)
+        {
+            try
+            {
+                var searchText = Convert.ToString(Data["SearchText"]);
+                var page = JsonConvert.DeserializeObject<pagination<Ledger>>(Convert.ToString(Data["Page"]));
+                var data = JsonConvert.DeserializeObject<dynamic>(Data["LedgerData"].ToString());
+               
+                int companyId = data["CompanyId"];
+                string LedgerType = data["LedgerType"];
+                string Country = data["Country"];
+
+
+                var result = _tenantDBCommonRepository.GetLedgerListForPartyMaster(companyId, page, searchText,LedgerType, Country);
+                if (result != null)
+                {
+                    return result;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                throw ex;
+            }
+
+        }
+
+        public pagination<Ledger> GetLedgerListForOtherAccounts(JObject Data)
+        {
+            try
+            {
+                var searchText = Convert.ToString(Data["SearchText"]);
+                var page = JsonConvert.DeserializeObject<pagination<Ledger>>(Convert.ToString(Data["Page"]));
+                var data = JsonConvert.DeserializeObject<dynamic>(Data["LedgerData"].ToString());
+               
+                int companyId = data["CompanyId"];
+                string LedgerType = data["LedgerType"];
+                string Country = data["Country"];
+
+
+                var result = _tenantDBCommonRepository.GetLedgerListForOtherAccounts(companyId, page, searchText,LedgerType, Country);
                 if (result != null)
                 {
                     return result;

@@ -1,3 +1,16 @@
+<div class="last-added-data" style="display: inline-block; border: 1px solid black; padding: 10px; margin-right: 10px;">
+  <h3 style="margin: 0;"><strong>Recent Entry</strong></h3>
+  <div style="display: flex; flex-direction: row;">
+    <p style="margin: 0; margin-right: 20px;"><strong>Party Name:</strong> {{ lastlyAddedPartyName }}</p>
+    <p style="margin: 0; margin-right: 20px;"><strong>Date:</strong> {{ lastlyAddedAate | slice:0:10 }}</p>
+    <p style="margin: 0; margin-right: 20px;"><strong>Lot No:</strong> {{ lastlyAddedLotNo }}</p>
+    <p style="margin: 0;"><strong>No. of Bags:</strong> {{ lastltAddedNumOfBags }}</p>
+  </div>
+
+</div>
+
+<hr/>
+
 <h2>Bazar Purchase</h2>
 <div class="container">
     <div class="row">
@@ -7,41 +20,36 @@
                     <label for="date" class="col-md-3 col-form-label">Date</label>
                     <div class="col-md-9">
                         <input type="date" id="date" [(ngModel)]="date" name="date"
-                            class="form-control">
+                            class="form-control" (ngModelChange)="onDateChange($event)">
                     </div>
                 </div>
-                <div class="form-group row mt-1">
-                    <label for="voucherId" class="col-md-3 col-form-label">Voucher Id</label>
-                    <div class="col-md-9">
-                        <input type="number" id="voucherId" [(ngModel)]="voucherId" name="voucherId"
-                            class="form-control" placeholder="Enter Voucher Id">
-                    </div>
-                </div>
-                <div class="form-group row mt-1">
-                    <label for="voucherNumber" class="col-md-3 col-form-label">Voucher
-                        No.</label>
-                    <div class="col-md-9">
-                        <input type="number" id="voucherNumber" [(ngModel)]="voucherNumber"
-                            name="voucherNumber" class="form-control"
-                            placeholder="Enter Voucher No.">
-                    </div>
-                </div>
+
 
                 <div class="form-group row mt-1">
                     <label for="commodity" class="col-md-3 col-form-label">Commodity</label>
                     <div class="col-md-9">
-                        <select id="commodity" [(ngModel)]="selectedCommodity" name="commodity"
-                            class="form-control" aria-placeholder="Select Commodity">
-                            <option *ngFor="let commodity of commodities" [value]="commodity">
-                                {{commodity.CommodityName}}</option>
-                        </select>
+
+                        <ng-select #commodity (keyup)="getCommodity(commodity.searchTerm)"
+                          [items]="commodityList" [(ngModel)]="selectedCommodity" bindLabel="CommodityName"
+                          bindValue="commodityList" placeholder="Select Commodity"
+                          (focus)="commodityList = []">
+                                  <ng-template ng-option-tmp let-item="item" let-index="index"
+                                        let-search="searchTerm">
+                                        <div class="item">
+                                            <div (click)="set($event, item)">
+                                                {{ item }}
+                                            </div>
+                                        </div>
+                              </ng-template>
+                        </ng-select>
+
                     </div>
                 </div>
 
                 <div class="form-group row mt-1">
                     <label for="commodity" class="col-md-3 col-form-label">Party</label>
                     <div class="col-md-9">
-                        <!-- <ng-select #party (keyup)="getPartyList(party.searchTerm)"
+                        <ng-select #party (keyup)="getPartyList(party.searchTerm)"
                             [items]="partyList" [(ngModel)]="partyName" bindLabel="ledgerName"
                             bindValue="ledgerId" placeholder="Select Party"
                             (focus)="partyList = []">
@@ -53,16 +61,15 @@
                                     </div>
                                 </div>
                             </ng-template>
-                        </ng-select> -->
-                        <input type="text" class="form-control" [value]="partyName" disabled
-                            readonly>
+                        </ng-select>
+
                     </div>
                 </div>
 
                 <div class="form-group row mt-1">
                     <label for="lotNo" class="col-md-3 col-form-label">Lot No</label>
                     <div class="col-md-9">
-                        <input type="number" id="lotNo" [(ngModel)]="lotNo" name="lotNo"
+                        <input type="number" (blur)="onKeyUp($event,false)" id="lotNo" [(ngModel)]="lotNo" name="lotNo"
                             class="form-control" placeholder="Enter Lot No">
                     </div>
                 </div>
@@ -92,15 +99,15 @@
                     </div>
                 </div>
 
-                <div class="form-group row mt-1">
+                <div class="form-group row mt-1" >
                     <label for="totalWeight" class="col-md-3 col-form-label">Total Weight</label>
                     <div class="col-md-9">
-                        <input type="number" id="totalWeight" [(ngModel)]="totalWeight"
-                            name="totalWeight" class="form-control" readonly [disabled]="true">
+                        <input type="number" id="totalWeight" [(ngModel)]="totalWeight" (keyup)="totalWeightCalculation()"
+                            name="totalWeight" class="form-control">
                     </div>
                 </div>
 
-                <div class="form-group row mt-1">
+                <div class="form-group row mt-1" *ngIf="showTotalWeight">
                     <label for="amount" class="col-md-3 col-form-label">Amount</label>
                     <div class="col-md-9">
                         <input type="number" id="amount" [(ngModel)]="amount" name="amount"
@@ -110,17 +117,18 @@
 
                 <div class="form-group row mt-1 d-flex justify-content-between">
                     <div class="col-8">
-                        <button type="button" mat-button class="btn btn-dark btn-sm px-3"
-                            (click)="saveAkadaEntry()">
-                            Submit
-                        </button>
                         &nbsp;
                         <button mat-button class="btn btn-danger btn-sm px-3 close"
                             (click)="onNoClick()">
                             Clear
                         </button>
                     </div>
+                    <button type="button" mat-button class="btn btn-dark btn-sm px-3" style="width: 80px;"
+                    (click)="onKeyUp($event,true)">
+                    Submit
+                </button>
                 </div>
+
             </form>
         </div>
         <div class="col-md-4">
@@ -140,23 +148,86 @@
                     <tbody>
                         <tr *ngFor="let entry of entries; let i = index">
                             <td>{{i + 1}}</td>
-                            <td>{{entry.lotNo}}</td>
-                            <td>{{entry.noOfBags}}</td>
-                            <td>{{entry.rate}}</td>
-                            <td>{{entry.totalWeight}}</td>
-                            <td>{{entry.amount}}</td>
-                            <td>{{entry.mark}}</td>
+                            <td>{{entry.LotNo}}</td>
+                            <td>{{entry.NoOfBags}}</td>
+                            <td>{{entry.Rate | number:'1.2-2'}}</td>
+                            <td>{{entry.TotalWeight}}</td>
+                            <td>{{entry.Amount | number:'1.2-2'}}</td>
+                            <td>{{entry.Mark}}</td>
                         </tr>
+                        <tr>
+                          <td colspan="2">Total</td>
+                          <td>{{ getTotalBag('NoOfBags') }}</td>
+                          <td></td>
+                          <td>{{ getTotal('TotalWeight') }}</td>
+                          <td>{{ getTotal('Amount') | number:'1.2-2' }}</td>
+                          <td></td>
+                      </tr>
                     </tbody>
                 </table>
             </div>
 
         </div>
         <div class="col-md-4">
+
+          <div class="form-group row mt-1">
+            <label for="Bags" class="col-md-5 col-form-label">Total Bags</label>
+            <div class="col-md-7">
+                <input type="number" id="commission" [(ngModel)]="ttbag" name="commission" readonly style="text-align: right;" [disabled]="true"
+                    class="form-control" placeholder="Enter Commission">
+            </div>
+          </div>
+
+             <div class="form-group row mt-1">
+            <label for="Weight" class="col-md-5 col-form-label">Total Weight</label>
+            <div class="col-md-7">
+                <input type="number" id="totalWeight" [(ngModel)]="totalWeight" name="commission" readonly style="text-align: right;" [disabled]="true"
+                    class="form-control" placeholder="Enter Total Weight">
+            </div>
+          </div>
+
+
+
+              <div class="form-group row mt-1">
+                <label for="Amount" class="col-md-5 col-form-label">Total Amount</label>
+                <div class="col-md-7">
+
+                        <input type="number" id="totalBags" [(ngModel)]="totalBags" name="totalBags" readonly [disabled]="true"
+                         class="form-control" style="text-align: right;" [value]="totalBags | number:'1.2-2'">
+
+                </div>
+              </div>
+
+
+
+              <div class="form-group row mt-1">
+                <label for="Packing" class="col-md-5 col-form-label">Packing</label>
+                <div class="col-md-7">
+                    <input type="number" id="packing" [(ngModel)]="packing" name="packing" readonly style="text-align: right;" [disabled]="true"
+                        class="form-control" placeholder="Enter packing">
+                </div>
+              </div>
+
+              <div class="form-group row mt-1">
+                <label for="Hamali" class="col-md-5 col-form-label">Hamali</label>
+                <div class="col-md-7">
+                    <input type="number" id="hamali" [(ngModel)]="hamali" name="hamali" readonly style="text-align: right;" [disabled]="true"
+                        class="form-control" placeholder="Enter hamali">
+                </div>
+              </div>
+
+              <div class="form-group row mt-1">
+                <label for="Weightman" class="col-md-5 col-form-label">Weightman Fee</label>
+                <div class="col-md-7">
+                    <input type="number" id="weightManFee" [(ngModel)]="weightManFee" name="weightManFee" readonly style="text-align: right;" [disabled]="true"
+                        class="form-control" placeholder="Enter weightManFee">
+                </div>
+              </div>
+
             <div class="form-group row mt-1">
                 <label for="commission" class="col-md-5 col-form-label">Commission</label>
                 <div class="col-md-7">
-                    <input type="number" id="commission" [(ngModel)]="commission" name="commission"
+                    <input type="number" id="commission" [(ngModel)]="commission" name="commission" readonly style="text-align: right;" [disabled]="true"
                         class="form-control" placeholder="Enter Commission">
                 </div>
             </div>
@@ -164,7 +235,7 @@
             <div class="form-group row mt-1">
                 <label for="cess" class="col-md-5 col-form-label">Cess</label>
                 <div class="col-md-7">
-                    <input type="number" id="cess" [(ngModel)]="cess" name="cess"
+                    <input type="number" id="cess" [(ngModel)]="cess" name="cess" readonly style="text-align: right;" [disabled]="true"
                         class="form-control" placeholder="Enter Cess">
                 </div>
             </div>
@@ -172,7 +243,7 @@
             <div class="form-group row mt-1">
                 <label for="taxableValue" class="col-md-5 col-form-label">Taxable Value</label>
                 <div class="col-md-7">
-                    <input type="number" id="taxableValue" [(ngModel)]="taxableValue"
+                    <input type="number" id="taxableValue" [(ngModel)]="taxableValue" readonly style="text-align: right;" [disabled]="true"
                         name="taxableValue" class="form-control" placeholder="Enter Taxable Value">
                 </div>
             </div>
@@ -180,70 +251,131 @@
             <div class="form-group row mt-1">
                 <label for="sgst" class="col-md-5 col-form-label">SGST</label>
                 <div class="col-md-7">
-                    <input type="number" id="sgst" [(ngModel)]="sgst" name="sgst"
+                    <input type="number" id="sgst" [(ngModel)]="sgst" name="sgst" readonly style="text-align: right;" [disabled]="true"
                         class="form-control" placeholder="Enter SGST">
                 </div>
             </div>
 
             <div class="form-group row mt-1">
+              <label for="cgst" class="col-md-5 col-form-label">CGST</label>
+              <div class="col-md-7">
+                  <input type="number" id="cgst" [(ngModel)]="cgst" name="cgst" readonly style="text-align: right;" [disabled]="true"
+                      class="form-control" placeholder="Enter CGST">
+              </div>
+          </div>
+
+          <div class="form-group row mt-1">
+            <label for="roundOff" class="col-md-5 col-form-label">Round Off</label>
+            <div class="col-md-7">
+                <input type="number" id="roundOff" [(ngModel)]="roundOff" name="roundOff" readonly style="text-align: right;" [disabled]="true"
+                    class="form-control" placeholder="Enter Round Off">
+            </div>
+        </div>
+
+        <div class="form-group row mt-1">
+          <label for="grandTotal" class="col-md-5 col-form-label">Grand Total</label>
+          <div class="col-md-7">
+              <input type="number" id="grandTotal" [(ngModel)]="grandTotal" name="grandTotal" readonly style="text-align: right;" [disabled]="true"
+                  class="form-control" placeholder="Enter Grand Total">
+          </div>
+      </div>
+
+            <div class="form-group row mt-1" style="visibility: collapse;">
                 <label for="otherExpenses" class="col-md-5 col-form-label">Other Expenses</label>
                 <div class="col-md-7">
-                    <input type="number" id="otherExpenses" [(ngModel)]="otherExpenses"
+                    <input type="number" id="otherExpenses" [(ngModel)]="otherExpenses" readonly style="text-align: right;" [disabled]="true"
                         name="otherExpenses" class="form-control"
                         placeholder="Enter Other Expenses">
                 </div>
             </div>
 
-            <div class="form-group row mt-1">
-                <label for="roundOff" class="col-md-5 col-form-label">Round Off</label>
-                <div class="col-md-7">
-                    <input type="number" id="roundOff" [(ngModel)]="roundOff" name="roundOff"
-                        class="form-control" placeholder="Enter Round Off">
-                </div>
-            </div>
-
-            <div class="form-group row mt-1">
-                <label for="grandTotal" class="col-md-5 col-form-label">Grand Total</label>
-                <div class="col-md-7">
-                    <input type="number" id="grandTotal" [(ngModel)]="grandTotal" name="grandTotal"
-                        class="form-control" placeholder="Enter Grand Total">
-                </div>
-            </div>
-
-            <div class="form-group row mt-1">
+       <div class="form-group row mt-1" style="visibility: collapse;">
                 <label for="partyInvNo" class="col-md-5 col-form-label">Party Inv No.</label>
                 <div class="col-md-7">
-                    <input type="number" id="partyInvNo" [(ngModel)]="partyInvNo" name="partyInvNo"
+                    <input type="number" id="partyInvNo" [(ngModel)]="partyInvNo" name="partyInvNo" readonly style="text-align: right;" [disabled]="true"
                         class="form-control" placeholder="Enter Party Inv No">
                 </div>
             </div>
 
-            <div class="form-group row mt-1">
+            <div class="form-group row mt-1" style="visibility: collapse;">
                 <label for="gstin" class="col-md-5 col-form-label">GSTIN</label>
                 <div class="col-md-7">
-                    <input type="text" id="gstin" [(ngModel)]="gstin" name="gstin"
+                    <input type="text" id="gstin" [(ngModel)]="gstin" name="gstin" readonly style="text-align: right;" [disabled]="true"
                         class="form-control" placeholder="Enter GSTIN">
                 </div>
             </div>
+
+
+              <div class="form-group row mt-1" style="visibility: collapse;">
+                <label for="average" class="col-md-5 col-form-label">Average</label>
+                <div class="col-md-7">
+                    <input type="text" id="average" [(ngModel)]="average" name="gstin" readonly style="text-align: right;" [disabled]="true"
+                        class="form-control" placeholder="Enter Average ">
+                </div>
+              </div>
+
         </div>
+
+        <div class="container" style="margin-top: -100px;">
+          <div class="row justify-content-end">
+              <div class="col-md-4">
+                  <div class="col-md-4">
+                      <table class="table table-bordered">
+                          <thead>
+                              <tr>
+                                  <th scope="col">S.no</th>
+                                  <th scope="col">Mark</th>
+                                  <th scope="col">No.of bags</th>
+                                  <th scope="col">Weight</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <tr *ngFor="let entry of markEntries; let i = index">
+                                  <td>{{i + 1}}</td>
+                                  <td>{{entry[0].Mark}}</td>
+                                  <td>{{entry[0].NoOfBags}}</td>
+                                  <td>{{entry[0].TotalWeight}}</td>
+                              </tr>
+                              <tr>
+                                  <td colspan="2">Total</td>
+                                  <td>{{ getTotl('NoOfBags') }}</td>
+                                  <td>{{ getTotl('TotalWeight') }}</td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+      </div>
+
 
     </div>
 
     &nbsp;
 
-    <div class="col-md-8 d-flex flex-wrap align-items-start"
-        style="height: 200px; overflow-x: auto; overflow-y: auto; border: strong 1px black;">
-        <div *ngFor="let field of dynamicFields; let i = index">
-            <div class="col-md-3">
-                <input type="text" [(ngModel)]="dynamicFields[i]" name="dynamicField{{i}}"
-                    class="form-control small-input" (ngModelChange)="onDynamicFieldChange()">
-            </div>
-        </div>
-
+    <div class="col-md-8 d-flex flex-column align-items-start" style="height: 400px; border: solid 0px black; overflow-y: auto;margin-top: -310px;" *ngIf="showParticularBag">
+      <div class="input-container">
+          <input *ngFor="let field of dynamicFields; let i = index" type="text" [(ngModel)]="inputFieldValues[i]" (ngModelChange)="onDynamicFieldChange()"
+                 class="form-control small-input">
+      </div>
     </div>
 
-    <div class="col-md-4">
 
-    </div>
+  <style>
+    .input-container {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        max-height: 90%;
+        overflow-y: auto;
+        width: 600px;
+    }
+
+    .input-container input {
+        width: fit-content;
+        margin-bottom: 10px;
+    }
+  </style>
+
 
 </div>

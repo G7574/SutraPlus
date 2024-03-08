@@ -1,0 +1,23 @@
+.expanded .col-md-4 {
+  display: block;
+}
+
+.minimized .col-md-4 {
+  display: none;
+}
+
+/* CSS for the cancel icon */
+.cancel-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer; /* Add cursor pointer for better UX */
+  font-size: 24px; /* Adjust size as needed */
+  padding-top: 25px;
+  padding-right: 28px;
+}
+
+/* Adjust container position for relative positioning */
+.container {
+  position: relative;
+}

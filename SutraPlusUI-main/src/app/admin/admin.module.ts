@@ -79,6 +79,10 @@ import { CommonReportGeneratorComponent } from './components/common-report-gener
 import { SelectBankDailogComponent } from './components/select-bank-dailog/select-bank-dailog.component';
 import { PaymentListReportViewComponent } from './components/payment-list-report-view/payment-list-report-view.component';
 import { GoodsInvoicePrintViewComponent } from './components/sales/goods-invoice/goods-invoice-print-view/goods-invoice-print-view.component';
+import { BillExpenseRateDailogComponent } from './components/bill-expense-rate-dailog/bill-expense-rate-dailog.component';
+import { VerifyBillsComponent } from './components/purchase/verify-bills/verify-bills.component';
+import { EditVerifyBillComponent } from './components/purchase/edit-verify-bill/edit-verify-bill.component';
+import { AkadaEntryOptionsDialogComponent } from './components/purchase/akada-entry-options-dialog/akada-entry-options-dialog.component';
 
 @NgModule({
   declarations: [
@@ -107,6 +111,7 @@ import { GoodsInvoicePrintViewComponent } from './components/sales/goods-invoice
     ViewExportInvoiceComponent,
     DecimalpointPipe,
     ReportsMainComponent,
+    VerifyBillsComponent,
     AkadaEntryComponent,
     BankJournalEntriesComponent,
     CashEntryComponent,
@@ -127,9 +132,16 @@ import { GoodsInvoicePrintViewComponent } from './components/sales/goods-invoice
     ItemWiseReportViewComponent,
     CommonReportGeneratorComponent,
     GoodsInvoicePrintViewComponent,
+    AkadaEntryOptionsDialogComponent,
+    BillExpenseRateDailogComponent,
     SelectBankDailogComponent,
     PaymentListReportViewComponent,
     GoodsInvoicePrintViewComponent,
+    BillExpenseRateDailogComponent,
+    VerifyBillsComponent,
+    EditVerifyBillComponent,
+    EditVerifyBillComponent,
+    AkadaEntryOptionsDialogComponent,
   ],
   imports: [
     CommonModule,

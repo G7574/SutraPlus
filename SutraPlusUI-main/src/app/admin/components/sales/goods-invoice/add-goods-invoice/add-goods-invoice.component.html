@@ -928,6 +928,22 @@
                                   [responsive]="true" cTable>
                                   <thead></thead>
                                   <tbody>
+
+                                    <tr class="border border-0 border-light" *ngIf="isAdvancePaidShowFirstOne">
+                                      <td class="text-end"></td>
+                                      <td width="15%" class="text-center"></td>
+                                      <td class="text-center">
+                                        <label cLabel="col" class="text-end" cCol [sm]="6">
+                                          Advance Paid
+                                        </label>
+                                      </td>
+                                      <td width="22%" class="text-center">
+                                        <input cFormControl type="text" style="margin-left: -44px;" class="text-end"
+                                          class="pe-none bg-gray text-end" [value]="SeperateComma(advPaid)" />
+                                      </td>
+                                      <td width="12%" colspan="2"></td>
+                                    </tr>
+
                                     <tr class="border border-0 border-light">
                                       <td class="text-end">
                                         <!--label cLabel="col" class="text-end" cCol [sm]="6">
@@ -988,9 +1004,7 @@
                                     </tr>
                                     <tr class="border border-0 border-light">
                                       <td class="text-end">
-                                        <!--label cLabel="col" class="text-end" cCol [sm]="6">
-                                                                Round OFF
-                                                            </label-->
+
                                         <label *ngIf="
                                             igstShow == false &&
                                             sgstShow == true &&
@@ -1020,60 +1034,22 @@
                                       </td>
                                       <td width="13%" colspan="2"></td>
                                     </tr>
-                                    <!--tr class="border border-0 border-light">
-                                                        <td width="30%"></td>
-                                                        <td width="15%" class="text-end">
-                                                            <!--div class="container">
-                                                                <div class="row">
-                                                                    <div class="col-4" class="myclass"
-                                                                        *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
-                                                                        <label cLabel="col" class="text-end" cCol [sm]="12">
-                                                                            SGST (%)
-                                                                        </label>
-                                                                        <input cFormControl type="text"
-                                                                            [ngClass]="disableRates==true ? 'pe-none bg-gray' : ''"
-                                                                            formControlName="sgstRate"
-                                                                            (keypress)="commonService.ValidateNumeric($event.keyCode)" />
-                                                                    </div>
-                                                                    <div class="col-4" class="myclass"
-                                                                        *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
-                                                                        <label cLabel="col" class="text-end" cCol [sm]="12">
-                                                                            CGST (%)
-                                                                        </label>
-                                                                        <input cFormControl type="text"
-                                                                            [ngClass]="disableRates==true ? 'pe-none bg-gray' : ''"
-                                                                            formControlName="cgstRate"
-                                                                            (keypress)="commonService.ValidateNumeric($event.keyCode)" />
-                                                                    </div>
-                                                                    <div class="col-4" class="myclass"
-                                                                        *ngIf="igstShow == true && sgstShow == false && cgstShow == false">
 
-                                                                        <label cLabel="col" class="text-end" cCol [sm]="12">
-                                                                            IGST (%)
-                                                                        </label>
-                                                                        <input cFormControl type="text"
-                                                                            [ngClass]="disableRates==true ? 'pe-none bg-gray' : ''"
-                                                                            formControlName="igstRate"
-                                                                            (keypress)="commonService.ValidateNumeric($event.keyCode)" />
-                                                                    </div>
+                                    <tr class="border border-0 border-light" *ngIf="isAdvancePaidShow">
+                                      <td class="text-end"></td>
+                                      <td width="15%" class="text-center"></td>
+                                      <td class="text-center">
+                                        <label cLabel="col" class="text-end" cCol [sm]="6">
+                                          {{ advancePaidText }}
+                                        </label>
+                                      </td>
+                                      <td width="22%" class="text-center">
+                                        <input cFormControl type="text" style="margin-left: -44px;" class="text-end"
+                                          class="pe-none bg-gray text-end" [value]="SeperateComma(advancePaintAmount)" />
+                                      </td>
+                                      <td width="12%" colspan="2"></td>
+                                    </tr>
 
-                                                                </div>
-                                                            </div--
-                                                        </td>
-                                                        <td class="text-end">
-                                                            <label cLabel="col" class="text-end" cCol [sm]="6"
-                                                                *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
-                                                                Total GST(%)
-                                                            </label>
-                                                        </td>
-                                                        <td width="12%" class="text-center"> <c-col class="align-items-start" [sm]="12"
-                                                                *ngIf="igstShow == false && sgstShow == true && cgstShow == true">
-                                                                <input cFormControl type="text" class="text-end" formControlName="totalGst"
-                                                                    class="pe-none" />
-                                                            </c-col>
-                                                        </td>
-                                                        <td width="13%" colspan="2"></td>
-                                                    </tr-->
                                     <tr class="border border-0 border-light">
                                       <td class="text-end"></td>
                                       <td width="15%" class="text-center"></td>
@@ -1204,7 +1180,7 @@
   </c-col>
 </c-row>
 
-<c-modal size="sm" id="GetInvoiceResponse" [visible]="invoiceResponseModelVisible">
+<c-modal size="xl" id="GetInvoiceResponse" [visible]="invoiceResponseModelVisible">
   <c-modal-header>
     <h3 cModalTitle>Get Invoice</h3>
     <button (click)="toggleGetinvoiceResponseModal()" cButtonClose class="fw-bold"></button>
@@ -1244,10 +1220,10 @@
     </c-row>
 
     <c-row class="mb-3">
-      <label class="col-form-label col-sm-4">Invoice Number (2):</label>
+      <label class="col-form-label col-sm-4"> Error Message:</label>
       <div class="col-sm-8">
         <input type="text" class="form-control" [(ngModel)]="invoiceNumber" name="invoiceNumber"
-          placeholder="Invoice Number" disabled readonly>
+          placeholder="Error Message" disabled readonly>
       </div>
     </c-row>
 

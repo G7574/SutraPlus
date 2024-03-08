@@ -60,6 +60,27 @@ namespace DXWebApplication5.Controllers {
             }
         }
 
+        [HttpGet("[action]")]
+        public ActionResult SetDatabaseName(string dataBaseName, int choice)
+        { 
+                switch (choice)
+            {
+                case 1:
+                    CustomReportStorageWebExtension.databaseName = dataBaseName;
+                    break;
+                case 2:
+                    CustomReportStorageWebExtension.DataSource = dataBaseName;
+                    break;
+                case 3:
+                    CustomReportStorageWebExtension.UserID = dataBaseName;
+                    break;
+                case 4:
+                    CustomReportStorageWebExtension.Password = dataBaseName;
+                    break;
+            }
+            return Ok("Database name updated successfully");
+        }
+
     }
 
     public class CustomQueryBuilderController : QueryBuilderController {

@@ -90,7 +90,7 @@ export class ItemWiseReportViewComponent {
     // }
 
   }
-      
+
   onReportOpened(event: any) { ;
   }
 

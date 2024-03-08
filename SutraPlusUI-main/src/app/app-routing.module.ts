@@ -153,6 +153,10 @@ const routes: Routes = [
     component: ItemWiseReportViewComponent,
   },
   {
+    path: 'ReportView',
+    component: ItemWiseReportViewComponent,
+  },
+  {
     path: 'PaymentListReportView',
     component: PaymentListReportViewComponent,
   },

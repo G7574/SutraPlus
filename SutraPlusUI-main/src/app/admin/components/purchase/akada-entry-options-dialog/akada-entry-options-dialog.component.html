@@ -1,0 +1,130 @@
+<div class="container">
+
+
+
+  <div>
+    <div class="col text-right">
+      <i class="fas fa-times cancel-icon" (click)="closeDialog()"></i>
+    </div>
+    <div class="col">
+      <h2 class="form-header">Akada Entry Options</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <form>
+
+        <div class="form-group row">
+          <label for="selectBank" class="col-md-2 col-form-label">Alter Date</label>
+          <div class="col-md-4">
+            <input type="date" id="date" [(ngModel)]="date" name="date" class="form-control" (ngModelChange)="onDateChange($event)">
+          </div>
+          <div class="col-md-4">
+            <button type="submit" class="btn btn-dark" style="font-size: 11px; width: 70%;" (click)="alterDate()">
+              Save
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="selectBank" class="col-md-2 col-form-label">Alter Party</label>
+          <div class="col-md-4">
+            <ng-select #party (keyup)="getPartyList(party.searchTerm)"
+                            [items]="partyList" [(ngModel)]="partyName" bindLabel="ledgerName"
+                            bindValue="ledgerId" placeholder="Select Party"
+                            (focus)="partyList = []">
+                            <ng-template ng-option-tmp let-item="item" let-index="index"
+                                let-search="searchTerm">
+                                <div class="item">
+                                    <div (click)="onClickTest($event, item)">
+                                        {{ item.ledgerName }}
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </ng-select>
+          </div>
+          <div class="col-md-4">
+            <button type="submit" class="btn btn-dark" style="font-size: 11px; width: 70%;" (click)="alterParty()">
+              Save
+            </button>
+          </div>
+          <div class="col-md-8" style="margin-left: 16%;margin-top: 10px;">
+            <button type="submit" class="btn btn-dark" style="font-size: 11px; width: 50%;" (click)="deletePosting()">
+              DELETE Posting
+            </button> <br/>
+            <button type="submit" class="btn btn-dark" style="font-size: 11px; width: 50%;" (click)="deleteBill()">
+              DELETE Bill
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="selectBank" class="col-md-2 col-form-label">Transfer All To </label>
+          <div class="col-md-4">
+            <input type="date" id="date" [(ngModel)]="date" name="date" class="form-control" (ngModelChange)="onDateChange($event)">
+          </div>
+          <div class="col-md-4">
+            <button type="submit" class="btn btn-dark" style="font-size: 11px; width: 70%;" (click)="transferAllTo()">
+              Save
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<style>
+  select.form-control {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px; /* Adjust as needed */
+    border-radius: 4px; /* Rounded corners */
+    margin-bottom: 10px; /* Added margin */
+  }
+
+  /* Hover style for the select dropdown */
+  select.form-control:hover {
+    background-color: #f2f2f2;
+  }
+
+  /* Added margin for form group row */
+  .form-group.row {
+    margin-bottom: 20px; /* Adjust as needed */
+  }
+
+  /* Added margin for buttons */
+  .btn {
+    margin-bottom: 10px; /* Adjust as needed */
+  }
+/*
+  .container {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .form-header {
+    background-color: lightblue;
+    padding: 10px;
+  } */
+
+  .container {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+.form-header {
+  background-color: lightblue;
+  padding: 10px;
+}
+
+</style>

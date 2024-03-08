@@ -15,5 +15,6 @@ namespace SutraPlus_DAL.Models
         public DateTime? TranctDate { get; set; }
         public string? BuyerCode { get; set; }
         public long? VikriSaleBillNo { get; set; }
+        public int? IsActive { get; set; }
     }
 }
