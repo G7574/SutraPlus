@@ -54,6 +54,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { DxDataGridModule } from 'devextreme-angular';
 
+
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
 };
@@ -65,7 +66,7 @@ const APP_CONTAINERS = [
 ];
 
 @NgModule({
-  declarations: [AppComponent, ...APP_CONTAINERS,],
+  declarations: [AppComponent, ...APP_CONTAINERS],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -104,7 +105,8 @@ const APP_CONTAINERS = [
       positionClass: 'toast-top-center',
       preventDuplicates: true,
     }),
-    NgxPaginationModule
+    NgxPaginationModule,
+
   ],
   providers: [
     {
@@ -117,6 +119,7 @@ const APP_CONTAINERS = [
     },
     IconSetService,
     Title,
+
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent],

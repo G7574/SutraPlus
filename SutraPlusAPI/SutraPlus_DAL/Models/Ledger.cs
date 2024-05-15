@@ -95,7 +95,7 @@ namespace SutraPlus_DAL.Models
         public decimal? TotalContactTv { get; set; }
         public decimal? OpeningBalance { get; set; }
         public string? CrDr { get; set; }
-        public bool? IsActive { get; set; }
+        public int? IsActive { get; set; }
         public string? LedType { get; set; }
     }
 }

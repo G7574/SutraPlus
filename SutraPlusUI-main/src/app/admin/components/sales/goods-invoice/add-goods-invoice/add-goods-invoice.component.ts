@@ -211,6 +211,7 @@ export class AddGoodsInvoiceComponent implements OnInit {
     this.todayDate = formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
     this.activatedRoute.queryParams.subscribe(params => {
       this.invType = params['InvoiceType'];
+      console.log("this.invType -> " + this.invType);
       this.voucherTypeId = params['VochType'];
       this.invoiceNo =  params['InvoiceNo'];
     });
@@ -1506,7 +1507,7 @@ export class AddGoodsInvoiceComponent implements OnInit {
   }
 
   changeNoOfBag(val: any, i: any): void {
-
+    console.log("ONE ----> " + val);
     this.dynamicArray[i].NoOfBags = val;
     if (this.dynamicArray[i].WeightPerBag > 0) {
       this.dynamicArray[i].TotalWeight = Number(
@@ -1552,6 +1553,7 @@ export class AddGoodsInvoiceComponent implements OnInit {
     }
 
     if (Caller == 'NoofBags') {
+      console.log("TWO ----> " + val);
       this.dynamicArray[i].NoOfBags = val;
     }
 
@@ -1610,7 +1612,6 @@ export class AddGoodsInvoiceComponent implements OnInit {
       this.dynamicArray[i].Taxable = Number(amt);
     }
 
-
     if (Caller == 'Amount' && !this.isDebitNote) {
       //this.dynamicArray[i].Amount = parseFloat(val.toFixed(2));
       this.dynamicArray[i].Amount = val;
@@ -1638,6 +1639,7 @@ export class AddGoodsInvoiceComponent implements OnInit {
       }
     } else {
 
+
     if (sessionStorage.getItem('State')?.toUpperCase() == this.defaultState?.toUpperCase()) {
 
       // this.sgstShow = true;
@@ -1651,6 +1653,23 @@ export class AddGoodsInvoiceComponent implements OnInit {
         ? Number((this.dynamicArray[i].Taxable * this.dynamicArray[i].SgstRate) / 100)
         : 0;
       this.dynamicArray[i].IgstAmount = 0;
+
+
+      if(this.invType == 'GoodsInvoice') {
+        this.dynamicArray[i].CgstAmount = !this.igstShow
+        ? Number((this.dynamicArray[i].Taxable * this.dynamicArray[i].CgstRate) / 100)
+        : 0;
+      this.dynamicArray[i].SgstAmount = !this.igstShow
+        ? Number((this.dynamicArray[i].Taxable * this.dynamicArray[i].SgstRate) / 100)
+        : 0;
+      }
+
+      if(this.invType == 'ProfarmaInvoice') {
+        this.igstShow = false;
+        this.dynamicArray[i].CgstAmount =  Number((this.dynamicArray[i].Taxable * this.dynamicArray[i].CgstRate) / 100);
+        this.dynamicArray[i].SgstAmount = Number((this.dynamicArray[i].Taxable * this.dynamicArray[i].SgstRate) / 100);
+      }
+
     }
     else {
 
@@ -1811,7 +1830,7 @@ export class AddGoodsInvoiceComponent implements OnInit {
   OfficeCopy: any;
 
   onPrint() {
-
+    this.ClientCode = sessionStorage.getItem("globalCustomerCode");
     let payload = {
       SalesDetails: {
         CompanyId: this.globalCompanyId,
@@ -1823,23 +1842,27 @@ export class AddGoodsInvoiceComponent implements OnInit {
 
     this.adminService.getInvType(payload).subscribe({
       next: (res: any) => {
-      if(this.route.snapshot.queryParamMap.get('InvoiceType')?.toString() == 'GoodsInvoice' || this.route.snapshot.queryParamMap.get('InvoiceType')?.toString() == 'SalesReturn') {
-            if(res.einvreq == 1 && res.frieghtPlus == 1) {
-              this.invType = 3;
-            } else if(res.einvreq == 1 && res.frieghtPlus == 0) {
-              this.invType = 4;
-            } else if(res.einvreq == 0 && res.frieghtPlus == 1) {
-              this.invType = 1;
-            } else if(res.einvreq == 0 && res.frieghtPlus == 0) {
-              this.invType = 2;
+        if(this.ClientCode == "UNNATI") {
+          this.Type = 6;
+        } else {
+              if(this.route.snapshot.queryParamMap.get('InvoiceType')?.toString() == 'GoodsInvoice' || this.route.snapshot.queryParamMap.get('InvoiceType')?.toString() == 'ProfarmaInvoice' || this.route.snapshot.queryParamMap.get('InvoiceType')?.toString() == 'SalesReturn') {
+                if(res.einvreq == 1 && res.frieghtPlus == 1) {
+                  this.invType = 3;
+                } else if(res.einvreq == 1 && res.frieghtPlus == 0) {
+                  this.invType = 4;
+                } else if(res.einvreq == 0 && res.frieghtPlus == 1) {
+                  this.invType = 1;
+                } else if(res.einvreq == 0 && res.frieghtPlus == 0) {
+                  this.invType = 2;
+                }
+            } else if(this.route.snapshot.queryParamMap.get('InvoiceType')?.toString() == 'GinningInvoice') {
+              this.invType = 7;
+            } else if(this.route.snapshot.queryParamMap.get('InvoiceType')?.toString() == 'DebitNote' || this.route.snapshot.queryParamMap.get('InvoiceType')?.toString() == 'CreditNote') {
+              this.invType = 5;
             }
-        } else if(this.route.snapshot.queryParamMap.get('InvoiceType')?.toString() == 'GinningInvoice') {
-          this.invType = 7;
-        } else if(this.route.snapshot.queryParamMap.get('InvoiceType')?.toString() == 'DebitNote' || this.route.snapshot.queryParamMap.get('InvoiceType')?.toString() == 'CreditNote') {
-          this.invType = 5;
-        }
 
-        this.Type = this.invType;
+            this.Type = this.invType;
+        }
 
       },
       error: (error: any) => {
@@ -1847,8 +1870,14 @@ export class AddGoodsInvoiceComponent implements OnInit {
       },
     });
 
-    this.ClientCode = "RGP";
-    this.vochType= "9";
+
+    if(this.ClientCode == "UNNATI") {
+
+      this.Type = 6;
+    }
+
+    //this.ClientCode = "RGP";
+    //this.vochType= "9";
     //this.invType = "3";
 
     let partyDetails = {
@@ -5046,7 +5075,9 @@ else if(InvoiceType == 'Office Copy')
             this.spinner.hide();
             this.showPrintButton = true;
             debugger;
-            this.getCRDRList(res.split('|||||')[1], res.split('|||||')[2]);
+            if(this.route.snapshot.queryParamMap.get('InvoiceType')?.toString() != 'ProfarmaInvoice') {
+              this.getCRDRList(res.split('|||||')[1], res.split('|||||')[2]);
+            }
 
             this.invoiceNoToGetReponse = res.split('|||||')[3];
 
@@ -5080,7 +5111,7 @@ else if(InvoiceType == 'Office Copy')
   formatDynamicArray(dynamicArray: any) {
     let dy: any = [];
 
-    console.log(dynamicArray);
+    console.log("LAST" + dynamicArray);
 
     dynamicArray.forEach((items: any) => {
       const a = {
@@ -5088,9 +5119,9 @@ else if(InvoiceType == 'Office Copy')
         "CommodityName": items.CommodityName,
         "CommodityId": items.CommodityId,
         "WeightPerBag": items.WeightPerBag,
-        "NoOfBags": !isEmpty(items.NoOfBags) ? items.NoOfBags : 0,
+        "NoOfBags": items.NoOfBags,
         "TotalWeight": items.TotalWeight,
-        "Rate": !isEmpty(items.Rate) ? items.Rate : 0,
+        "Rate": items.Rate,
         "MOU": items.MOU,
         "Taxable": items.Taxable,
         "Amount": items.Amount,
@@ -5372,6 +5403,7 @@ else if(InvoiceType == 'Office Copy')
 
 
   getCRDRList(invoiceno: string, VochType: string) {
+
     this.toggleCrDrDetails();
     let payload = {
       InvioceData: {

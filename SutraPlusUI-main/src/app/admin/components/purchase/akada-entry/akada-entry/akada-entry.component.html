@@ -19,8 +19,24 @@
                 <div class="form-group row mt-1">
                     <label for="date" class="col-md-3 col-form-label">Date</label>
                     <div class="col-md-9">
-                        <input type="date" id="date" [(ngModel)]="date" name="date"
-                            class="form-control" (ngModelChange)="onDateChange($event)">
+                        <!-- <input type="date" id="date" [(ngModel)]="date" name="date"
+                            class="form-control" (ngModelChange)="onDateChange($event)"> -->
+
+                            <div class="input-group">
+                              <input
+                                class="form-control"
+                                placeholder="yyyy-mm-dd"
+                                name="dp"
+                                [(ngModel)]="date"
+                                ngbDatepicker
+                                [minDate]="minYear"
+                                [maxDate]="maxYear"
+                                #da="ngbDatepicker"
+                                readonly
+                              />
+                              <button class="btn btn-outline-secondary bi bi-calendar3" (click)="da.toggle()" type="button"></button>
+                            </div>
+
                     </div>
                 </div>
 
@@ -100,12 +116,12 @@
                 </div>
 
                 <div class="form-group row mt-1" >
-                    <label for="totalWeight" class="col-md-3 col-form-label">Total Weight</label>
-                    <div class="col-md-9">
-                        <input type="number" id="totalWeight" [(ngModel)]="totalWeight" (keyup)="totalWeightCalculation()"
-                            name="totalWeight" class="form-control">
-                    </div>
-                </div>
+                  <label for="totalWeight" class="col-md-3 col-form-label">Total Weight</label>
+                  <div class="col-md-9">
+                      <input type="number" id="totalWeight" [(ngModel)]="totalWeight" (keyup)="totalWeightCalculation()"
+                          name="totalWeight" class="form-control">
+                  </div>
+              </div>
 
                 <div class="form-group row mt-1" *ngIf="showTotalWeight">
                     <label for="amount" class="col-md-3 col-form-label">Amount</label>

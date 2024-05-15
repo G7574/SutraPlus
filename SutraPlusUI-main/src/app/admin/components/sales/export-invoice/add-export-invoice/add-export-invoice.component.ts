@@ -234,7 +234,7 @@ export class AddExportInvoiceComponent implements OnInit {
       this.partyList = [];
     }
   }
- 
+
   onClickTest($event: any, item: any) {
     this.ledgerId = item.ledgerId
     let invoiceData;
@@ -690,7 +690,7 @@ export class AddExportInvoiceComponent implements OnInit {
   }
 
   onChangeDiscount(value: any): void {
-    
+
     let val = Number(value);
     let taxAmt = Number(this.taxableAmt);
     let perc = ((taxAmt) * (val / 100))
@@ -715,7 +715,7 @@ export class AddExportInvoiceComponent implements OnInit {
           "DealerType": this.dealerType,
           "PAN": this.PANNumber,
           "GST": this.getParty.value.gst,
-          "InvoiceType": "SalesExport", //refer all types of invoice 
+          "InvoiceType": "SalesExport", //refer all types of invoice
           "InoviceNo": this.getParty.value.invoiceNo,
           "State": this.defaultState,
           "ExpenseName1": this.ExpenseName1,

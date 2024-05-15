@@ -454,7 +454,7 @@ namespace WebApplication2.Implementations
                                 ACKNO = reader1["ACKNO"] as string,
                                 IRNNO = reader1["IRNNO"] as string,
                                 SignQRCODE = reader1["SignQRCODE"] as string,
-                                IsActive = reader1["IsActive"] as bool?,
+                                IsActive = reader1["IsActive"] as int?,
                                 IsServiceInvoice = reader1["IsServiceInvoice"] as bool?,
                             };
                                  
@@ -709,7 +709,7 @@ namespace WebApplication2.Implementations
                                         buyer.TotalContactTv = ledgerReader["TotalContactTv"] as decimal?;
                                         buyer.OpeningBalance = ledgerReader["OpeningBalance"] as decimal?;
                                         buyer.CrDr = ledgerReader["CrDr"] as string;
-                                        buyer.IsActive = ledgerReader["IsActive"] as bool?;
+                                        buyer.IsActive = ledgerReader["IsActive"] as int?;
                                         buyer.LedType = ledgerReader["LedType"] as string;
                                     }
 

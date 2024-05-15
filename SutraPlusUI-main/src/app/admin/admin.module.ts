@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe, JsonPipe } from '@angular/common';
 
 import { AdminRoutingModule } from './admin-routing.module';
 import { AdminComponent } from './admin.component';
@@ -83,6 +83,12 @@ import { BillExpenseRateDailogComponent } from './components/bill-expense-rate-d
 import { VerifyBillsComponent } from './components/purchase/verify-bills/verify-bills.component';
 import { EditVerifyBillComponent } from './components/purchase/edit-verify-bill/edit-verify-bill.component';
 import { AkadaEntryOptionsDialogComponent } from './components/purchase/akada-entry-options-dialog/akada-entry-options-dialog.component';
+import { PrintAkadaComponent } from './components/print-akada/print-akada.component';
+import { DaySummaryComponent } from './components/day-summary/day-summary.component';
+import { AccountStatementComponent } from './components/account-statement/account-statement.component';
+import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
+import { TrialBalanceComponent } from './components/trial-balance/trial-balance.component';
+import { TransactionSummaryComponent } from './components/transaction-summary/transaction-summary.component';
 
 @NgModule({
   declarations: [
@@ -120,6 +126,7 @@ import { AkadaEntryOptionsDialogComponent } from './components/purchase/akada-en
     CreateDcComponent,
     ImportEInvoiceComponent,
     ItemWiseReportComponent,
+    PrintAkadaComponent,
     CommonReportGeneratorComponent,
     ItemWiseReportViewComponent,
     MonthWiseReportComponent,
@@ -139,9 +146,16 @@ import { AkadaEntryOptionsDialogComponent } from './components/purchase/akada-en
     GoodsInvoicePrintViewComponent,
     BillExpenseRateDailogComponent,
     VerifyBillsComponent,
+    TrialBalanceComponent,
     EditVerifyBillComponent,
     EditVerifyBillComponent,
     AkadaEntryOptionsDialogComponent,
+    PrintAkadaComponent,
+    DaySummaryComponent,
+    AccountStatementComponent,
+    TrialBalanceComponent,
+    TransactionSummaryComponent,
+
   ],
   imports: [
     CommonModule,
@@ -177,7 +191,8 @@ import { AkadaEntryOptionsDialogComponent } from './components/purchase/akada-en
     MatFormFieldModule,
     DxReportViewerModule,
     DxDataGridModule,
-
+    NgbDatepickerModule,
+    JsonPipe,
   ],
   providers: [DatePipe, ExportAsService],
 })

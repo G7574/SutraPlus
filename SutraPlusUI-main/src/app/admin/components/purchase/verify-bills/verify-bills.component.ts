@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { start } from 'repl';
 import { AdminServicesService } from 'src/app/admin/services/admin-services.service';
 import { Ledger } from '../../sales/models/ladger.model';
+import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-verify-bills',
@@ -21,9 +22,30 @@ export class VerifyBillsComponent implements OnInit {
   filteredEntries: any[] = [];
 
   ngOnInit(): void {
-    this.startDate = (new Date()).toISOString().substring(0,10);
-    this.endDate = (new Date()).toISOString().substring(0,10);
+
+    this.financialYear = sessionStorage.getItem('financialYear');
+    let [startYear, endYear] = this.financialYear.split("-");
+
+    const currentDate = this.calendar.getToday();
+    this.startDate = { year: currentDate.year, month: currentDate.month, day: 1 };
+    this.endDate = this.calendar.getNext(this.startDate, 'm', 1);
+
+    this.minYear = { year: Number(startYear), month: 4, day: 1 };
+    this.maxYear = { year: Number(endYear), month: 3, day: 31 };
+
+    this.minYear1 = { year: Number(startYear), month: 4, day: 1 };
+    this.maxYear1 = { year: Number(endYear), month: 3, day: 31 };
+ 
+    // this.startDate = (new Date()).toISOString().substring(0,10);
+    // this.endDate = (new Date()).toISOString().substring(0,10);
     this.getData();
+  }
+
+  ngbDateToDate(date: NgbDateStruct): Date {
+    if (date === null) {
+      return null;
+    }
+    return new Date(date.year, date.month - 1, date.day);
   }
 
   onPost() {
@@ -52,9 +74,17 @@ export class VerifyBillsComponent implements OnInit {
 
   }
 
+  financialYear: string = "";
+  minYear : NgbDateStruct;
+  maxYear : NgbDateStruct;
+
+  minYear1 : NgbDateStruct;
+  maxYear1 : NgbDateStruct;
+
   constructor(private toastr: ToastrService,
     private spinner: NgxSpinnerService,
     private router: Router,
+    private calendar: NgbCalendar,
     private adminService: AdminServicesService) {
       this.globalCompanyId = sessionStorage.getItem('companyID');
   }
@@ -69,8 +99,8 @@ export class VerifyBillsComponent implements OnInit {
   filterData() {
     this.filteredEntries = this.entries.filter(entry => {
       const entryDate = new Date(entry.tranctdate.substring(0, 10));
-      const startDate = new Date(this.startDate);
-      const endDate = new Date(this.endDate);
+      const startDate = new Date((this.formatDate(this.ngbDateToDate(this.startDate))));
+      const endDate = new Date((this.formatDate(this.ngbDateToDate(this.endDate))));
       return entryDate >= startDate && entryDate <= endDate;
     });
   }

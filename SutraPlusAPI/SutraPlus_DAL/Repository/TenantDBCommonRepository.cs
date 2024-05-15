@@ -1,8 +1,11 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Azure;
+using iTextSharp.text;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop.Implementation;
 using Microsoft.SqlServer.Management.Smo;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -13,14 +16,19 @@ using SutraPlus_DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection.Metadata;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static iTextSharp.text.pdf.AcroFields;
 using static iTextSharp.text.pdf.events.IndexEvents;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using static QRCoder.PayloadGenerator.SwissQrCode;
 
 namespace SutraPlus_DAL.Repository
 {
@@ -43,7 +51,7 @@ namespace SutraPlus_DAL.Repository
             try
             {
                 var result = (from c in _tenantDBContext.Commodities
-                              where c.IsActive == true
+                              where c.IsActive == 1
                               select new { c.CommodityId, c.Mou }).ToList().DistinctBy(c => new { c.Mou });
                 if (result != null)
                 {
@@ -386,7 +394,7 @@ namespace SutraPlus_DAL.Repository
                                     updateCommand.Parameters.AddWithValue("@OpeningBalance", ledger.OpeningBalance ?? 0);
                                     updateCommand.Parameters.AddWithValue("@CrDr", ledger.CrDr ?? "");
                                     updateCommand.Parameters.AddWithValue("@LedType", ledger.LedType ?? "");
-                                    updateCommand.Parameters.AddWithValue("@IsActive", true);
+                                    updateCommand.Parameters.AddWithValue("@IsActive", 1);
                                     
                                     // Execute the update command
                                     int rowsAffected = updateCommand.ExecuteNonQuery();
@@ -408,6 +416,835 @@ namespace SutraPlus_DAL.Repository
 
         }
 
+        public JObject GetMarks(JObject data)
+        {
+            var response = new JObject();
+            try
+            {
+
+                var d = JsonConvert.DeserializeObject<dynamic>(data["GetAkadaData"].ToString());
+                long selectedCompanyId = d["CompanyId"];
+                DateTime selectedDate = DateTime.Parse(d["TranctDate"].ToString());
+                string cboPlace = d["Search"].ToString();
+
+                if (string.IsNullOrEmpty(cboPlace))
+                {
+                    var query = from i in _tenantDBContext.Inventory
+                                join l in _tenantDBContext.Ledgers on new { i.CompanyId, i.LedgerId } equals new { l.CompanyId, l.LedgerId }
+                                where l.CompanyId == i.CompanyId && l.LedgerId == i.LedgerId && i.CompanyId == selectedCompanyId  && i.IsTender == 1 && i.TranctDate == selectedDate 
+                                select i.Mark;
+                    
+                    if (query != null)
+                    {
+                        var marks = query.Distinct().ToList();
+                        if (marks.Count() > 0)
+                        {
+                            var dataArray = new JArray();
+                            foreach (var mark in marks)
+                            {
+                                if (mark != null)
+                                {
+                                    dataArray.Add(mark);
+                                }
+                            }
+                            response.Add("Data", dataArray);
+                        }
+                    }
+                }
+                else
+                {
+                    var query = from i in _tenantDBContext.Inventory
+                                join l in _tenantDBContext.Ledgers on new { i.CompanyId, i.LedgerId } equals new { l.CompanyId, l.LedgerId }
+                                where l.CompanyId == i.CompanyId && l.LedgerId == i.LedgerId && i.CompanyId == selectedCompanyId  && i.IsTender == 1 && i.TranctDate == selectedDate
+                                select i.Mark;
+                    //&& l.Place == cboPlace
+                  
+                    if (query != null)
+                    {
+                        var marks = query.Distinct().ToList();
+                        if (marks.Count() > 0)
+                        {
+                            var dataArray = new JArray();
+                            foreach (var mark in marks)
+                            {
+                                if (mark != null)
+                                {
+                                    dataArray.Add(mark);
+                                }
+                            }
+                            response.Add("Data", dataArray);
+                        }
+                    }
+                }
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public JObject GetTransactionSummary(JObject data)
+        {
+            var res = new JObject();
+
+            try
+            {
+                var d = JsonConvert.DeserializeObject<dynamic>(data["TransactionSummary"].ToString());
+                if (d != null)
+                {
+                    JArray voucherArray = new JArray();
+                    long selectedCompanyId = d["CompanyId"];
+                    DateTime fromDate = DateTime.Parse(d["fromDate"].ToString());
+                    DateTime toDate = DateTime.Parse(d["toDate"].ToString());
+  
+                    var distinctAccountingGroupIds = (from l in _tenantDBContext.Ledgers
+                                                      join a in _tenantDBContext.AccounitngGroups on l.AccountingGroupId equals a.AccontingGroupId
+                                                      join v in _tenantDBContext.Vouchers on l.LedgerId equals v.LedgerId
+                                                      where l.CompanyId == 1 && v.TranctDate <= fromDate
+                                                      select l.AccountingGroupId).Distinct().OrderBy(id => id).ToList();
+
+                    int counter = 0;
+                    decimal? totalDebit = 0;
+                    decimal? totalCredit = 0;
+
+                    decimal? totalDebit_ = 0;
+                    decimal? totalCredit_ = 0;
+
+                    decimal? totalOpeningBalance = 0;
+
+                    foreach (var id in distinctAccountingGroupIds)
+                    {
+
+                        var groupName = _tenantDBContext.AccounitngGroups.Where(n => n.AccontingGroupId == id).FirstOrDefault();
+                        var distinctLedgers = (
+                            from l in _tenantDBContext.Ledgers
+                            join v in _tenantDBContext.Vouchers on l.LedgerId equals v.LedgerId
+                            where l.CompanyId == selectedCompanyId && l.AccountingGroupId == id && v.TranctDate <= toDate
+                            orderby l.LedgerName    
+                            group v by new
+                            {
+                                l.LedgerId,
+                                l.LedgerName,
+                                l.Place,
+                                l.AccountingGroupId
+                            } into g
+                            select new
+                            {
+                                g.Key.LedgerId,
+                                g.Key.LedgerName,
+                                g.Key.Place,
+                                g.Key.AccountingGroupId,
+                                TotalAmount = g.Sum(x => x.Credit - x.Debit)
+                            }).Distinct().OrderBy(n => n.LedgerName).ToList();
+
+                        var row1 = new JObject();
+                        var rowMain = new JObject();
+                        var ledgerArray = new JArray();
+
+                        foreach (var l in distinctLedgers)
+                        {
+
+                            var vouchers = _tenantDBContext.Vouchers
+                            .Where(v => v.LedgerId == l.LedgerId && v.CompanyId == selectedCompanyId)
+                            .Where(v => v.TranctDate > fromDate && v.TranctDate < toDate)
+                            .ToList();
+
+                            var Credit = vouchers.Sum(v => v.Credit);
+                            var Debit = vouchers.Sum(v => v.Debit);
+
+                            var OpeningBalance = _tenantDBContext.Vouchers.Where(v => v.LedgerId == l.LedgerId && v.CompanyId == selectedCompanyId && v.TranctDate < fromDate)
+                                                                          .Sum(v => v.Credit - v.Debit);
+
+                            if (l.TotalAmount != 0 || Credit != 0 || Debit != 0 || OpeningBalance != 0)
+                            {
+                                counter++;
+                                totalCredit_ += Credit;
+                                totalDebit_ += Debit;
+
+                                if (OpeningBalance < 0)
+                                {
+                                    totalOpeningBalance += (OpeningBalance * -1);
+                                }
+                                else
+                                {
+                                    totalOpeningBalance += OpeningBalance;
+                                }
+
+                                if (l.TotalAmount < 0)
+                                {
+                                    totalDebit += (l.TotalAmount * -1);
+                                }
+                                else
+                                {
+                                    totalCredit += l.TotalAmount;
+                                }
+
+                                row1 = new JObject
+                                   {
+                                       { "counter", counter },
+                                       { "GroupName", groupName.GroupName },
+                                       { "LedgerName", l.LedgerName },
+                                       { "Place", l.Place },
+                                       { "OpeningBalance", OpeningBalance },
+                                       { "Credit", Credit },
+                                       { "Debit", Debit },
+                                       { "Balance", l.TotalAmount },
+                                   };
+                                ledgerArray.Add(row1);
+
+                            }
+                        }
+
+                        rowMain = new JObject
+                           {
+                               {
+                                   "GroupName",
+                                   groupName.GroupName
+                               },
+                               {
+                                   "Data",
+                                   ledgerArray
+                               }
+                           };
+
+                        voucherArray.Add(rowMain);
+
+                    }
+                    res.Add("result", voucherArray);
+                    res.Add("Debit", totalDebit);
+                    res.Add("Credit", totalCredit);
+
+                    res.Add("totalDebit_", totalDebit_);
+                    res.Add("totalCredit_", totalCredit_);
+                    res.Add("ttOpeningBalance", totalOpeningBalance);
+                }
+
+            }
+            catch (Exception we)
+            {
+                throw we;
+            }
+
+            return res;
+        }
+
+        public JObject GetTrialBalance(JObject data)
+        { 
+            var res = new JObject();
+
+            try
+            {
+                var d = JsonConvert.DeserializeObject<dynamic>(data["TrialBalance"].ToString());
+                if (d != null)
+                { 
+                    JArray voucherArray = new JArray();
+                    long selectedCompanyId = d["CompanyId"];
+                    DateTime TransDate = DateTime.Parse(d["TransDate"].ToString());
+                      
+                    var distinctAccountingGroupIds = (from l in _tenantDBContext.Ledgers
+                                                      join a in _tenantDBContext.AccounitngGroups on l.AccountingGroupId equals a.AccontingGroupId
+                                                      join v in _tenantDBContext.Vouchers on l.LedgerId equals v.LedgerId
+                                                      where l.CompanyId == 1 && v.TranctDate <= TransDate
+                                                      select l.AccountingGroupId).Distinct().OrderBy(id => id).ToList();
+
+                    int counter = 0;
+                    decimal? totalDebit = 0;
+                    decimal? totalCredit = 0;
+                     
+                    foreach (var id in distinctAccountingGroupIds) {
+
+                        var groupName = _tenantDBContext.AccounitngGroups.Where(n => n.AccontingGroupId == id).FirstOrDefault();
+                        var distinctLedgers = (
+                            from l in _tenantDBContext.Ledgers
+                                               join v in _tenantDBContext.Vouchers on l.LedgerId equals v.LedgerId
+                                               where l.CompanyId == selectedCompanyId && l.AccountingGroupId == id && v.TranctDate <= TransDate
+                                               orderby l.LedgerName
+                                               group v by new
+                                               {
+                                                   l.LedgerId,
+                                                   l.LedgerName,
+                                                   l.Place,
+                                                   l.AccountingGroupId
+                                               } into g 
+                                               select new
+                                               {
+                                                   g.Key.LedgerId,
+                                                   g.Key.LedgerName,
+                                                   g.Key.Place,
+                                                   g.Key.AccountingGroupId,
+                                                   TotalAmount = g.Sum(x => x.Credit - x.Debit)
+                                               }).Distinct().OrderBy(n=>n.LedgerName).ToList();
+
+                        var row1 = new JObject();
+                        var rowMain = new JObject();
+                        var ledgerArray = new JArray();
+
+                        foreach (var l in distinctLedgers)
+                        {
+                            if (l.TotalAmount != 0)
+                            {
+                                counter++;
+                                row1 = new JObject
+                                {
+                                    { "counter", counter },
+                                    { "GroupName", groupName.GroupName },
+                                    { "LedgerName", l.LedgerName },
+                                    { "Place", l.Place },
+                                    { "Balance", l.TotalAmount },
+                                };
+                                ledgerArray.Add(row1);
+
+                                if (l.TotalAmount < 0)
+                                {
+                                    totalDebit += (l.TotalAmount * -1);
+                                }
+                                else
+                                {
+                                    totalCredit += l.TotalAmount;
+                                }
+                            }
+                        }
+
+                        rowMain = new JObject
+                        {
+                            {
+                                "GroupName",
+                                groupName.GroupName
+                            },
+                            {
+                                "Data",
+                                ledgerArray
+                            }
+                        };
+
+                        voucherArray.Add(rowMain);
+
+                    }
+                    res.Add("result", voucherArray); 
+                    res.Add("Debit", totalDebit); 
+                    res.Add("Credit", totalCredit); 
+                }
+
+            }
+            catch(Exception we)
+            {
+                throw we;
+            }
+             
+            return res;
+        }
+
+        public JObject GetDataMyMark(JObject data)
+        {
+            var res = new JObject();
+            try
+            {
+                var d = JsonConvert.DeserializeObject<dynamic>(data["GetAkadaData"].ToString());
+                if (d != null)
+                {
+                    long selectedCompanyId = d["CompanyId"];
+                    DateTime selectedDate = DateTime.Parse(d["TranctDate"].ToString());
+
+                    var query = from i in _tenantDBContext.Inventory
+                                join l in _tenantDBContext.Ledgers on new { i.CompanyId, i.LedgerId } equals new { l.CompanyId, l.LedgerId }
+                                where i.IsActive == 1 && i.CompanyId == selectedCompanyId && i.IsTender == 1 && i.TranctDate == selectedDate
+                                orderby l.LedgerName
+                                select new { Inventory = i, Ledger = l };
+
+                    if (query != null)
+                    {
+                        var ds = query.ToList();
+                        if (ds != null)
+                        {
+                            var dataArray = new JArray();
+                            foreach (var item in ds)
+                            { 
+                                long ledgrID = item.Inventory.LedgerId ?? 0;
+                                string partyName = getPartyName(ledgrID);
+                                long LotNo = item.Inventory.LotNo ?? 0;
+                                string Mark = item.Inventory.Mark;
+                                decimal NoOfBags = Convert.ToDecimal(item.Inventory.NoOfBags);
+                                decimal TotalWeight = Convert.ToDecimal(item.Inventory.TotalWeight);
+                                decimal Rate = Convert.ToDecimal(item.Inventory.Rate);
+                                decimal Amount = Convert.ToDecimal(item.Inventory.Amount);
+                                string individualeights = getIndividualWeights(ledgrID, LotNo, selectedDate);
+                                if (NoOfBags == 1)
+                                {
+                                    individualeights = TotalWeight.ToString();
+                                }
+                                var row = new JObject
+                                {
+                                    { "PartyName", partyName },
+                                    { "LotNo", LotNo },
+                                    { "Mark", Mark },
+                                    { "NoOfBags", NoOfBags },
+                                    { "TotalWeight", TotalWeight },
+                                    { "Rate", Rate },
+                                    { "Amount", Amount },
+                                    { "Individualeights", individualeights }
+                                };
+                                dataArray.Add(row);
+                            }
+                            res.Add("Data", dataArray);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            return res;
+        }
+
+        private string getIndividualWeights(long ledgrID, long lotNo, DateTime v)
+        {
+
+            var res = _tenantDBContext.BagWeights.Where(n => n.LedgerId == ledgrID && n.LotNo == lotNo && n.TranctDate == v).ToList();
+            if(res != null && res.Count() > 0)
+            {
+                StringBuilder resultBuilder = new StringBuilder();
+                foreach (var item in res)
+                {
+                    if (item.BagWeight1 != null)
+                    {
+                        resultBuilder.Append(item.BagWeight1);
+                        resultBuilder.Append(", ");
+                    }
+                }
+
+                if (resultBuilder.Length > 0)
+                {
+                    resultBuilder.Length -= 2;  
+                }
+
+                return resultBuilder.ToString();
+
+            } else
+            {
+                var weight = _tenantDBContext.Inventory.Where(n => n.LedgerId == ledgrID && n.LotNo == lotNo && n.TranctDate == v).FirstOrDefault();
+                if(weight != null)
+                {
+                    if(weight.TotalWeight != null)
+                    {
+                        return weight.TotalWeight + "";
+                    }
+                }
+            }
+
+            return  "--";
+        }
+
+
+        public JObject GetOpeningBalance(JObject data)
+        {
+            var res = new JObject();
+
+            try
+            {
+                var d = JsonConvert.DeserializeObject<dynamic>(data["Data"].ToString());
+                if (d != null)
+                {
+                    long LedgerId = d["LedgerId"];
+                    long CompanyId = d["CompanyId"];
+                    DateTime TransDateStart = d["TransDateStart"];
+                    DateTime TransDateEnd = d["TransDateEnd"];
+                         
+                    var result =  _tenantDBContext.Vouchers
+                            .Where(n => n.LedgerId == LedgerId &&
+                                    n.CompanyId == CompanyId &&
+                                    n.TranctDate < TransDateStart)
+                            .Select(v => v.Credit - v.Debit)
+                            .Sum();
+
+                    res.Add("result", result);
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
+        }
+
+        public JObject GetVoucherDataForAccountStatementPage(JObject data)
+        {
+            var res = new JObject();
+
+            try
+            {
+                var d = JsonConvert.DeserializeObject<dynamic>(data["Data"].ToString());
+                if (d != null)
+                {
+                    long LedgerId = d["LedgerId"];
+                    long CompanyId = d["CompanyId"];
+                    DateTime TransDateStart = d["TransDateStart"];
+                    DateTime TransDateEnd = d["TransDateEnd"];
+
+                    var result = (from v in _tenantDBContext.Vouchers
+                                  join vt in _tenantDBContext.VoucherTypes on v.VoucherId equals vt.VoucherId
+                                  where v.LedgerId == LedgerId &&
+                                        v.CompanyId == CompanyId &&
+                                        v.TranctDate >= TransDateStart && v.TranctDate <= TransDateEnd
+                                  orderby v.TranctDate
+                                  select new
+                                  {
+                                      v.TranctDate,
+                                      v.PartyInvoiceNumber,
+                                      v.Credit,
+                                      v.Debit,
+                                      vt.VoucherName,
+                                      v.LedgerNameForNarration,
+                                      v.Narration
+                                  }).ToList();
+
+                    JArray voucherArray = new JArray();
+
+                    foreach (var voucher in result)
+                    {
+                        JObject voucherObject = new JObject();
+                        voucherObject.Add("TranctDate", voucher.TranctDate);
+                        voucherObject.Add("PartyInvoiceNumber", voucher.PartyInvoiceNumber);
+                        voucherObject.Add("Credit", voucher.Credit);
+                        voucherObject.Add("Debit", voucher.Debit);
+                        voucherObject.Add("VoucherName", voucher.VoucherName);
+                        voucherObject.Add("LedgerNameForNarration", voucher.LedgerNameForNarration);
+                        voucherObject.Add("Narration", voucher.Narration);
+                        voucherArray.Add(voucherObject);
+                    }
+
+                    res.Add("result", voucherArray);
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                // Handle exception
+            }
+            return res;
+        }
+
+
+        /*  public JObject GetVoucherDataForAccountStatementPage(JObject data)
+          {
+              var res = new JObject();
+
+              try
+              { 
+                  var d = JsonConvert.DeserializeObject<dynamic>(data["Data"].ToString());
+                  if (d != null)
+                  {
+                      long LedgerId = d["LedgerId"];
+                      long CompanyId = d["CompanyId"];
+                      DateTime TransDateStart = d["TransDateStart"];
+                      DateTime TransDateEnd = d["TransDateEnd"];
+
+                      var result = _tenantDBContext.Vouchers
+                          .Where(n => n.LedgerId == LedgerId &&
+                                      n.CompanyId == CompanyId &&
+                                      (n.TranctDate >= TransDateStart && n.TranctDate <= TransDateEnd)).OrderBy(n=>n.TranctDate).ToList();
+
+                      JArray voucherArray = new JArray();
+
+                      foreach (var voucher in result)
+                      { 
+                              var voucherType = _tenantDBContext.VoucherTypes
+                                  .Where(vt => vt.VoucherId == voucher.VoucherId)
+                                  .FirstOrDefault();
+
+                              if (voucherType != null)
+                              {
+                                  JObject voucherObject = new JObject();
+                                  voucherObject.Add("TranctDate", voucher.TranctDate);
+                                  voucherObject.Add("PartyInvoiceNumber", voucher.PartyInvoiceNumber);
+                                  voucherObject.Add("Credit", voucher.Credit);
+                                  voucherObject.Add("Debit", voucher.Debit);
+                                  voucherObject.Add("VoucherName", voucherType.VoucherName);
+                                  voucherObject.Add("LedgerNameForNarration", voucher.LedgerNameForNarration);
+                                  voucherObject.Add("Narration", voucher.Narration);
+                                  voucherArray.Add(voucherObject);
+                              }
+
+                      }
+
+                      res.Add("result", voucherArray);
+
+                  }
+
+              }
+              catch (Exception ex)
+              {
+
+              }
+              return res; 
+          }*/
+
+        public JObject  GetVocuherDataForDaySummary(JObject data)
+        {
+            var res = new JObject();
+
+            try
+            {
+                var d = JsonConvert.DeserializeObject<dynamic>(data["GetAkadaData"].ToString());
+
+                if(d!= null)
+                {
+                    long VoucherId = d["VoucherId"];
+                    long VoucherNo = d["VoucherNo"];
+                    long selectedCompanyId = d["CompanyId"];
+                    string PartyInvoiceNumber = d["PartyInvoiceNumber"];
+                    DateTime Tranctdate = d["TranctDate"];
+
+                    var getData = _tenantDBContext.Vouchers.Where(n=>n.TranctDate == Tranctdate && n.CompanyId == selectedCompanyId && n.VoucherNo == VoucherNo && n.VoucherId == VoucherId).ToList();
+
+                    if (getData != null)
+                    {
+                        var voucherArray = new JArray();
+
+                        foreach (var voucher in getData)
+                        {
+                            var voucherObject = new JObject();
+
+                            var ledger = _tenantDBContext.Ledgers.FirstOrDefault(l => l.LedgerId == voucher.LedgerId);
+                            if (ledger != null)
+                            {
+                                voucherObject.Add("LedgerId", voucher.LedgerId);
+                                voucherObject.Add("LedgerName", ledger.LedgerName);
+                                voucherObject.Add("TranctDate", voucher.TranctDate);
+                                voucherObject.Add("PartyInvoiceNumber", voucher.PartyInvoiceNumber);
+                                voucherObject.Add("Credit", voucher.Credit);
+                                voucherObject.Add("Debit", voucher.Debit);
+                            }
+
+                            voucherArray.Add(voucherObject);
+                        }
+
+                        res.Add("vouchers", voucherArray);
+                    }
+
+                }
+
+            } catch(Exception e)
+            {
+                throw e;
+            }
+            
+            return res;
+
+        }
+
+        public JObject GetDaySummary(JObject data)
+        {
+            var res = new JObject();
+
+            try
+            {
+                var d = JsonConvert.DeserializeObject<dynamic>(data["GetAkadaData"].ToString());
+          
+                if (d != null)
+                {
+                    long selectedCompanyId = d["CompanyId"];
+                    bool DoWeHaveDate = d["DoWeHaveDate"];
+                     
+                    var builder = new SqlConnectionStringBuilder(TenantDBContext.staticConnectionString);
+                    string connectionString = builder.ToString();
+                    string query = "";
+                     
+                    if(DoWeHaveDate)
+                    {
+                      
+                        query = @"SELECT (SELECT LedgerName FROM Ledger WHERE LedgerId = MAX(v.LedgerId)) AS LedgerName,
+                                    v.Tranctdate,
+                                    v.Partyinvoicenumber,
+                                    MAX(v.VoucherId) AS VoucherId,
+                                    MAX(v.VoucherNo) AS VoucherNo,
+                                    SUM(v.credit) AS CR,
+                                    SUM(v.debit) AS DR
+                            FROM Vouchers v
+                            WHERE v.CompanyId = @CompanyId
+                                AND v.VoucherId > 1
+                                AND v.VoucherId <= 14
+                                AND v.Tranctdate = @Tranctdate
+                            GROUP BY v.Tranctdate, v.Partyinvoicenumber 
+                            HAVING SUM(v.credit) <> SUM(v.debit)
+                            ORDER BY v.TranctDate;";
+                    } else
+                    {
+                        query = @"SELECT (SELECT LedgerName FROM Ledger WHERE LedgerId = MAX(v.LedgerId)) AS LedgerName,
+                                    v.Tranctdate,
+                                    v.Partyinvoicenumber,
+                                    MAX(v.VoucherId) AS VoucherId,
+                                    MAX(v.VoucherNo) AS VoucherNo,
+                                    SUM(v.credit) AS CR,
+                                    SUM(v.debit) AS DR
+                            FROM Vouchers v
+                            WHERE v.CompanyId = @CompanyId
+                                AND v.VoucherId > 1
+                                AND v.VoucherId <= 14
+                            GROUP BY v.Tranctdate, v.Partyinvoicenumber 
+                            HAVING SUM(v.credit) <> SUM(v.debit)
+                            ORDER BY v.TranctDate;";
+                           
+                    }
+
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@CompanyId", selectedCompanyId);
+                            if(DoWeHaveDate)
+                            {
+                                DateTime Tranctdate = d["TranctDate"];
+                                command.Parameters.AddWithValue("@Tranctdate", Tranctdate);
+                            }
+                            connection.Open();
+                            SqlDataReader reader = command.ExecuteReader();
+
+                            JArray vouchersArray = new JArray();
+
+                            while (reader.Read())
+                            {
+                                JObject voucherObject = new JObject();
+                                voucherObject["LedgerName"] = reader["LedgerName"].ToString();
+                                voucherObject["Tranctdate"] = reader["Tranctdate"].ToString();
+                                voucherObject["Partyinvoicenumber"] = reader["Partyinvoicenumber"].ToString();
+                                voucherObject["CR"] = Convert.ToDecimal(reader["CR"]);
+                                voucherObject["DR"] = Convert.ToDecimal(reader["DR"]);
+                                voucherObject["VoucherNo"] = Convert.ToInt64(reader["VoucherNo"]);
+                                voucherObject["VoucherId"] = Convert.ToInt64(reader["VoucherId"]);
+
+                                vouchersArray.Add(voucherObject);
+                            }
+
+                            res["vouchers"] = vouchersArray;
+                        }
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+            return res;
+        }
+
+        public JObject GetAkadaData(JObject data)
+        {
+            var response = new JObject();
+
+            try
+            {
+                var d = JsonConvert.DeserializeObject<dynamic>(data["GetAkadaData"].ToString());
+                if (d != null)
+                {
+                    long selectedCompanyId = d["CompanyId"];
+                    DateTime selectedDate = DateTime.Parse(d["TranctDate"].ToString());
+
+                    var query = from i in _tenantDBContext.Inventory
+                                join l in _tenantDBContext.Ledgers on new { i.CompanyId, i.LedgerId } equals new { l.CompanyId, l.LedgerId }
+                                where i.IsActive == 1 && i.CompanyId == selectedCompanyId && i.IsTender == 1 && i.TranctDate == selectedDate
+                                orderby l.LedgerName
+                                select new { Inventory = i, Ledger = l };
+                       
+                    if (query != null)
+                    {
+                        var ds = query.ToList();
+                        if (ds != null)
+                        {
+                            var dataArray = new JArray();
+                            foreach (var item in ds)
+                            {
+                                long ledgrID = item.Inventory.LedgerId ?? 0;
+                                string partyName = getPartyName(ledgrID);
+                                long LotNo = item.Inventory.LotNo ?? 0;
+                                string Mark = item.Inventory.Mark;
+                                decimal NoOfBags = decimal.Parse(item.Inventory.NoOfBags.ToString());
+                                decimal TotalWeight = decimal.Parse(item.Inventory.TotalWeight.ToString());
+                                decimal Rate = decimal.Parse(item.Inventory.Rate.ToString());
+                                decimal Amount = decimal.Parse(item.Inventory.Amount.ToString());
+                                string individualeights = getIndividualWeights(ledgrID, LotNo, selectedDate);
+                                if (NoOfBags == 1)
+                                {
+                                    individualeights = TotalWeight.ToString();
+                                }
+                                var row = new JObject
+                        {
+                            { "PartyName", partyName },
+                            { "LotNo", LotNo },
+                            { "Mark", Mark },
+                            { "NoOfBags", NoOfBags },
+                            { "TotalWeight", TotalWeight },
+                            { "Rate", Rate },
+                            { "Amount", Amount },
+                            { "Individualeights", individualeights }
+                        };
+                                dataArray.Add(row);
+                            }
+                            response.Add("Data", dataArray);
+                        }
+                    }
+                }
+                return response;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public string getPartyName(long id)
+        {
+            var res = _tenantDBContext.Ledgers.Where(n => n.LedgerId == id).FirstOrDefault();
+            if(res != null)
+            {
+                return res.LedgerName;
+            } else
+            {
+                return "--";
+            }
+        }
+
+
+        /* public JObject GetAkadaData(JObject data)
+         {
+             var response = new JObject();
+
+             try
+             {
+                 var d = JsonConvert.DeserializeObject<dynamic>(data["GetAkadaData"].ToString());
+                 if (d != null)
+                 {
+                     long selectedCompanyId = d["CompanyId"];
+                     DateTime selectedDate = d["TranctDate"];
+
+                     var query = from i in _tenantDBContext.Inventory
+                                 join l in _tenantDBContext.Ledgers on new { i.CompanyId, i.LedgerId } equals new { l.CompanyId, l.LedgerId }
+                                 where i.IsActive == true && i.CompanyId == selectedCompanyId && i.TranctDate == selectedDate && i.IsTender == 1
+                                 orderby l.LedgerName
+                                 select new { Inventory = i, Ledger = l };
+
+                     if (query != null)
+                     {
+                        var ds = query.ToList();
+                         if (ds != null)
+                         {
+                             response.Add("Data", JArray.FromObject(ds));
+                         }
+                     }
+                 }
+                 return response;
+             } catch (Exception e)
+             {
+                 throw e;
+             }
+         }*/
 
         public bool updateData(JObject data)
         {
@@ -487,8 +1324,8 @@ namespace SutraPlus_DAL.Repository
             try
             {
                 
-                        objList1 = _tenantDBContext.Ledgers.Where(e => e.CompanyId == companyId && e.IsActive == true && (e.AccountingGroupId == 21 || e.AccountingGroupId == 22) && e.LedgerName.Length > 2).OrderBy(e => e.LedgerName).ToList();
-                        page.TotalCount = _tenantDBContext.Ledgers.Where(e => e.CompanyId == companyId && e.IsActive == true && (e.AccountingGroupId == 21 || e.AccountingGroupId == 22) && e.LedgerName.Length > 2).OrderBy(e => e.LedgerName).Count();
+                        objList1 = _tenantDBContext.Ledgers.Where(e => e.CompanyId == companyId && e.IsActive == 1 && (e.AccountingGroupId == 21 || e.AccountingGroupId == 22) && e.LedgerName.Length > 2).OrderBy(e => e.LedgerName).ToList();
+                        page.TotalCount = _tenantDBContext.Ledgers.Where(e => e.CompanyId == companyId && e.IsActive == 1 && (e.AccountingGroupId == 21 || e.AccountingGroupId == 22) && e.LedgerName.Length > 2).OrderBy(e => e.LedgerName).Count();
                         //page.TotalCount = objList1.Count();
                      
                 foreach (var obj in objList1.ToList())
@@ -557,8 +1394,8 @@ namespace SutraPlus_DAL.Repository
             try
             {
                 
-                        objList1 = _tenantDBContext.Ledgers.Where(e => e.CompanyId == companyId && e.IsActive == true && (e.AccountingGroupId != 21 || e.AccountingGroupId != 22) && e.LedgerName.Length > 2).OrderBy(e => e.LedgerName).ToList();
-                        page.TotalCount = _tenantDBContext.Ledgers.Where(e => e.CompanyId == companyId && e.IsActive == true && (e.AccountingGroupId != 21 || e.AccountingGroupId != 22) && e.LedgerName.Length > 2).OrderBy(e => e.LedgerName).Count();
+                        objList1 = _tenantDBContext.Ledgers.Where(e => e.CompanyId == companyId && e.IsActive == 1 && (e.AccountingGroupId != 21 || e.AccountingGroupId != 22) && e.LedgerName.Length > 2).OrderBy(e => e.LedgerName).ToList();
+                        page.TotalCount = _tenantDBContext.Ledgers.Where(e => e.CompanyId == companyId && e.IsActive == 1 && (e.AccountingGroupId != 21 || e.AccountingGroupId != 22) && e.LedgerName.Length > 2).OrderBy(e => e.LedgerName).Count();
                         //page.TotalCount = objList1.Count();
                      
                 foreach (var obj in objList1.ToList())
@@ -634,18 +1471,18 @@ namespace SutraPlus_DAL.Repository
                         if (Country == "Export")
                         {
                             objList1 = _tenantDBContext.Ledgers.Where(e => (e.LedgerName.ToLower().Contains(SearchText.ToLower()) || e.LedgerType.ToLower().Contains(SearchText.ToLower())) &&
-                            e.CompanyId == companyId && e.IsActive == true && e.LedType == LedgerType && e.Country != "India").OrderBy(L => L.LedgerName).ToList();
+                            e.CompanyId == companyId && e.IsActive == 1 && e.LedType == LedgerType && e.Country != "India").OrderBy(L => L.LedgerName).ToList();
 
-                            page.TotalCount = _tenantDBContext.Ledgers.Where(e => (e.LedType == LedgerType && e.IsActive == true)).Count();
+                            page.TotalCount = _tenantDBContext.Ledgers.Where(e => (e.LedType == LedgerType && e.IsActive == 1)).Count();
 
                             //page.TotalCount = objList1.Count();
                         }
                         else
                         {
                             objList1 = _tenantDBContext.Ledgers.Where(e => (e.LedgerName.ToLower().Contains(SearchText.ToLower()) || e.LedgerType.ToLower().Contains(SearchText.ToLower())) &&
-                            e.CompanyId == companyId && e.IsActive == true && e.AccountingGroupId==24).OrderBy(L => L.LedgerName).ToList();
+                            e.CompanyId == companyId && e.IsActive == 1 && e.AccountingGroupId==24).OrderBy(L => L.LedgerName).ToList();
                             
-                            page.TotalCount = _tenantDBContext.Ledgers.Where(e => (e.LedType == LedgerType && e.IsActive == true)).Count();
+                            page.TotalCount = _tenantDBContext.Ledgers.Where(e => (e.LedType == LedgerType && e.IsActive == 1)).Count();
                             
                             //page.TotalCount = objList1.Count();
                         }
@@ -654,10 +1491,10 @@ namespace SutraPlus_DAL.Repository
                     { 
 
                             objList1 = _tenantDBContext.Ledgers.Where(e => (e.LedgerName.ToLower().Contains(SearchText.ToLower())) && (e.AccountingGroupId > 20 && e.AccountingGroupId < 23) &&
-                            e.CompanyId == companyId && e.IsActive == true).OrderBy(L => L.LedgerName).ToList();
+                            e.CompanyId == companyId && e.IsActive == 1).OrderBy(L => L.LedgerName).ToList();
                          
                      
-                        page.TotalCount = _tenantDBContext.Ledgers.Where(e => (e.LedType == LedgerType && e.IsActive == true)).Count();
+                        page.TotalCount = _tenantDBContext.Ledgers.Where(e => (e.LedType == LedgerType && e.IsActive == 1)).Count();
                        // page.TotalCount = objList1.Count();
                     }
                 }
@@ -665,14 +1502,14 @@ namespace SutraPlus_DAL.Repository
                 {
                     if (Country!="")
                     {
-                        objList1 = _tenantDBContext.Ledgers.Where(e => e.CompanyId == companyId && e.IsActive == true && e.LedType == LedgerType && e.Country == Country).OrderBy(e => e.LedgerName).ToList();
-                        page.TotalCount = _tenantDBContext.Ledgers.Where(e => (e.LedType == LedgerType && e.IsActive == true)).Count();
+                        objList1 = _tenantDBContext.Ledgers.Where(e => e.CompanyId == companyId && e.IsActive == 1 && e.LedType == LedgerType && e.Country == Country).OrderBy(e => e.LedgerName).ToList();
+                        page.TotalCount = _tenantDBContext.Ledgers.Where(e => (e.LedType == LedgerType && e.IsActive == 1)).Count();
                         //page.TotalCount = objList1.Count();
                     }
                     else
                     {
-                        objList1 = _tenantDBContext.Ledgers.Where(e => e.CompanyId == companyId && e.IsActive == true && e.AccountingGroupId != 21 && e.AccountingGroupId != 22 ).OrderBy(e => e.LedgerName).ToList();
-                        page.TotalCount = _tenantDBContext.Ledgers.Where(e => e.CompanyId == companyId && e.IsActive == true && e.AccountingGroupId != 21 && e.AccountingGroupId != 22).OrderBy(e => e.LedgerName).Count();
+                        objList1 = _tenantDBContext.Ledgers.Where(e => e.CompanyId == companyId && e.IsActive == 1 && e.AccountingGroupId != 21 && e.AccountingGroupId != 22 ).OrderBy(e => e.LedgerName).ToList();
+                        page.TotalCount = _tenantDBContext.Ledgers.Where(e => e.CompanyId == companyId && e.IsActive == 1 && e.AccountingGroupId != 21 && e.AccountingGroupId != 22).OrderBy(e => e.LedgerName).Count();
                         //page.TotalCount = objList1.Count();
                     }
                 }
@@ -741,7 +1578,7 @@ namespace SutraPlus_DAL.Repository
             try
             {
                 var result = _tenantDBContext.Ledgers
-                    .Where(c => c.CompanyId == companyId && c.LedgerId == ledgerId && c.IsActive == true )
+                    .Where(c => c.CompanyId == companyId && c.LedgerId == ledgerId && c.IsActive == 1 )
                      .Select(c => new                    
                               {
                                   c.CompanyId,
@@ -867,7 +1704,7 @@ namespace SutraPlus_DAL.Repository
                         entity.OpeningBalance = data["OpeningBalance"];
                         entity.CrDr = data["CrDr"];
                         entity.LedType = "Sales Ledger";
-                        entity.IsActive = true;
+                        entity.IsActive = 1;
                         _tenantDBContext.SaveChanges();
                         _tenantDBContext.Update(entity);
                         _logger.LogDebug("TenantDBCommonRepo : Ledger Updated");
@@ -907,7 +1744,7 @@ namespace SutraPlus_DAL.Repository
                         entity.CreatedBy = data["CreatedBy"];
                         entity.CreatedDate = DateTime.Now;
                         entity.LedType = "Sales Other Ledger";
-                        entity.IsActive = true;
+                        entity.IsActive = 1;
                         _tenantDBContext.SaveChanges();
                         _tenantDBContext.Update(entity);
                         _logger.LogDebug("TenantDBCommonRepo : Other Ledger Updated");
@@ -985,12 +1822,12 @@ namespace SutraPlus_DAL.Repository
             {
                 if (searchText != null && searchText != string.Empty)
                 {
-                    objList1 = this._tenantDBContext.Commodities.Where(e => (e.CommodityName.ToLower().Contains(searchText.ToLower()) && e.IsActive == true)).OrderBy(c => c.CommodityName).ToList();
-                    page.TotalCount = _tenantDBContext.Commodities.Where(e => (e.CommodityName.ToLower().Contains(searchText.ToLower()) && e.IsActive == true)).Count();
+                    objList1 = this._tenantDBContext.Commodities.Where(e => (e.CommodityName.ToLower().Contains(searchText.ToLower()) && e.IsActive == 1)).OrderBy(c => c.CommodityName).ToList();
+                    page.TotalCount = _tenantDBContext.Commodities.Where(e => (e.CommodityName.ToLower().Contains(searchText.ToLower()) && e.IsActive == 1)).Count();
                 }
                 else
                 { 
-                    objList1 = this._tenantDBContext.Commodities.Where(e => e.IsActive == true).OrderBy(e => e.CommodityName).ToList();
+                    objList1 = this._tenantDBContext.Commodities.Where(e => e.IsActive == 1).OrderBy(e => e.CommodityName).ToList();
                     page.TotalCount = objList1.Count();
                 }
                 foreach (var obj in objList1.ToList())
@@ -1068,7 +1905,7 @@ namespace SutraPlus_DAL.Repository
 
                         entity.IsService = data["IsService"];
                         entity.CreatedDate = DateTime.Now;
-                        entity.IsActive = true;
+                        entity.IsActive = 1;
 
 
 
@@ -1111,18 +1948,18 @@ namespace SutraPlus_DAL.Repository
                 {
                     using (var context = new MasterDBContext())
                     {
-                        var activeentity = _tenantDBContext.Commodities.SingleOrDefault(item => item._Id == id && item.IsActive == true);
-                        var deactivateentity = _tenantDBContext.Commodities.SingleOrDefault(item => item._Id == id && item.IsActive == false);
+                        var activeentity = _tenantDBContext.Commodities.SingleOrDefault(item => item._Id == id && item.IsActive == 1);
+                        var deactivateentity = _tenantDBContext.Commodities.SingleOrDefault(item => item._Id == id && item.IsActive == 0);
                         if (activeentity != null)
                         {
-                            activeentity.IsActive = false;
+                            activeentity.IsActive = 0;
                             _tenantDBContext.SaveChanges();
                             _tenantDBContext.Update(activeentity);
                             _logger.LogDebug("TenantDBCommonRepo : Product Deactivated");
                         }
                         else if (deactivateentity != null)
                         {
-                            deactivateentity.IsActive = true;
+                            deactivateentity.IsActive = 1;
                             _tenantDBContext.SaveChanges();
                             _tenantDBContext.Update(deactivateentity);
                             _logger.LogDebug("TenantDBCommonRepo : Product Activated");

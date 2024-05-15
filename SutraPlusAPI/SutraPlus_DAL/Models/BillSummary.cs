@@ -153,7 +153,7 @@ namespace SutraPlus_DAL.Models
         public string? ACKNO { get; set; }
         public string? IRNNO { get; set; }
         public string? SignQRCODE { get; set; }
-        public Boolean? IsActive { get; set; }
+        public int? IsActive { get; set; }
         public Boolean? IsServiceInvoice { get; set; }
         
     }

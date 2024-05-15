@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { DxReportViewerComponent } from 'devexpress-reporting-angular';
 import { ActionId } from 'devexpress-reporting/dx-webdocumentviewer';
@@ -10,6 +10,7 @@ import { formatDate } from '@angular/common';
 import { saveAs } from 'file-saver';
 import { HttpClient } from '@angular/common/http';
 import { AdminServicesService } from '../../services/admin-services.service';
+import { NgbCalendar, NgbDateStruct, NgbDatepickerNavigateEvent } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-month-wise-report',
@@ -18,21 +19,57 @@ import { AdminServicesService } from '../../services/admin-services.service';
 })
 export class MonthWiseReportComponent implements OnInit {
 
-  constructor(private http: HttpClient,    private adminService: AdminServicesService) {
+	model: NgbDateStruct;
+  today = inject(NgbCalendar).getToday();
 
+  constructor(private http: HttpClient,  private calendar: NgbCalendar,  private adminService: AdminServicesService) {
+
+  }
+
+  onNavigate(event: NgbDatepickerNavigateEvent) {
+    this.startDate = event.next;
   }
 
   startDate: any;
   endDate: any;
   onchangeValue: string = "All";
+  financialYear: string = "";
+  minYear : NgbDateStruct;
+  maxYear : NgbDateStruct;
+  minYear1 : NgbDateStruct;
+  maxYear1 : NgbDateStruct;
+
   ngOnInit(): void {
 
     // Additional initialization logic can be added here
-    const currentDate = new Date();
-    this.startDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1));
-    this.endDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0));
-    $("#startDate").val(this.startDate);
-    $("#endDate").val(this.endDate);
+    // const currentDate1 = new Date();
+    // this.startDate = this.formatDate(new Date(currentDate1.getFullYear(), currentDate1.getMonth(), 1));
+    // this.endDate = this.formatDate(new Date(currentDate1.getFullYear(), currentDate1.getMonth() + 1, 0));
+
+    this.financialYear = sessionStorage.getItem('financialYear');
+    let [startYear, endYear] = this.financialYear.split("-");
+
+
+    const currentDate = this.calendar.getToday();
+    this.startDate = { year: currentDate.year, month: currentDate.month, day: 1 };
+    this.endDate = this.calendar.getNext(this.startDate, 'm', 1);
+
+    $("#startDate").val(this.formatDate(this.ngbDateToDate(this.startDate)));
+    $("#endDate").val(this.formatDate(this.ngbDateToDate(this.endDate)));
+
+    this.minYear = { year: Number(startYear), month: 4, day: 1 };
+    this.maxYear = { year: Number(endYear), month: 3, day: 31 };
+
+    this.minYear1 = { year: Number(startYear), month: 4, day: 1 };
+    this.maxYear1 = { year: Number(endYear), month: 3, day: 31 };
+
+  }
+
+  ngbDateToDate(date: NgbDateStruct): Date {
+    if (date === null) {
+      return null;
+    }
+    return new Date(date.year, date.month - 1, date.day);
   }
 
   private formatDate(date: Date): string {
@@ -106,7 +143,7 @@ export class MonthWiseReportComponent implements OnInit {
 
 setParameterALL() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport("MonthView" + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99"+
+  this.viewer.bindingSender.OpenReport("MonthView" + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99"+
   "|" +
   "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
   "&DataSource=" + sessionStorage.getItem("DataSource") +
@@ -116,7 +153,7 @@ setParameterALL() {
 
 setParameterVP() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4"+
+  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4"+
   "|" +
   "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
   "&DataSource=" + sessionStorage.getItem("DataSource") +
@@ -125,7 +162,7 @@ setParameterVP() {
 }
 setParameterVS() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13"+
+  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13"+
   "|" +
   "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
   "&DataSource=" + sessionStorage.getItem("DataSource") +
@@ -134,7 +171,7 @@ setParameterVS() {
 }
 setParameterVPR() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14"+
+  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=14"+
   "|" +
   "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
   "&DataSource=" + sessionStorage.getItem("DataSource") +
@@ -143,7 +180,7 @@ setParameterVPR() {
 }
 setParameterVSR() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6&vochtype2=6"+
+  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=6&vochtype2=6"+
   "|" +
   "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
   "&DataSource=" + sessionStorage.getItem("DataSource") +
@@ -168,6 +205,7 @@ onChange(event: any){
 }
 
 generateRepo() {
+
   switch (this.onchangeValue)
   {
       case "All":
@@ -196,7 +234,7 @@ generateRepo() {
 
 setParameterVCN() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9"+
+  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=9"+
   "|" +
   "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
   "&DataSource=" + sessionStorage.getItem("DataSource") +
@@ -205,7 +243,7 @@ setParameterVCN() {
 }
 setParameterVDN() {
   let globalCompanyId = sessionStorage.getItem('companyID');
-  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15"+
+  this.viewer.bindingSender.OpenReport(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=15"+
   "|" +
   "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
   "&DataSource=" + sessionStorage.getItem("DataSource") +

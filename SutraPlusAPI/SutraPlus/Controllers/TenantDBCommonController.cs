@@ -227,6 +227,150 @@ namespace SutraPlus.Controllers
             }
         }
 
+        [HttpPost("GetAkadaData")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetAkadaData([FromBody] JObject data)
+        {
+            try
+            {
+                var result = _tenantDBCommonService.GetAkadaData(data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("GetDaySummary")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetDaySummary([FromBody] JObject data)
+        {
+            try
+            {
+                var result = _tenantDBCommonService.GetDaySummary(data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("GetVocuherDataForDaySummary")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetVocuherDataForDaySummary([FromBody] JObject data)
+        {
+            try
+            {
+                var result = _tenantDBCommonService.GetVocuherDataForDaySummary(data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("GetVoucherDataForAccountStatementPage")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetVoucherDataForAccountStatementPage([FromBody] JObject data)
+        {
+            try
+            {
+                var result = _tenantDBCommonService.GetVoucherDataForAccountStatementPage(data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("GetOpeningBalance")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetOpeningBalance([FromBody] JObject data)
+        {
+            try
+            {
+                var result = _tenantDBCommonService.GetOpeningBalance(data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("GetMarks")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetMarks([FromBody] JObject data)
+        {
+            try
+            {
+                var result = _tenantDBCommonService.GetMarks(data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+        
+        [HttpPost("GetDataMyMark")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetDataMyMark([FromBody] JObject data)
+        {
+            try
+            {
+                var result = _tenantDBCommonService.GetDataMyMark(data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+        
+        [HttpPost("GetTrialBalance")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetTrialBalance([FromBody] JObject data)
+        {
+            try
+            {
+                var result = _tenantDBCommonService.GetTrialBalance(data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+        
+        [HttpPost("GetTransactionSummary")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetTransactionSummary([FromBody] JObject data)
+        {
+            try
+            {
+                var result = _tenantDBCommonService.GetTransactionSummary(data);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost("GetLedgerListForPartyMaster")]
         [AllowAnonymous]
         public async Task<ActionResult> GetLedgerListForPartyMaster([FromBody] JObject data)

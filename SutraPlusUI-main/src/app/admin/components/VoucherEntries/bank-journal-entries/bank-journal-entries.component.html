@@ -20,9 +20,23 @@
           <c-row class="mb-2">
           <c-col [sm]="6">
             <label cLabel>Date <span class="text-danger">*</span></label>
-            <input formControlName="TransDate" [ngClass]="{ 'is-invalid': submitted && add['TransDate'].errors }"
+            <!-- <input formControlName="TransDate" [ngClass]="{ 'is-invalid': submitted && add['TransDate'].errors }"
                    cFormControl
-                   type="date" />
+                   type="date" /> -->
+
+                   <div class="input-group">
+                    <input
+                      class="form-control"
+                      formControlName="TransDate"
+                      placeholder="yyyy-mm-dd"
+                      name="dp"
+                      [ngClass]="{ 'is-invalid': submitted && add['TransDate'].errors }"
+                      ngbDatepicker
+                      #da="ngbDatepicker"
+                      readonly
+                    />
+                    <button class="btn btn-outline-secondary bi bi-calendar3" (click)="da.toggle()" type="button"></button>
+                  </div>
 
 
             <div *ngIf="submitted && add['TransDate'].errors"
@@ -40,9 +54,9 @@
             </select>
 
             <div *ngIf="submitted && add['voucherType'].errors" class="invalid-feedback fw-semibold">
-              
+
               <div *ngIf="add['voucherType'].errors['required']">Select Voucher Type</div>
-              </div> 
+              </div>
 
         </c-col>
       </c-row>
@@ -52,7 +66,7 @@
               <ng-select #party
                           (keyup)="getPartyList(party.searchTerm)"
                          [items]="partyList"
-                         
+
                          bindLabel="ledgerName"
                          bindValue="ledgerId"
                          placeholder="Select Credit Account"
@@ -75,7 +89,7 @@
           <c-col [sm]="12">
               <label cLabel>Vikri Bill No</label>
               <input cFormControl
-                     type="text"                       
+                     type="text"
                      placeholder="Vikri Bill No"
                      formControlName="VikriBillNo" />
             </c-col>
@@ -87,7 +101,7 @@
               <ng-select #meena
                          (keyup)="getPartyList(meena.searchTerm)"
                          [items]="partyList"
-                         
+
                          bindLabel="ledgerName"
                          bindValue="ledgerId"
                          placeholder="Select Credit Account"
@@ -110,28 +124,28 @@
           <c-col [sm]="12">
               <label cLabel>Amount <span class="text-danger">*</span></label>
               <input cFormControl [ngClass]="{ 'is-invalid': submitted && add['Amount'].errors }"
-                     type="text"  #search                     
-                     placeholder="Amount" 
+                     type="text"  #search
+                     placeholder="Amount"
                      formControlName="Amount"  />
 
                      <div *ngIf="submitted && add['Amount'].errors" class="invalid-feedback fw-semibold">
                       <div *ngIf="add['Amount'].errors['required']">Please enter Amount</div>
-                      </div> 
+                      </div>
 
             </c-col>
-          </c-row> 
+          </c-row>
 
           <c-row class="mb-2">
             <c-col [sm]="12">
               <label cLabel>Narration <span class="text-danger">*</span></label>
               <textarea cFormControl  [ngClass]="{ 'is-invalid': submitted && add['Narration'].errors }"
-                     type="text"                       
+                     type="text"
                      placeholder="Narration"
                      formControlName="Narration"></textarea>
-              
+
               <div *ngIf="add['Narration'].errors" class="invalid-feedback fw-semibold">
                 <div *ngIf="add['Narration'].errors['required']">Please enter Amount</div>
-              </div> 
+              </div>
 
             </c-col>
           </c-row>
@@ -139,13 +153,13 @@
 
 
         </c-card-body>
-        
+
         <c-card-body class="p-3">
-          
+
           <hr>
           <c-row class="mb-3">
             <c-col [sm]="12" class="d-flex justify-content-between">
-              
+
               <button cButton class="btn btn-dark ms-2 px-3" type="submit"
                 (click)="onSubmit()">Ok</button>
 
@@ -182,7 +196,7 @@
                   <td>{{ item.DebitAmount  }}</td>
                   <td>{{ item.Narration }}</td>
                   <td>{{ item.VikriBillno }}</td>
-                  
+
                 </tr>
 
                 <tr>
@@ -191,12 +205,12 @@
                   <td><b> {{ DebitTotals }} </b></td>
                   <td></td>
                   <td></td>
-                  
+
                 </tr>
 
 
               </tbody>
-          
+
             </table>
           </div>
     </c-card>

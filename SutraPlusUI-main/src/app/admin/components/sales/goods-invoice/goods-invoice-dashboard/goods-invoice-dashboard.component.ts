@@ -92,6 +92,8 @@ export class GoodsInvoiceDashboardComponent implements OnInit {
 
   onPrint(item:any) {
 
+    this.ClientCode = sessionStorage.getItem("globalCustomerCode");
+
     let payload = {
       SalesDetails: {
         CompanyId: this.globalCompanyId,
@@ -99,25 +101,35 @@ export class GoodsInvoiceDashboardComponent implements OnInit {
       },
     };
 
-    this.adminService.getInvType(payload).subscribe({
+    this.adminService.GetInvtypeForCalculation(payload).subscribe({
       next: (res: any) => {
 
-      if(this.route.snapshot.queryParamMap.get('InvoiceName')?.toString() == 'GoodsInvoice' || this.route.snapshot.queryParamMap.get('InvoiceName')?.toString() == 'SalesReturn') {
-            if(res.einvreq == 1 && res.frieghtPlus == 1) {
-              this.invType = 3;
-            } else if(res.einvreq == 1 && res.frieghtPlus == 0) {
-              this.invType = 4;
-            } else if(res.einvreq == 0 && res.frieghtPlus == 1) {
-              this.invType = 1;
-            } else if(res.einvreq == 0 && res.frieghtPlus == 0) {
-              this.invType = 2;
-            }
-        } else if(this.route.snapshot.queryParamMap.get('InvoiceName')?.toString() == 'GinningInvoice') {
-          this.invType = 7;
-        } else if(this.route.snapshot.queryParamMap.get('InvoiceName')?.toString() == 'DebitNote' || this.route.snapshot.queryParamMap.get('InvoiceName')?.toString() == 'CreditNote') {
-          this.invType = 5;
-        }
-        this.Type = this.invType;
+        if(this.ClientCode == "UNNATI") {
+
+          this.Type = 6;
+        } else {
+            if(this.route.snapshot.queryParamMap.get('InvoiceName')?.toString() == 'GoodsInvoice' ||
+                  this.route.snapshot.queryParamMap.get('InvoiceName')?.toString() == 'ProfarmaInvoice' ||
+                  this.route.snapshot.queryParamMap.get('InvoiceName')?.toString() == 'SalesReturn') {
+              if(res.einvreq == 1 && res.frieghtPlus == 1) {
+                this.invType = 3;
+              } else if(res.einvreq == 1 && res.frieghtPlus == 0) {
+                this.invType = 4;
+              } else if(res.einvreq == 0 && res.frieghtPlus == 1) {
+                this.invType = 1;
+              } else if(res.einvreq == 0 && res.frieghtPlus == 0) {
+                this.invType = 2;
+              }
+          } else if(this.route.snapshot.queryParamMap.get('InvoiceName')?.toString() == 'GinningInvoice') {
+            this.invType = 7;
+          } else if(this.route.snapshot.queryParamMap.get('InvoiceName')?.toString() == 'DebitNote' ||
+          this.route.snapshot.queryParamMap.get('InvoiceName')?.toString() == 'CreditNote') {
+            this.invType = 5;
+          }
+            this.Type = this.invType;
+
+          }
+
       },
       error: (error: any) => {
         this.toastr.error('Something went wrong');
@@ -125,8 +137,18 @@ export class GoodsInvoiceDashboardComponent implements OnInit {
       },
     });
 
-    this.ClientCode = "RGP";
-    this.vochType= "9";
+    if(this.ClientCode == "UNNATI") {
+
+      this.Type = 6;
+    }
+
+    console.log("checking" + this.Type)
+
+    //this.ClientCode = "RGP";
+    //this.vochType= "9";
+
+    this.vochType =  String(item['vochType']);
+
     //this.invType = "3";
 
     let partyDetails = {

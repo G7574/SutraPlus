@@ -15,6 +15,7 @@ import { Location } from '@angular/common';
 import { CommonService } from 'src/app/share/services/common.service';
 import { Observable, map, of, startWith, tap } from 'rxjs';
 import { party } from 'src/app/share/models/party';
+import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-bank-journal-entries',
@@ -76,6 +77,7 @@ export class BankJournalEntriesComponent {
     private spinner: NgxSpinnerService,
     private fb: FormBuilder,
     private location: Location,
+    private calendar: NgbCalendar,
     public commonService: CommonService
   ) {
     //this.getAutoComplete();
@@ -89,7 +91,7 @@ export class BankJournalEntriesComponent {
     this.nameField.nativeElement.focus();
   }
 
-  
+
   onChangeOption(ctrlName: any) {
     debugger;
     const value = this.addParty.get(ctrlName)?.value;
@@ -108,11 +110,22 @@ export class BankJournalEntriesComponent {
 
   }
 
+  minYear : NgbDateStruct;
+  maxYear : NgbDateStruct;
+
   ngOnInit(): void {
 
+    this.financialYear = sessionStorage.getItem('financialYear');
+    let [startYear, endYear] = this.financialYear.split("-");
+    const currentDate = this.calendar.getToday();
+    let date = { year: currentDate.year, month: currentDate.month, day: 1 };
+    this.minYear = { year: Number(startYear), month: 4, day: 1 };
+    this.maxYear = { year: Number(endYear), month: 3, day: 31 };
+
+
     this.addParty = new FormGroup({
-      
-      
+
+
       TransDate: new FormControl(''),
       voucherType: new FormControl(''),
       CreditAccount: new FormControl(''),
@@ -120,7 +133,7 @@ export class BankJournalEntriesComponent {
       VikriBillNo : new FormControl(''),
       Amount : new FormControl(''),
       Narration: new FormControl(''),
-      
+
     });
 
     this.addParty = this.fb.group({
@@ -129,7 +142,7 @@ export class BankJournalEntriesComponent {
       VikriBillNo : new FormControl(''),
       Amount : new FormControl('', [Validators.required]),
       Narration: new FormControl('',[Validators.required]),
-      
+
 
     });
 
@@ -189,7 +202,7 @@ export class BankJournalEntriesComponent {
        if(this.particularrow.length == 0)
        {
           this.particularrow.push({ "AccountName": this.CreditAccountName,"AccountID": this.CreditAccountID , "Sno": (this.particularrow.length + 1), "CreditAmount": this.addParty.get('Amount')?.value, "DebitAmount": 0,"Narration":this.addParty.get('Narration')?.value,"VikriBillno":this.addParty.get('VikriBillNo')?.value,"TransDate":this.addParty.get('TransDate')?.value,"CompanyID":this.globalCompanyId,"LedgerNameForNarration":'' });
-          
+
           this.addParty.patchValue
           ({
             CreditAccount: '',
@@ -197,7 +210,7 @@ export class BankJournalEntriesComponent {
           });
 
           this.CreditAccountName = '';
-          this.CreditAccountID  = '';  
+          this.CreditAccountID  = '';
        }
        else
        {
@@ -217,20 +230,20 @@ export class BankJournalEntriesComponent {
         alert('Invalid Amount');
       }
        }
-       console.log(this.particularrow); 
+       console.log(this.particularrow);
        this.GetTotals();
        this.addParty.controls['Amount'].setValue(this.CreditTotals - this.DebitTotals);
-    } 
+    }
   }
 
 
 
 
   getVoucherTypeList() {
-          
+
     this.adminService.getVoucherType([]).subscribe({
       next: (res: any) => {
-        
+
         this.VoucherTypeList = res.VoucherTypes;
         console.log(this.VoucherTypeList);
       },
@@ -239,7 +252,7 @@ export class BankJournalEntriesComponent {
         this.toastr.error('Something went wrong');
       },
     });
-  
+
 }
 
 getPartyList(text: string) {
@@ -280,14 +293,14 @@ getPartyList(text: string) {
 SelectCreditAccount(selectedCreditAccountName:string, SelectedCreditAccountID:string)
 {
   this.CreditAccountName = selectedCreditAccountName;
-  this.CreditAccountID  = SelectedCreditAccountID;  
-  
+  this.CreditAccountID  = SelectedCreditAccountID;
+
 }
 
 SelectDebitAccount(selectedDebitAccountName:string, SelectedDebitAccountID:string)
 {
   this.DebitAccountName = selectedDebitAccountName;
-  this.DebitAccountID  = SelectedDebitAccountID;  
+  this.DebitAccountID  = SelectedDebitAccountID;
 }
 
 
@@ -299,7 +312,7 @@ GetTotals()
 
     var i = 0;
     for(i=0;i<this.particularrow.length; i++)
-    { 
+    {
       if(i == 0)
       {
         this.CreditTotals += parseFloat(this.particularrow[i]['CreditAmount']);
@@ -327,7 +340,7 @@ OnSave()
       }
   }
 
-  
+
 
   let payload = {
     BankJournalEntries: this.formatDynamicArray(this.particularrow),
@@ -368,11 +381,11 @@ formatDynamicArray(dynamicArray: any) {
       "AccountName": items.Data,
       "LedgerID": items.AccountID,
       "VoucherTypeID": items.voucherType,
-      "TransDate": items.TransDate,
+      "TransDate": this.formatDate(this.ngbDateToDate(items.TransDate)),
       "AccountID": items.AccountID,
       "CreditAmount": items.CreditAmount,
       "DebitAmount": items.DebitAmount,
-      "Narration": items.Narration, 
+      "Narration": items.Narration,
       "VikriBillno": items.VikriBillno,
       "CompanyID":this.globalCompanyId,
       "LedgerNameForNarration": items.LedgerNameForNarration
@@ -382,6 +395,20 @@ formatDynamicArray(dynamicArray: any) {
   return dy;
 }
 
+ngbDateToDate(date: NgbDateStruct): Date {
+  if (date === null) {
+    return null;
+  }
+  return new Date(date.year, date.month - 1, date.day);
+}
+
+private formatDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = ('0' + (date.getMonth() + 1)).slice(-2);
+  const day = ('0' + date.getDate()).slice(-2);
+  return `${year}-${month}-${day}`;
+  // return `2022-04-01`;
+}
 
 
 

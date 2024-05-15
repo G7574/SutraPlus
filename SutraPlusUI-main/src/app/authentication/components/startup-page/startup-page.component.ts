@@ -34,6 +34,9 @@ export class StartupPageComponent implements OnInit {
     this.customerId = this.route.snapshot.paramMap.get('id');
     sessionStorage.setItem('globalCustomerCode', this.customerId)
     this.getYears(this.customerId)
+
+  
+
   }
 
   getYears(id: any): void {
@@ -73,6 +76,7 @@ export class StartupPageComponent implements OnInit {
     this.router.navigate(['/login']);
     console.log(data);
     sessionStorage.setItem('tenantId', btoa(data.Id));
+
     sessionStorage.setItem('themeCode', data.ThemeCode);
     sessionStorage.setItem('financialYear', data.Description);
     sessionStorage.setItem('financialYearValue', data.Year);

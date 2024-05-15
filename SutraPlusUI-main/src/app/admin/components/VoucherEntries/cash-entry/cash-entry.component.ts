@@ -15,6 +15,7 @@ import { Location } from '@angular/common';
 import { CommonService } from 'src/app/share/services/common.service';
 import { Observable, map, of, startWith, tap } from 'rxjs';
 import { party } from 'src/app/share/models/party';
+import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-cash-entry',
@@ -66,7 +67,20 @@ export class CashEntryComponent {
   DebitAccountName!:string | null;
   DebitAccountID!:string | null;
 
+  ngbDateToDate(date: NgbDateStruct): Date {
+    if (date === null) {
+      return null;
+    }
+    return new Date(date.year, date.month - 1, date.day);
+  }
 
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+    // return `2022-04-01`;
+  }
 
   constructor(
     private router: Router,
@@ -75,6 +89,7 @@ export class CashEntryComponent {
     private toastr: ToastrService,
     private spinner: NgxSpinnerService,
     private fb: FormBuilder,
+    private calendar: NgbCalendar,
     private location: Location,
     public commonService: CommonService
   ) {
@@ -89,7 +104,9 @@ export class CashEntryComponent {
     this.nameField.nativeElement.focus();
   }
 
-  
+  minYear : NgbDateStruct;
+  maxYear : NgbDateStruct;
+
   onChangeOption(ctrlName: any) {
     debugger;
     const value = this.addParty.get(ctrlName)?.value;
@@ -117,7 +134,7 @@ export class CashEntryComponent {
       VikriBillNo : new FormControl(''),
       Amount : new FormControl(''),
       Narration: new FormControl(''),
-      
+
     });
 
     this.addParty = this.fb.group({
@@ -207,7 +224,7 @@ OnSave()
   debugger;
 
   let payload = {
-    TransDate: this.addParty.get('TransDate')?.value,
+    TransDate: this.formatDate(this.ngbDateToDate(this.addParty.get('TransDate')?.value)),
     ReceiptPayment:this.addParty.get('ReceiptPayment')?.value,
     SelectAccount:this.CreditAccountID,
     VikriBillNo:this.addParty.get('VikriBillNo')?.value,
@@ -240,7 +257,7 @@ OnSave()
 SelectCreditAccount(selectedCreditAccountName:string, SelectedCreditAccountID:string)
 {
   this.CreditAccountName = selectedCreditAccountName;
-  this.CreditAccountID  = SelectedCreditAccountID;  
+  this.CreditAccountID  = SelectedCreditAccountID;
 }
 
 

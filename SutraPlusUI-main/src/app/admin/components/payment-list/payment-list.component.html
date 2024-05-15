@@ -14,7 +14,21 @@
         <div class="row">
           <div class="col-md-2">
             <label for="endDate">Up To:</label>
-            <input type="date" id="endDate" name="endDate" class="form-control" cFormControl type="date" [ngModel]="endDate" (ngModelChange)="onDate($event)" />
+            <!-- <input type="date" id="endDate" name="endDate" class="form-control" cFormControl type="date" [ngModel]="endDate" (ngModelChange)="onDate($event)" /> -->
+            <div class="input-group">
+              <input
+                class="form-control"
+                placeholder="yyyy-mm-dd"
+                name="dp"
+                [(ngModel)]="endDate"
+                ngbDatepicker
+                #d="ngbDatepicker"
+                [minDate]="minYear"
+                [maxDate]="maxYear"
+                readonly
+              />
+              <button class="btn btn-outline-secondary bi bi-calendar3" (click)="d.toggle()" type="button"></button>
+            </div>
           </div>
 
           <div class="col-md-3">

@@ -9,6 +9,7 @@ import { SelectBankDailogComponent } from '../../../select-bank-dailog/select-ba
 import { BillExpenseRateDailogComponent } from '../../../bill-expense-rate-dailog/bill-expense-rate-dailog.component';
 import { DecimalPipe } from '@angular/common';
 import { add } from 'date-fns';
+import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-akada-entry',
@@ -76,9 +77,14 @@ export class AkadaEntryComponent implements OnInit {
   lastlyAddedLotNo : any;
   lastltAddedNumOfBags : any;
 
+  minYear : NgbDateStruct;
+  maxYear : NgbDateStruct;
+  financialYear: string = "";
+
   constructor(private formBuilder: FormBuilder,
     private toastr: ToastrService,
     private spinner: NgxSpinnerService,
+    private calendar: NgbCalendar,
     private adminService: AdminServicesService,
     private dialog: MatDialog) {
     this.globalCompanyId = sessionStorage.getItem('companyID');
@@ -94,7 +100,21 @@ export class AkadaEntryComponent implements OnInit {
 
   ngOnInit() {
 
-    this.date = (new Date()).toISOString().substring(0,10);
+    this.financialYear = sessionStorage.getItem('financialYear');
+    let [startYear, endYear] = this.financialYear.split("-");
+
+
+    const currentDate = this.calendar.getToday();
+    this.date = { year: currentDate.year, month: currentDate.month, day: 1 };
+
+    this.minYear = { year: Number(startYear), month: 4, day: 1 };
+    this.maxYear = { year: Number(endYear), month: 3, day: 31 };
+
+    if(this.date.year > this.maxYear.year) {
+      this.date = { year: Number(endYear), month: 3, day: 31 }
+    }
+
+    //this.date = (new Date()).toISOString().substring(0,10);
     this.dynamicFields = Array(this.noOfBags).fill(0);
     this.inputFieldValues = Array(this.noOfBags).fill(0);
     this.getAllCommodities();
@@ -102,6 +122,22 @@ export class AkadaEntryComponent implements OnInit {
     this.getLastlyAddedRecordFromInventory();
 
   }
+
+  ngbDateToDate(date: NgbDateStruct): Date {
+    if (date === null) {
+      return null;
+    }
+    return new Date(date.year, date.month - 1, date.day);
+  }
+
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+    // return `2022-04-01`;
+  }
+
 
   initData() {
     this.spinner.show();
@@ -119,7 +155,7 @@ export class AkadaEntryComponent implements OnInit {
         "CommodityName": this.commodityName || ' ',
         "GridEntries": this.inputFieldValues,
         "LedgerId": this.ledgerId || 0,
-        "TranctDate": this.date,
+        "TranctDate": this.formatDate(this.ngbDateToDate(this.date)),
         "Cess": this.cess,
         "SGST": this.sgst,
         "Taxable": this.taxableValue,
@@ -160,8 +196,8 @@ export class AkadaEntryComponent implements OnInit {
 
         this.commodityId = res.commodityId;
 
-        this.commodityName = res.commodityName;
-        this.partyName = res.PartyName;
+        //this.commodityName = res.commodityName;
+        //this.partyName = res.PartyName;
 
         if (this.commodityId != 0 && this.ledgerId != 0) {
           let send = {
@@ -170,7 +206,7 @@ export class AkadaEntryComponent implements OnInit {
               "LotNo": 0,
               "CommodityId": this.commodityId || 0,
               "LedgerId": this.ledgerId || 0,
-              "TranctDate": this.date,
+              "TranctDate": this.formatDate(this.ngbDateToDate(this.date)),
             }
           }
           this.getLotData(send);
@@ -292,7 +328,7 @@ export class AkadaEntryComponent implements OnInit {
     return this.entries.reduce((total, entry) => total + entry[property], 0);
   }
   getTotl(property: string): number {
-    this.totalWeight = this.entries.reduce((total, entry) => total + entry[property], 0);
+  //  this.totalWeight = this.entries.reduce((total, entry) => total + entry[property], 0);
     return this.markEntries.reduce((total, entry) => total + entry[0][property], 0);
   }
 
@@ -304,6 +340,7 @@ onKeyUp(event: any,ab : boolean) {
   }
 
   if(this.lotNo == null || this.lotNo == "") {
+    this.toastr.error('Please Select the Lot no!');
     return;
   }
 
@@ -312,7 +349,7 @@ console.log("this.lotNo -> " + this.lotNo)
     let akadaData = {
       "AkadaData": {
         "lotNo": this.lotNo,
-        "date": this.date,
+        "date": this.formatDate(this.ngbDateToDate(this.date)),
         "CompanyId": this.globalCompanyId,
         "ledgerId": this.ledgerId,
         "commodityId": this.commodityId,
@@ -340,7 +377,8 @@ console.log("this.lotNo -> " + this.lotNo)
 }
 
   onNoClick(): void {
-    this.date = (new Date()).toISOString().substring(0,10);
+    const currentDate = this.calendar.getToday();
+    this.date = { year: currentDate.year, month: currentDate.month, day: 1 };
     this.commodityId = null;
     this.commodityName = null;
     this.lotNo = null;
@@ -395,7 +433,7 @@ console.log("this.lotNo -> " + this.lotNo)
     let akadaData = {
       "AkadaData": {
         "CompanyId": this.globalCompanyId,
-        "TranctDate" : this.date
+        "TranctDate" : this.formatDate(this.ngbDateToDate(this.date))
       }
     }
 
@@ -416,6 +454,32 @@ console.log("this.lotNo -> " + this.lotNo)
   saveAkadaEntry() {
     // console.log(this.akadaEntryForm.value);
     console.log("save" + this.commodityList);
+
+    if(this.ledgerId == undefined || this.ledgerId == null || this.ledgerId == 0) {
+      this.toastr.error('Something went wrong. Please Select Party Again');
+      return;
+    }
+
+    if(this.noOfBags == undefined || this.noOfBags == null || this.noOfBags == 0) {
+      this.toastr.error('Something went wrong. Number of bags are invalid');
+      return;
+    }
+
+    if(this.totalWeight == undefined || this.totalWeight == null || this.totalWeight == 0) {
+      this.toastr.error('Something went wrong. TotalWeight of bags are invalid');
+      return;
+    }
+
+    if(this.sgst == undefined || this.sgst == null || this.sgst == 0) {
+      this.toastr.error('Something went wrong. Sgst of bags are invalid');
+      return;
+    }
+
+    if(this.commodityId == undefined || this.commodityId == null || this.commodityId == 0) {
+      this.toastr.error('Something went wrong. CommodityId of bags are invalid');
+      return;
+    }
+
     this.spinner.show();
 
     let send = {
@@ -424,7 +488,7 @@ console.log("this.lotNo -> " + this.lotNo)
         "LotNo": this.lotNo,
         "CommodityId": this.commodityId || 0,
         "LedgerId": this.ledgerId || 0,
-        "TranctDate": this.date,
+        "TranctDate": this.formatDate(this.ngbDateToDate(this.date)),
       }
     }
 
@@ -447,7 +511,7 @@ console.log("this.lotNo -> " + this.lotNo)
         // "VoucherId": this.voucherId,
         // "VoucherNumber": this.voucherNumber,
         "LedgerId": this.ledgerId || 0,
-        "TranctDate": this.date,
+        "TranctDate": this.formatDate(this.ngbDateToDate(this.date)),
         "Cess": this.cess,
         "SGST": this.sgst,
         "Taxable": this.taxableValue,
@@ -465,7 +529,7 @@ console.log("this.lotNo -> " + this.lotNo)
           this.getLotData(send);
 
           // const entry = {
-          //   date: this.date,
+          //   date: this.formatDate(this.ngbDateToDate(this.startDate)),
           //   commodityId: this.commodityId,
           //   commodityName: this.commodityName,
           //   lotNo: this.lotNo,
@@ -699,7 +763,7 @@ console.log("this.lotNo -> " + this.lotNo)
           "LotNo": 0,
           "CommodityId": this.commodityId || 0,
           "LedgerId": this.ledgerId || 0,
-          "TranctDate": this.date,
+          "TranctDate": this.formatDate(this.ngbDateToDate(this.date)),
         }
       }
       this.getLotData(send);

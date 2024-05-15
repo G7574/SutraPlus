@@ -183,7 +183,7 @@ namespace SutraPlus_BAL.Service
                         ManualBookPageNo = data["ManualBookPageNo"],
                         CreatedBy = data["CreatedBy"],
                         CreatedDate = DateTime.Now,
-                        IsActive = true,
+                        IsActive = 1,
                         LedType = "Sales Ledger" //it should be Party Ledger future problem same ledger can be utlilized in purchase invoice. 6-6-23
                     };
                     return _tenantDBCommonRepository.AddLedger(ledger);
@@ -208,7 +208,7 @@ namespace SutraPlus_BAL.Service
                     AccountingGroupId = data["AccountingGroupId"], //id value of drop down
                     CreatedBy = data["CreatedBy"],
                     CreatedDate = DateTime.Now,
-                    IsActive = true,
+                    IsActive = 1,
                     LedType = "Sales Other Ledger" //data["LedType"] //it should be Other Ledger 
                 };
                 return _tenantDBCommonRepository.AddLedger(ledger);
@@ -224,6 +224,44 @@ namespace SutraPlus_BAL.Service
         public Boolean updateData(JObject data)
         {
             return _tenantDBCommonRepository.updateData(data);
+        }
+
+        public JObject GetAkadaData(JObject data)
+        {
+            return _tenantDBCommonRepository.GetAkadaData(data);
+        }
+
+        public JObject GetDaySummary(JObject data)
+        {
+            return _tenantDBCommonRepository.GetDaySummary(data);
+        }
+        public JObject GetVocuherDataForDaySummary(JObject data)
+        {
+            return _tenantDBCommonRepository.GetVocuherDataForDaySummary(data);
+        }
+        public JObject GetVoucherDataForAccountStatementPage(JObject data)
+        {
+            return _tenantDBCommonRepository.GetVoucherDataForAccountStatementPage(data);
+        }
+        public JObject GetOpeningBalance(JObject data)
+        {
+            return _tenantDBCommonRepository.GetOpeningBalance(data);
+        }
+        public JObject GetMarks(JObject data)
+        {
+            return _tenantDBCommonRepository.GetMarks(data);
+        }
+        public JObject GetDataMyMark(JObject data)
+        {
+            return _tenantDBCommonRepository.GetDataMyMark(data);
+        }
+        public JObject GetTrialBalance(JObject data)
+        {
+            return _tenantDBCommonRepository.GetTrialBalance(data);
+        }
+        public JObject GetTransactionSummary(JObject data)
+        {
+            return _tenantDBCommonRepository.GetTransactionSummary(data);
         }
 
         public pagination<Ledger> GetLedgerList(JObject Data)
@@ -385,7 +423,7 @@ namespace SutraPlus_BAL.Service
                     IsVikriCommodity = data["DeductItem"],
                     IsService = data["IsService"],
                     CreatedDate = DateTime.Now,
-                    IsActive = true
+                    IsActive = 1
                 };
                 return _tenantDBCommonRepository.Add(commodity);
             }

@@ -92,7 +92,7 @@ namespace SutraPlus_DAL.Repository
                         CompanyId = item.CompanyID,
                         Credit = Convert.ToDecimal(item.CreditAmount),
                         Debit = 0,
-                        IsActive = true,
+                        IsActive = 1,
                         PartyInvoiceNumber = "",
                         LedgerNameForNarration = item.LedgerNameForNarration,
                         CreatedBy = 1
@@ -114,7 +114,7 @@ namespace SutraPlus_DAL.Repository
                         CompanyId = item.CompanyID,
                         Credit = 0,
                         Debit = Convert.ToDecimal(item.DebitAmount),
-                        IsActive = true,
+                        IsActive = 1,
                         PartyInvoiceNumber = "",
                         LedgerNameForNarration = item.LedgerNameForNarration,
                         CreatedBy = 1
@@ -162,7 +162,7 @@ namespace SutraPlus_DAL.Repository
                     CompanyId = CompanyID,
                     Credit = Convert.ToDecimal(Amount),
                     Debit = 0,
-                    IsActive = true,
+                    IsActive = 1,
                     PartyInvoiceNumber = "",
                     LedgerNameForNarration = "Cash Received",
                     CreatedBy = 1
@@ -184,7 +184,7 @@ namespace SutraPlus_DAL.Repository
                     CompanyId = CompanyID,
                     Credit = 0,
                     Debit = Convert.ToDecimal(Amount),
-                    IsActive = true,
+                    IsActive = 1,
                     PartyInvoiceNumber = "",
                     LedgerNameForNarration = "Cash Paid",
                     CreatedBy = 1

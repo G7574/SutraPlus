@@ -147,6 +147,59 @@ namespace SutraPlus_DAL.Repository
             }
              
         }
+        public JObject GetInvtypeForCalculation(int companyId,int LedgerId)
+        {
+            var response = new JObject();
+            int EinvReq = 0;
+
+            try
+            {
+                var query = _tenantDBContext.Companies.Where(n=>n.CompanyId == companyId).FirstOrDefault();
+                 
+
+                if (query == null)
+                {
+                    EinvReq = 0;
+
+                }
+                else
+                {
+                    if (query.EinvoiceKey == "" || query.EinvoiceKey == null)
+                    {
+                        EinvReq = 0;
+
+                    }
+                    else
+                    {
+                        EinvReq = 1;
+
+                    }
+
+                }
+
+                var ch = _tenantDBContext.BillSummaries.Where(n => n.LedgerId == LedgerId).FirstOrDefault();
+               
+                response.Add("einvreq", EinvReq);
+                if(ch != null)
+                {
+                    if(ch.frieghtPlus != null)
+                    {
+                        response.Add("frieghtPlus", ch.frieghtPlus);
+                    } else
+                    {
+                        response.Add("frieghtPlus", 0);
+                    }
+                    
+                }
+ 
+                return response;
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+             
+        }
 
         public JObject Get(int CompanyId, int LedgerId, string DealerType, string InvoiceType)
         {
@@ -166,49 +219,49 @@ namespace SutraPlus_DAL.Repository
                         {
                             var voucherId = _tenantDBContext.VoucherTypes.Where(v => v.VoucherName == "Local Sale").Select(x => x.VoucherId).SingleOrDefault();
                             response.Add("VoucherType", new JValue("Local Sale"));
-                            response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType > 8 && x.VochType < 12 && x.CompanyId == CompanyId && x.IsActive == true).Select(x => x.VochNo).ToList().Max()) + 1));
+                            response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType > 8 && x.VochType < 12 && x.CompanyId == CompanyId && x.IsActive == 1).Select(x => x.VochNo).ToList().Max()) + 1));
                             response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
                         }
                         else if (companyState.ToLower() != ledgerState.ToLower() && dealer_type == "Registered Dealer" && country_name == "India" && (InvoiceType == "GoodsInvoice" || InvoiceType == "GinningInvoice"))
                         {
                             var voucherId = _tenantDBContext.VoucherTypes.Where(v => v.VoucherName == "Interstate Sale").Select(x => x.VoucherId).SingleOrDefault();
                             response.Add("VoucherType", new JValue("Interstate Sale"));
-                            response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType > 8 && x.VochType < 12 && x.CompanyId == CompanyId && x.IsActive == true).Select(x => x.VochNo).ToList().Max()) + 1));
+                            response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType > 8 && x.VochType < 12 && x.CompanyId == CompanyId && x.IsActive == 1).Select(x => x.VochNo).ToList().Max()) + 1));
                             response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
                         }
                         else if (dealer_type != "Register Dealer" && country_name == "India" && (InvoiceType == "GoodsInvoice" || InvoiceType == "GinningInvoice"))
                         {
                             var voucherId = _tenantDBContext.VoucherTypes.Where(v => v.VoucherName == "URD Sale").Select(x => x.VoucherId).SingleOrDefault();
                             response.Add("VoucherType", new JValue("URD Sale"));
-                            response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType > 8 && x.VochType < 12 && x.CompanyId == CompanyId && x.IsActive == true).Select(x => x.VochNo).ToList().Max()) + 1));
+                            response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType > 8 && x.VochType < 12 && x.CompanyId == CompanyId && x.IsActive == 1).Select(x => x.VochNo).ToList().Max()) + 1));
                             response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
                         }
                         else if (country_name != "India" && InvoiceType == "ExportInvoice")
                         {
                             var voucherId = _tenantDBContext.VoucherTypes.Where(v => v.VoucherName == "Export Sale").Select(x => x.VoucherId).SingleOrDefault();
                             response.Add("VoucherType", new JValue("Export Sale"));
-                            response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType == 12 && x.CompanyId == CompanyId && x.IsActive == true).Select(x => x.VochNo).ToList().Max()) + 1));
+                            response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType == 12 && x.CompanyId == CompanyId && x.IsActive == 1).Select(x => x.VochNo).ToList().Max()) + 1));
                             response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
                         }
                         else if (country_name == "India" && InvoiceType == "DeemedExport")
                         {
                             var voucherId = _tenantDBContext.VoucherTypes.Where(v => v.VoucherName == "Deemed Export").Select(x => x.VoucherId).SingleOrDefault();
                             response.Add("VoucherType", new JValue("Deemed Export"));
-                            response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType == 13 && x.CompanyId == CompanyId && x.IsActive == true).Select(x => x.VochNo).ToList().Max()) + 1));
+                            response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType == 13 && x.CompanyId == CompanyId && x.IsActive == 1).Select(x => x.VochNo).ToList().Max()) + 1));
                             response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
                         }
                         else if (country_name == "India" && InvoiceType == "PurchaseReturn")
                         {
                             var voucherId = _tenantDBContext.VoucherTypes.Where(v => v.VoucherName == "Purchase Return").Select(x => x.VoucherId).SingleOrDefault();
                             response.Add("VoucherType", new JValue("Purchase Return"));
-                            response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType == 8 && x.CompanyId == CompanyId && x.IsActive == true).Select(x => x.VochNo).ToList().Max()) + 1));
+                            response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType == 8 && x.CompanyId == CompanyId && x.IsActive == 1).Select(x => x.VochNo).ToList().Max()) + 1));
                             response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
                         }
                         else if (country_name == "India" && InvoiceType == "ProfarmaInvoice")
                         {
                             var voucherId = _tenantDBContext.VoucherTypes.Where(v => v.VoucherName == "Profarma Invoice").Select(x => x.VoucherId).SingleOrDefault();
                             response.Add("VoucherType", new JValue("Profarma Invoice"));
-                            response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType == 16 && x.CompanyId == CompanyId && x.IsActive == true).Select(x => x.VochNo).ToList().Max()) + 1));
+                            response.Add("InvoiceNo", new JValue(Convert.ToUInt32(_tenantDBContext.Inventory.Where(x => x.VochType == 16 && x.CompanyId == CompanyId && x.IsActive == 1).Select(x => x.VochNo).ToList().Max()) + 1));
                             response.Add("VoucherId", new JValue(Convert.ToInt64(voucherId)));
                         }
                     }
@@ -255,7 +308,7 @@ namespace SutraPlus_DAL.Repository
                              join cpn in _tenantDBContext.Companies on Vouchers.CompanyId equals cpn.CompanyId
                              join VochType in _tenantDBContext.VoucherTypes on Vouchers.VoucherId equals VochType.VoucherId
                              join led in _tenantDBContext.Ledgers on Vouchers.LedgerId equals led.LedgerId
-                             where Vouchers.CompanyId == CompanyId && Vouchers.VoucherNo == vochno && Vouchers.VoucherId == VochTypeID && Vouchers.IsActive == true
+                             where Vouchers.CompanyId == CompanyId && Vouchers.VoucherNo == vochno && Vouchers.VoucherId == VochTypeID && Vouchers.IsActive == 1
                              select new
                              {
                                  Date = Vouchers.TranctDate,
@@ -372,7 +425,7 @@ namespace SutraPlus_DAL.Repository
                     CompanyId = int.Parse(companyId),
                     Credit = payAmount,
                     Debit = 0,
-                    IsActive = true,
+                    IsActive = 1,
                     PartyInvoiceNumber = chequeNo.ToString(),
                     LedgerNameForNarration = "Cheque Payment",
                     CreatedBy = 1
@@ -390,7 +443,7 @@ namespace SutraPlus_DAL.Repository
                     CompanyId = int.Parse(companyId),
                     Credit = 0,
                     Debit = payAmount,
-                    IsActive = true,
+                    IsActive = 1,
                     PartyInvoiceNumber = chequeNo.ToString(),
                     LedgerNameForNarration = bankName,
                     CreatedBy = 1
@@ -419,7 +472,9 @@ namespace SutraPlus_DAL.Repository
 
                 InvoiceDetails invdetail = new InvoiceDetails();
 
-                string connectionString = "Server=103.50.212.163;Database=K2223RGP;uid=sa;Password=root@123;TrustServerCertificate=True;";
+                //string connectionString = "Server=103.50.212.163;Database=K2223RGP;uid=sa;Password=root@123;TrustServerCertificate=True;";
+                var builder = new SqlConnectionStringBuilder(TenantDBContext.staticConnectionString);
+                string connectionString = builder.ToString();
                 Company customer = new Company();
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
@@ -693,7 +748,7 @@ namespace SutraPlus_DAL.Repository
                                             ACKNO = reader["ACKNO"] as string,
                                             IRNNO = reader["IRNNO"] as string,
                                             SignQRCODE = reader["SignQRCODE"] as string,
-                                            IsActive = reader["IsActive"] as bool?,
+                                            IsActive = reader["IsActive"] as int?,
                                             IsServiceInvoice = reader["IsServiceInvoice"] as bool?
                                         };
 
@@ -765,7 +820,7 @@ namespace SutraPlus_DAL.Repository
                 if (string.IsNullOrEmpty(GST_type))
                 {
                     var result = (from c in _tenantDBContext.Commodities
-                                  where c.CommodityName.Contains(name) && c.IsActive == true
+                                  where c.CommodityName.Contains(name) && c.IsActive == 1
                                   select new
                                   {
                                       c.CommodityId,
@@ -780,7 +835,7 @@ namespace SutraPlus_DAL.Repository
                 else
                 {
                     var result = (from c in _tenantDBContext.Commodities
-                                  where c.SGST == Convert.ToDecimal(GST_type) || c.CGST == Convert.ToDecimal(GST_type) || c.IGST == Convert.ToDecimal(GST_type) && c.IsActive == true
+                                  where c.SGST == Convert.ToDecimal(GST_type) || c.CGST == Convert.ToDecimal(GST_type) || c.IGST == Convert.ToDecimal(GST_type) && c.IsActive == 1
                                   select new
                                   {
                                       c.CommodityId,
@@ -807,7 +862,7 @@ namespace SutraPlus_DAL.Repository
             {
                 var response = new JObject();
                 var result = (from c in _tenantDBContext.Commodities
-                              where c.IsActive == true
+                              where c.IsActive == 1
                               select new
                               {
                                   c.CommodityId,
@@ -1123,7 +1178,7 @@ namespace SutraPlus_DAL.Repository
                             AccountingGroupId = 24,
                             CreatedBy = 1,
                             CreatedDate = DateTime.Now,
-                            IsActive = true
+                            IsActive = 1
                         };
 
                         ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
@@ -1144,7 +1199,7 @@ namespace SutraPlus_DAL.Repository
                         CompanyId = companyId,
                         Credit = 0,
                         Debit = taxableValue,
-                        IsActive = true,
+                        IsActive = 1,
                         PartyInvoiceNumber = BillNumber,
                         LedgerNameForNarration = legder_name,
                         CreatedBy = 1
@@ -1166,7 +1221,7 @@ namespace SutraPlus_DAL.Repository
                         CompanyId = companyId,
                         Credit = 0,
                         Debit = Convert.ToDecimal(SGST_Tot),
-                        IsActive = true,
+                        IsActive = 1,
                         PartyInvoiceNumber = BillNumber,
                         LedgerNameForNarration = legder_name,
                         CreatedBy = 1
@@ -1189,7 +1244,7 @@ namespace SutraPlus_DAL.Repository
                         CompanyId = companyId,
                         Credit = 0,
                         Debit = Convert.ToDecimal(CGST_Tot),
-                        IsActive = true,
+                        IsActive = 1,
                         PartyInvoiceNumber = BillNumber,
                         LedgerNameForNarration = legder_name,
                         CreatedBy = 1
@@ -1217,7 +1272,7 @@ namespace SutraPlus_DAL.Repository
                             CompanyId = companyId,
                             Debit = Convert.ToDecimal(roundOff) > 0 ? Convert.ToDecimal(roundOff) : 0,
                             Credit = (Convert.ToDecimal(roundOff) < 0 ? Convert.ToDecimal(roundOff) : 0) * -1,
-                            IsActive = true,
+                            IsActive = 1,
                             PartyInvoiceNumber = BillNumber,
                             LedgerNameForNarration = legder_name,
                             CreatedBy = 1
@@ -1237,7 +1292,7 @@ namespace SutraPlus_DAL.Repository
                         CompanyId = companyId,
                         Credit = Convert.ToDecimal(Grand_Total),
                         Debit = 0,
-                        IsActive = true,
+                        IsActive = 1,
                         PartyInvoiceNumber = BillNumber,
                         LedgerNameForNarration = CommodityAccountName,
                         CreatedBy = 1
@@ -1312,7 +1367,7 @@ namespace SutraPlus_DAL.Repository
                     var entityBls = _tenantDBContext.BillSummaries.FirstOrDefault(item => item.VochNo == Convert.ToInt64(invoiceNo) && item.VochType == VochType);
                     if (entityBls != null)
                     {
-                        entityBls.IsActive = false;
+                        entityBls.IsActive = 0;
                         _tenantDBContext.SaveChanges();
                         _tenantDBContext.Update(entityBls);
                     }
@@ -1330,7 +1385,7 @@ namespace SutraPlus_DAL.Repository
                     foreach (var invitem in Invresult)
                     {
                         var entityVoch = _tenantDBContext.Inventory.FirstOrDefault(item => item.VochNo == Convert.ToInt64(invoiceNo) && item.VochType == VochType && item.Id == Convert.ToInt64(invitem.Id));
-                        entityVoch.IsActive = false;
+                        entityVoch.IsActive = 0;
                         _tenantDBContext.SaveChanges();
                         _tenantDBContext.Update(entityVoch);
                     }
@@ -1349,7 +1404,7 @@ namespace SutraPlus_DAL.Repository
                     foreach (var Vochitem in Vochresult)
                     {
                         var entityVoch = _tenantDBContext.Vouchers.FirstOrDefault(item => item.VoucherNo == Convert.ToInt64(invoiceNo) && item.VoucherId == VochType && item.Id == Convert.ToInt64(Vochitem.Id));
-                        entityVoch.IsActive = false;
+                        entityVoch.IsActive = 0;
                         _tenantDBContext.SaveChanges();
                         _tenantDBContext.Update(entityVoch);
                     }
@@ -1450,13 +1505,22 @@ namespace SutraPlus_DAL.Repository
 
                 var FrieghtPlus = 0;
 
-                if (LorryData["FrieghtPlus_Less"] == "Party Lorry Frieght" && LorryData["AdvanceFrieght"] > 0)
+                try
                 {
-                    FrieghtPlus = 1;
-                } else
+                    if (LorryData["FrieghtPlus_Less"] == "Party Lorry Frieght" && LorryData["AdvanceFrieght"] > 0)
+                    {
+                        FrieghtPlus = 1;
+                    }
+                    else
+                    {
+                        FrieghtPlus = 0;
+                    }
+                } catch (Exception e)
                 {
-                    FrieghtPlus = 0;
+                    LorryData["FrieghtPlus_Less"] = "";
                 }
+
+                
 
                 BillSummary billsummary = new BillSummary
                 {
@@ -1469,22 +1533,22 @@ namespace SutraPlus_DAL.Repository
                     DisplayinvNo = RartyInvoiceNumber,
                     PartyInvoiceNumber = RartyInvoiceNumber,
                     VochType = data["VochType"],
-                    VoucherName = data["VoucherName"],
+                    VoucherName = data["VoucherName"]??"",
                     DealerType = data["DealerType"],
                     PAN = data["PAN"],
                     GST = data["GST"],
                     InvoiceType = invType,
                     VochNo = data["InoviceNo"],
-                    State = data["State"],
+                    State = data["State"]??"",
                     TotalBags = data["NoOfBags"],
                     TotalWeight = data["TotalWeight"],
                     //other charges block
-                    ExpenseName1 = data["ExpenseName1"],
-                    ExpenseName2 = data["ExpenseName2"],
-                    ExpenseName3 = data["ExpenseName3"],
-                    ExpenseAmount1 = data["ExpenseAmount1"],
-                    ExpenseAmount2 = data["ExpenseAmount2"],
-                    ExpenseAmount3 = data["ExpenseAmount3"],
+                    ExpenseName1 = data["ExpenseName1"] ?? "",
+                    ExpenseName2 = data["ExpenseName2"]??"",
+                    ExpenseName3 = data["ExpenseName3"]??"",
+                    ExpenseAmount1 = data["ExpenseAmount1"] ?? "",
+                    ExpenseAmount2 = data["ExpenseAmount2"]??"",
+                    ExpenseAmount3 = data["ExpenseAmount3"]??"",
                     //paymentDetails
                     TaxableValue = data["TaxableValue"],
                     Discount = data["Discount"],
@@ -1492,14 +1556,14 @@ namespace SutraPlus_DAL.Repository
                     CSGSTValue = data["Cgstvalue"],
                     IGSTValue = data["Igstvalue"],
                     IsSEZ = data["IsSEZ"],
-                    RoundOff = data["RoundOff"],
+                    RoundOff = data["RoundOff"] ?? "",
                     TotalAmount = data["TotalAmount"],
                     BillAmount = data["BillAmount"],
                     StateCode2 = stateCode2value,
                     INWords = AmountToWord(Convert.ToDouble(TotalAmount)),// call amt here (write method to which pass amt & get return amt in words like Ruppes One Hundred & Fifty Five Only)                                                                     
                                                                           //DispatcherAddress1 = data["Address"],
-                    FromPlace = data["FromPlace"],
-                    ToPlace = data["ToPlace"],
+                    FromPlace = data["FromPlace"] ?? "",
+                    ToPlace = data["ToPlace"] ?? "",
                     //Lorray details
                     Ponumber = LorryData["PoNumber"],
                     EwayBillNo = LorryData["EwaybillNo"],
@@ -1525,7 +1589,7 @@ namespace SutraPlus_DAL.Repository
                     DeliveryStateCode = LorryData["DeliveryStateCode"],
                     Distance = LorryData["Distance"],
                     DCNote = LorryData["Dcnote"],
-                    IsActive = true,
+                    IsActive = 1,
 
                     // dispatcher
                     DispatcherName = LorryData["DispatcherName"],
@@ -1553,6 +1617,7 @@ namespace SutraPlus_DAL.Repository
 
                 foreach (var item in itemdata)
                 {
+ 
                     if (item["Sno"] == 1)
                     {
                         ItemNameForVoucherInsert = item["CommodityName"];
@@ -1611,330 +1676,617 @@ namespace SutraPlus_DAL.Repository
                         CGSTRate = item["CgstRate"],
                         Taxable = item["Taxable"],
                         
-                        IsActive = true
+                        IsActive = 1
                     };
                     inventorylist.Add(inventory);
                 }
                 _tenantDBContext.Add(billsummary);
-                _tenantDBContext.SaveChanges();
+                //_tenantDBContext.SaveChanges();
                 _tenantDBContext.AddRange(inventorylist);
                 _tenantDBContext.SaveChanges();
 
-
-                if (VochType > 8)
+                if(VochType != 16)
                 {
-                    var Comm = (from t1 in _tenantDBContext.Inventory
-                                join t2 in _tenantDBContext.Commodities on t1.CommodityId equals t2.CommodityId
-                                where t1.CompanyId == companyid && t1.VochType == VochType && t1.VochNo == invoiceNo
-                                group t1 by new { t1.CommodityId, t2.CommodityName } into g
-                                select new
-                                {
-                                    CommodityName = g.Key.CommodityName,
-                                    Amount = g.Sum(t1 => t1.Amount)
-                                }).ToList();
-                    List<Voucher> voucherlist = new List<Voucher>();
-
-                    string FirstRowCommodityAccountName = "";
-
-                    foreach (var item in Comm)
+                    if (VochType > 8)
                     {
-                        var CommodityAccount = item.CommodityName;
-                        string CommodityAccountName = CommodityAccount + " " + "Account";
-                        var sumofAmt = Comm.Select(c => c.Amount).First();
-                        var ledgerVal = (_tenantDBContext.Ledgers.
-                                      Where(l => l.LedgerName == CommodityAccountName && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+                        var Comm = (from t1 in _tenantDBContext.Inventory
+                                    join t2 in _tenantDBContext.Commodities on t1.CommodityId equals t2.CommodityId
+                                    where t1.CompanyId == companyid && t1.VochType == VochType && t1.VochNo == invoiceNo
+                                    group t1 by new { t1.CommodityId, t2.CommodityName } into g
+                                    select new
+                                    {
+                                        CommodityName = g.Key.CommodityName,
+                                        Amount = g.Sum(t1 => t1.Amount)
+                                    }).ToList();
+                        List<Voucher> voucherlist = new List<Voucher>();
 
+                        string FirstRowCommodityAccountName = "";
 
-                        if (ledgerVal == 0 || ledgerVal == null)
+                        foreach (var item in Comm)
                         {
-                            Ledger ledger = new Ledger
-                            {
-                                CompanyId = companyid,
-                                LedgerName = CommodityAccountName,
-                                AccountingGroupId = 24,
-                                CreatedBy = 1,
-                                CreatedDate = DateTime.Now,
-                                IsActive = true
-                            };
-
-                            ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
-                            ledgerVal = ledger.LedgerId;
-                            _tenantDBContext.Add(ledger);
-                            _tenantDBContext.SaveChanges();
-                        }
+                            var CommodityAccount = item.CommodityName;
+                            string CommodityAccountName = CommodityAccount + " " + "Account";
+                            var sumofAmt = Comm.Select(c => c.Amount).First();
+                            var ledgerVal = (_tenantDBContext.Ledgers.
+                                          Where(l => l.LedgerName == CommodityAccountName && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
 
 
-
-
-
-
-
-
-                        Voucher voucherlst = new Voucher
-                        {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = ledgerVal,
-                            CompanyId = companyid,
-                            Credit = Convert.ToDecimal(item.Amount),
-                            Debit = 0,
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = LorryData["DeliveryName"],
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(voucherlst);
-                    }
-
-
-                    if (Convert.ToDecimal(data["Igstvalue"]) > 0)
-                    {
-                        string CommodityAccountName1 = "Output IGST";
-                        var ledgerVal1 = (_tenantDBContext.Ledgers.
-                                      Where(l => l.LedgerName == CommodityAccountName1 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-                        Voucher voucherlst = new Voucher
-                        {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = ledgerVal1,
-                            CompanyId = companyid,
-                            Credit = Convert.ToDecimal(data["Igstvalue"]),
-                            Debit = 0,
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = LorryData["DeliveryName"],
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(voucherlst);
-
-
-                    }
-                    else
-                    {
-                        string CommodityAccountName1 = "Output SGST";
-                        var ledgerVal1 = (_tenantDBContext.Ledgers.
-                                      Where(l => l.LedgerName == CommodityAccountName1 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-                        var sgstvalue = data["Sgstvalue"];
-                        if (sgstvalue == null)
-                            data["Sgstvalue"] = 0;
-                        Voucher voucherlst = new Voucher
-                        {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = ledgerVal1,
-                            CompanyId = companyid,
-                            Credit = Convert.ToDecimal(data["Sgstvalue"]),
-                            Debit = 0,
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = data["LedgerName"],
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(voucherlst);
-
-                        string CommodityAccountName2 = "Output CGST";
-
-                        var ledgerVal2 = (_tenantDBContext.Ledgers.
-                                      Where(l => l.LedgerName == CommodityAccountName2 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-                        var Cgstvalue = data["Cgstvalue"];
-                        if (Cgstvalue == null)
-                            data["Cgstvalue"] = 0;
-
-                        Voucher voucherlst1 = new Voucher
-                        {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = ledgerVal2,
-                            CompanyId = companyid,
-                            Credit = Convert.ToDecimal(data["Cgstvalue"]),
-                            Debit = 0,
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = data["LedgerName"],
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(voucherlst1);
-                    }
-
-
-
-
-                    if (Convert.ToDecimal(data["ExpenseAmount1"]) > 0)
-                    {
-                        string ExpenseName1 = data["ExpenseName1"];
-                        var Expense1LedgerID = (_tenantDBContext.Ledgers.
-                                      Where(l => l.LedgerName == ExpenseName1 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-
-                        if (Expense1LedgerID == 0 || Expense1LedgerID == null)
-                        {
-                            Ledger ledger = new Ledger
-                            {
-                                CompanyId = companyid,
-                                LedgerName = ExpenseName1,
-                                AccountingGroupId = 24,
-                                CreatedBy = 1,
-                                CreatedDate = DateTime.Now,
-                                IsActive = true
-                            };
-
-                            ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
-                            Expense1LedgerID = ledger.LedgerId;
-                            _tenantDBContext.Add(ledger);
-                            _tenantDBContext.SaveChanges();
-                        }
-
-
-
-
-                        Voucher voucherlstExpenses1 = new Voucher
-                        {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = Expense1LedgerID,
-                            CompanyId = companyid,
-                            Credit = Convert.ToDecimal(data["ExpenseAmount1"]),
-                            Debit = 0,
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = data["LedgerName"],
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(voucherlstExpenses1);
-                    }
-
-                    if (Convert.ToDecimal(data["ExpenseAmount2"]) > 0)
-                    {
-                        string ExpenseName2 = data["ExpenseName2"];
-                        var Expense2LedgerID = (_tenantDBContext.Ledgers.
-                                      Where(l => l.LedgerName == ExpenseName2 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-
-                        if (Expense2LedgerID == 0 || Expense2LedgerID == null)
-                        {
-                            Ledger ledger = new Ledger
-                            {
-                                CompanyId = companyid,
-                                LedgerName = ExpenseName2,
-                                AccountingGroupId = 24,
-                                CreatedBy = 1,
-                                CreatedDate = DateTime.Now,
-                                IsActive = true
-                            };
-
-                            ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
-                            Expense2LedgerID = ledger.LedgerId;
-                            _tenantDBContext.Add(ledger);
-                            _tenantDBContext.SaveChanges();
-                        }
-
-
-                        Voucher voucherlstExpenses2 = new Voucher
-                        {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = Expense2LedgerID,
-                            CompanyId = companyid,
-                            Credit = Convert.ToDecimal(data["ExpenseAmount2"]),
-                            Debit = 0,
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = data["LedgerName"],
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(voucherlstExpenses2);
-                    }
-
-                    if (Convert.ToDecimal(data["ExpenseAmount3"]) > 0)
-                    {
-                        string ExpenseName3 = data["ExpenseName3"];
-                        var Expense3LedgerID = (_tenantDBContext.Ledgers.
-                                      Where(l => l.LedgerName == ExpenseName3 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-                        if (Expense3LedgerID == 0 || Expense3LedgerID == null)
-                        {
-                            Ledger ledger = new Ledger
-                            {
-                                CompanyId = companyid,
-                                LedgerName = ExpenseName3,
-                                AccountingGroupId = 24,
-                                CreatedBy = 1,
-                                CreatedDate = DateTime.Now,
-                                IsActive = true
-                            };
-
-                            ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
-                            Expense3LedgerID = ledger.LedgerId;
-                            _tenantDBContext.Add(ledger);
-                            _tenantDBContext.SaveChanges();
-                        }
-
-
-
-
-                        Voucher voucherlstExpenses3 = new Voucher
-                        {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = Expense3LedgerID,
-                            CompanyId = companyid,
-                            Credit = Convert.ToDecimal(data["ExpenseAmount3"]),
-                            Debit = 0,
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = data["LedgerName"],
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(voucherlstExpenses3);
-                    }
-
-
-
-                    if (LorryData["FrieghtPlus_Less"] == "Party Lorry Frieght")
-                    {
-                        if (Convert.ToDecimal(LorryData["AdvanceFrieght"]) > 0)
-                        {
-                            string TransPorterName1 = "";
-
-                            if (LorryData["Transporter"] == null || LorryData["Transporter"] == "")
-                            {
-                                TransPorterName1 = "Lorry Frieght Advance Account";
-                            }
-                            else
-                            {
-                                TransPorterName1 = LorryData["Transporter"];
-                            }
-
-                            var ledgerValTransPorterName1 = (_tenantDBContext.Ledgers.
-                                          Where(l => l.LedgerName == TransPorterName1 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-                            if (ledgerValTransPorterName1 == 0 || ledgerValTransPorterName1 == null)
+                            if (ledgerVal == 0 || ledgerVal == null)
                             {
                                 Ledger ledger = new Ledger
+                                {
+                                    CompanyId = companyid,
+                                    LedgerName = CommodityAccountName,
+                                    AccountingGroupId = 24,
+                                    CreatedBy = 1,
+                                    CreatedDate = DateTime.Now,
+                                    IsActive = 1
+                                };
+
+                                ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
+                                ledgerVal = ledger.LedgerId;
+                                _tenantDBContext.Add(ledger);
+                                _tenantDBContext.SaveChanges();
+                            }
+
+
+
+
+
+
+
+
+                            Voucher voucherlst = new Voucher
+                            {
+                                CommodityId = 0,
+                                TranctDate = data["OriginalInvDate"],
+                                VoucherId = VochType,
+                                VoucherNo = invoiceNo,
+                                Narration = Convert.ToString(invoiceNo),
+                                LedgerId = ledgerVal,
+                                CompanyId = companyid,
+                                Credit = Convert.ToDecimal(item.Amount),
+                                Debit = 0,
+                                IsActive = 1,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
+                                LedgerNameForNarration = LorryData["DeliveryName"],
+                                CreatedBy = 1
+                            };
+                            voucherlist.Add(voucherlst);
+                        }
+
+
+                        if (Convert.ToDecimal(data["Igstvalue"]) > 0)
+                        {
+                            string CommodityAccountName1 = "Output IGST";
+                            var ledgerVal1 = (_tenantDBContext.Ledgers.
+                                          Where(l => l.LedgerName == CommodityAccountName1 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+                            Voucher voucherlst = new Voucher
+                            {
+                                CommodityId = 0,
+                                TranctDate = data["OriginalInvDate"],
+                                VoucherId = VochType,
+                                VoucherNo = invoiceNo,
+                                Narration = Convert.ToString(invoiceNo),
+                                LedgerId = ledgerVal1,
+                                CompanyId = companyid,
+                                Credit = Convert.ToDecimal(data["Igstvalue"]),
+                                Debit = 0,
+                                IsActive = 1,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
+                                LedgerNameForNarration = LorryData["DeliveryName"],
+                                CreatedBy = 1
+                            };
+                            voucherlist.Add(voucherlst);
+
+
+                        }
+                        else
+                        {
+                            string CommodityAccountName1 = "Output SGST";
+                            var ledgerVal1 = (_tenantDBContext.Ledgers.
+                                          Where(l => l.LedgerName == CommodityAccountName1 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+                            var sgstvalue = data["Sgstvalue"];
+                            if (sgstvalue == null)
+                                data["Sgstvalue"] = 0;
+                            Voucher voucherlst = new Voucher
+                            {
+                                CommodityId = 0,
+                                TranctDate = data["OriginalInvDate"],
+                                VoucherId = VochType,
+                                VoucherNo = invoiceNo,
+                                Narration = Convert.ToString(invoiceNo),
+                                LedgerId = ledgerVal1,
+                                CompanyId = companyid,
+                                Credit = Convert.ToDecimal(data["Sgstvalue"]),
+                                Debit = 0,
+                                IsActive = 1,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
+                                LedgerNameForNarration = data["LedgerName"],
+                                CreatedBy = 1
+                            };
+                            voucherlist.Add(voucherlst);
+
+                            string CommodityAccountName2 = "Output CGST";
+
+                            var ledgerVal2 = (_tenantDBContext.Ledgers.
+                                          Where(l => l.LedgerName == CommodityAccountName2 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+                            var Cgstvalue = data["Cgstvalue"];
+                            if (Cgstvalue == null)
+                                data["Cgstvalue"] = 0;
+
+                            Voucher voucherlst1 = new Voucher
+                            {
+                                CommodityId = 0,
+                                TranctDate = data["OriginalInvDate"],
+                                VoucherId = VochType,
+                                VoucherNo = invoiceNo,
+                                Narration = Convert.ToString(invoiceNo),
+                                LedgerId = ledgerVal2,
+                                CompanyId = companyid,
+                                Credit = Convert.ToDecimal(data["Cgstvalue"]),
+                                Debit = 0,
+                                IsActive = 1,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
+                                LedgerNameForNarration = data["LedgerName"],
+                                CreatedBy = 1
+                            };
+                            voucherlist.Add(voucherlst1);
+                        }
+
+
+
+
+                        if (Convert.ToDecimal(data["ExpenseAmount1"]) > 0)
+                        {
+                            string ExpenseName1 = data["ExpenseName1"];
+                            var Expense1LedgerID = (_tenantDBContext.Ledgers.
+                                          Where(l => l.LedgerName == ExpenseName1 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+
+                            if (Expense1LedgerID == 0 || Expense1LedgerID == null)
+                            {
+                                Ledger ledger = new Ledger
+                                {
+                                    CompanyId = companyid,
+                                    LedgerName = ExpenseName1,
+                                    AccountingGroupId = 24,
+                                    CreatedBy = 1,
+                                    CreatedDate = DateTime.Now,
+                                    IsActive = 1
+                                };
+
+                                ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
+                                Expense1LedgerID = ledger.LedgerId;
+                                _tenantDBContext.Add(ledger);
+                                _tenantDBContext.SaveChanges();
+                            }
+
+
+
+
+                            Voucher voucherlstExpenses1 = new Voucher
+                            {
+                                CommodityId = 0,
+                                TranctDate = data["OriginalInvDate"],
+                                VoucherId = VochType,
+                                VoucherNo = invoiceNo,
+                                Narration = Convert.ToString(invoiceNo),
+                                LedgerId = Expense1LedgerID,
+                                CompanyId = companyid,
+                                Credit = Convert.ToDecimal(data["ExpenseAmount1"]),
+                                Debit = 0,
+                                IsActive = 1,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
+                                LedgerNameForNarration = data["LedgerName"],
+                                CreatedBy = 1
+                            };
+                            voucherlist.Add(voucherlstExpenses1);
+                        }
+
+                        if (Convert.ToDecimal(data["ExpenseAmount2"]) > 0)
+                        {
+                            string ExpenseName2 = data["ExpenseName2"];
+                            var Expense2LedgerID = (_tenantDBContext.Ledgers.
+                                          Where(l => l.LedgerName == ExpenseName2 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+
+                            if (Expense2LedgerID == 0 || Expense2LedgerID == null)
+                            {
+                                Ledger ledger = new Ledger
+                                {
+                                    CompanyId = companyid,
+                                    LedgerName = ExpenseName2,
+                                    AccountingGroupId = 24,
+                                    CreatedBy = 1,
+                                    CreatedDate = DateTime.Now,
+                                    IsActive = 1
+                                };
+
+                                ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
+                                Expense2LedgerID = ledger.LedgerId;
+                                _tenantDBContext.Add(ledger);
+                                _tenantDBContext.SaveChanges();
+                            }
+
+
+                            Voucher voucherlstExpenses2 = new Voucher
+                            {
+                                CommodityId = 0,
+                                TranctDate = data["OriginalInvDate"],
+                                VoucherId = VochType,
+                                VoucherNo = invoiceNo,
+                                Narration = Convert.ToString(invoiceNo),
+                                LedgerId = Expense2LedgerID,
+                                CompanyId = companyid,
+                                Credit = Convert.ToDecimal(data["ExpenseAmount2"]),
+                                Debit = 0,
+                                IsActive = 1,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
+                                LedgerNameForNarration = data["LedgerName"],
+                                CreatedBy = 1
+                            };
+                            voucherlist.Add(voucherlstExpenses2);
+                        }
+
+                        if (Convert.ToDecimal(data["ExpenseAmount3"]) > 0)
+                        {
+                            string ExpenseName3 = data["ExpenseName3"];
+                            var Expense3LedgerID = (_tenantDBContext.Ledgers.
+                                          Where(l => l.LedgerName == ExpenseName3 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+                            if (Expense3LedgerID == 0 || Expense3LedgerID == null)
+                            {
+                                Ledger ledger = new Ledger
+                                {
+                                    CompanyId = companyid,
+                                    LedgerName = ExpenseName3,
+                                    AccountingGroupId = 24,
+                                    CreatedBy = 1,
+                                    CreatedDate = DateTime.Now,
+                                    IsActive = 1
+                                };
+
+                                ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
+                                Expense3LedgerID = ledger.LedgerId;
+                                _tenantDBContext.Add(ledger);
+                                _tenantDBContext.SaveChanges();
+                            }
+
+
+
+
+                            Voucher voucherlstExpenses3 = new Voucher
+                            {
+                                CommodityId = 0,
+                                TranctDate = data["OriginalInvDate"],
+                                VoucherId = VochType,
+                                VoucherNo = invoiceNo,
+                                Narration = Convert.ToString(invoiceNo),
+                                LedgerId = Expense3LedgerID,
+                                CompanyId = companyid,
+                                Credit = Convert.ToDecimal(data["ExpenseAmount3"]),
+                                Debit = 0,
+                                IsActive = 1,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
+                                LedgerNameForNarration = data["LedgerName"],
+                                CreatedBy = 1
+                            };
+                            voucherlist.Add(voucherlstExpenses3);
+                        }
+
+
+
+                        if (LorryData["FrieghtPlus_Less"] == "Party Lorry Frieght")
+                        {
+                            if (Convert.ToDecimal(LorryData["AdvanceFrieght"]) > 0)
+                            {
+                                string TransPorterName1 = "";
+
+                                if (LorryData["Transporter"] == null || LorryData["Transporter"] == "")
+                                {
+                                    TransPorterName1 = "Lorry Frieght Advance Account";
+                                }
+                                else
+                                {
+                                    TransPorterName1 = LorryData["Transporter"];
+                                }
+
+                                var ledgerValTransPorterName1 = (_tenantDBContext.Ledgers.
+                                              Where(l => l.LedgerName == TransPorterName1 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+                                if (ledgerValTransPorterName1 == 0 || ledgerValTransPorterName1 == null)
+                                {
+                                    /*Ledger ledger = new Ledger
+                                    {
+                                        CompanyId = companyid,
+                                        LedgerName = LorryData["Transporter"],
+                                        AccountingGroupId = 21,
+                                        CreatedBy = 1,
+                                        CreatedDate = DateTime.Now,
+                                        IsActive = true
+                                    };
+
+                                    ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
+                                    ledgerValTransPorterName1 = ledger.LedgerId;
+                                    _tenantDBContext.Add(ledger);
+                                    _tenantDBContext.SaveChanges();*/
+
+                                    var builder = new SqlConnectionStringBuilder(TenantDBContext.staticConnectionString);
+                                    string connectionString = builder.ToString();
+                                    using (SqlConnection connection = new SqlConnection(connectionString))
+                                    {
+                                        connection.Open();
+
+                                        SqlCommand insertCommand = connection.CreateCommand();
+                                        insertCommand.CommandType = CommandType.Text;
+                                        insertCommand.CommandText = @"INSERT INTO Ledger (CompanyId, LedgerName, AccountingGroupId, CreatedBy, CreatedDate, IsActive) 
+                                   VALUES (@CompanyId, @LedgerName, @AccountingGroupId, @CreatedBy, @CreatedDate, @IsActive);";
+
+                                        insertCommand.Parameters.AddWithValue("@CompanyId", companyid);
+                                        insertCommand.Parameters.AddWithValue("@LedgerName", Convert.ToString(LorryData["Transporter"]));
+                                        insertCommand.Parameters.AddWithValue("@AccountingGroupId", 21);
+                                        insertCommand.Parameters.AddWithValue("@CreatedBy", 1);
+                                        insertCommand.Parameters.AddWithValue("@CreatedDate", DateTime.Now);
+                                        insertCommand.Parameters.AddWithValue("@IsActive", 1);
+
+                                        insertCommand.ExecuteNonQuery();
+
+                                        SqlCommand selectMaxIdCommand = connection.CreateCommand();
+                                        selectMaxIdCommand.CommandType = CommandType.Text;
+                                        selectMaxIdCommand.CommandText = "SELECT MAX(LedgerId) FROM Ledger;";
+
+                                        int ledgerId = Convert.ToInt32(selectMaxIdCommand.ExecuteScalar());
+
+                                        ledgerValTransPorterName1 = ledgerId;
+
+                                        // Close the connection
+                                        connection.Close();
+                                    }
+
+                                }
+
+                                Voucher voucherlstAdvanceFrieght1 = new Voucher
+                                {
+                                    CommodityId = 0,
+                                    TranctDate = data["OriginalInvDate"],
+                                    VoucherId = VochType,
+                                    VoucherNo = invoiceNo,
+                                    Narration = Convert.ToString(invoiceNo),
+                                    LedgerId = ledgerValTransPorterName1,
+                                    CompanyId = companyid,
+                                    Credit = Convert.ToDecimal(LorryData["AdvanceFrieght"]),
+                                    Debit = 0,
+                                    IsActive = 1,
+                                    PartyInvoiceNumber = RartyInvoiceNumber,
+                                    LedgerNameForNarration = data["LedgerName"],
+                                    CreatedBy = 1
+                                };
+                                voucherlist.Add(voucherlstAdvanceFrieght1);
+                            }
+                        }
+
+                        if (LorryData["FrieghtPlus_Less"] == "Own Lorry Frieght")
+                        {
+                            if (LorryData["TotalFrieght"] > 0)
+                            {
+                                string TotalFrieghtName = "";
+
+                                TotalFrieghtName = "Lorry Frieght Account";
+
+                                var ledgerValTransPorterName1 = (_tenantDBContext.Ledgers.
+                                              Where(l => l.LedgerName == TotalFrieghtName && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+
+                                Voucher voucherlstAdvanceFrieght1 = new Voucher
+                                {
+                                    CommodityId = 0,
+                                    TranctDate = data["OriginalInvDate"],
+                                    VoucherId = VochType,
+                                    VoucherNo = invoiceNo,
+                                    Narration = Convert.ToString(invoiceNo),
+                                    LedgerId = ledgerValTransPorterName1,
+                                    CompanyId = companyid,
+                                    Credit = 0,
+                                    Debit = Convert.ToDecimal(LorryData["TotalFrieght"]),
+                                    IsActive = 1,
+                                    PartyInvoiceNumber = RartyInvoiceNumber,
+                                    LedgerNameForNarration = data["LedgerName"],
+                                    CreatedBy = 1
+                                };
+                                voucherlist.Add(voucherlstAdvanceFrieght1);
+                            }
+
+                            if (Convert.ToDecimal(LorryData["AdvanceFrieght"]) > 0)
+                            {
+                                string TransPorterName1 = "";
+
+                                if (LorryData["Transporter"] == null || LorryData["Transporter"] == "")
+                                {
+                                    TransPorterName1 = "Lorry Frieght Advance Account";
+                                }
+                                else
+                                {
+                                    TransPorterName1 = LorryData["Transporter"];
+                                }
+
+                                var ledgerValTransPorterName1 = (_tenantDBContext.Ledgers.
+                                              Where(l => l.LedgerName == TransPorterName1 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+
+                                if (ledgerValTransPorterName1 == 0 || ledgerValTransPorterName1 == null)
+                                {
+                                    /*Ledger ledger = new Ledger
+                                    {
+                                        CompanyId = companyid,
+                                        LedgerName = TransPorterName1,
+                                        AccountingGroupId = 21,
+                                        CreatedBy = 1,
+                                        CreatedDate = DateTime.Now,
+                                        IsActive = true
+                                    };
+
+                                    ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
+                                    ledgerValTransPorterName1 = ledger.LedgerId;
+                                    _tenantDBContext.Add(ledger);
+                                    _tenantDBContext.SaveChanges();*/
+
+                                    var builder = new SqlConnectionStringBuilder(TenantDBContext.staticConnectionString);
+                                    string connectionString = builder.ToString();
+
+                                    using (SqlConnection connection = new SqlConnection(connectionString))
+                                    {
+                                        connection.Open();
+
+                                        string insertQuery = @"INSERT INTO Ledgers (CompanyId, LedgerName, AccountingGroupId, CreatedBy, CreatedDate, IsActive)
+                            VALUES (@CompanyId, @LedgerName, @AccountingGroupId, @CreatedBy, @CreatedDate, @IsActive);
+                            SELECT SCOPE_IDENTITY();";
+                                        using (SqlCommand insertCommand = new SqlCommand(insertQuery, connection))
+                                        {
+                                            insertCommand.Parameters.AddWithValue("@CompanyId", companyid);
+                                            insertCommand.Parameters.AddWithValue("@LedgerName", TransPorterName1);
+                                            insertCommand.Parameters.AddWithValue("@AccountingGroupId", 21);
+                                            insertCommand.Parameters.AddWithValue("@CreatedBy", 1);
+                                            insertCommand.Parameters.AddWithValue("@CreatedDate", DateTime.Now);
+                                            insertCommand.Parameters.AddWithValue("@IsActive", 1);
+
+                                            int newLedgerId = Convert.ToInt32(insertCommand.ExecuteScalar());
+
+                                            ledgerValTransPorterName1 = newLedgerId;
+                                        }
+                                    }
+
+                                }
+
+
+                                Voucher voucherlstAdvanceFrieght1 = new Voucher
+                                {
+                                    CommodityId = 0,
+                                    TranctDate = data["OriginalInvDate"],
+                                    VoucherId = VochType,
+                                    VoucherNo = invoiceNo,
+                                    Narration = Convert.ToString(invoiceNo),
+                                    LedgerId = ledgerValTransPorterName1,
+                                    CompanyId = companyid,
+                                    Credit = Convert.ToDecimal(LorryData["AdvanceFrieght"]),
+                                    Debit = 0,
+                                    IsActive = 1,
+                                    PartyInvoiceNumber = RartyInvoiceNumber,
+                                    LedgerNameForNarration = data["LedgerName"],
+                                    CreatedBy = 1
+                                };
+                                voucherlist.Add(voucherlstAdvanceFrieght1);
+                            }
+                        }
+
+                        var RoundOff = data["RoundOff"];
+                        if (RoundOff == null)
+                            data["RoundOff"] = 0;
+
+                        if (Convert.ToDecimal(data["RoundOff"]) != 0)
+                        {
+                            string RoundoffAccountName = "Round Off Account";
+                            var RoundoffLedgerID = (_tenantDBContext.Ledgers.
+                                          Where(l => l.LedgerName == RoundoffAccountName && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+                            Voucher voucherlstExpenses3 = new Voucher
+                            {
+                                CommodityId = 0,
+                                TranctDate = data["OriginalInvDate"],
+                                VoucherId = VochType,
+                                VoucherNo = invoiceNo,
+                                Narration = Convert.ToString(invoiceNo),
+                                LedgerId = RoundoffLedgerID,
+                                CompanyId = companyid,
+                                Credit = Convert.ToDecimal(data["RoundOff"]) > 0 ? Convert.ToDecimal(data["RoundOff"]) : 0,
+                                Debit = (Convert.ToDecimal(data["RoundOff"]) < 0 ? Convert.ToDecimal(data["RoundOff"]) : 0) * -1,
+                                IsActive = 1,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
+                                LedgerNameForNarration = data["LedgerName"],
+                                CreatedBy = 1
+                            };
+                            voucherlist.Add(voucherlstExpenses3);
+                        }
+
+
+                        if (LorryData["FrieghtPlus_Less"] == "Own Lorry Frieght" && LorryData["Transporter"] != "" && LorryData["TotalFrieght"] > 0 && LorryData["TDS"] > 0)
+                        {
+                            var TDSAmount = (LorryData["TotalFrieght"] * LorryData["TDS"]) / 100;
+
+                            string TDSAccountName = "TDS On Rent";
+                            var TDSLedgerID = (_tenantDBContext.Ledgers.
+                                          Where(l => l.LedgerName == TDSAccountName && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+                            if (TDSLedgerID == 0 || TDSLedgerID == null)
+                            {
+                                /* Ledger ledger = new Ledger
+                                 {
+                                     CompanyId = companyid,
+                                     LedgerName = TDSAccountName,
+                                     AccountingGroupId = 27,
+                                     CreatedBy = 1,
+                                     CreatedDate = DateTime.Now,
+                                     IsActive = true
+                                 };
+
+                                 ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
+                                 TDSLedgerID = ledger.LedgerId;
+                                 _tenantDBContext.Add(ledger);
+                                 _tenantDBContext.SaveChanges();*/
+
+                                var builder = new SqlConnectionStringBuilder(TenantDBContext.staticConnectionString);
+                                string connectionString = builder.ToString();
+                                using (SqlConnection connection = new SqlConnection(connectionString))
+                                {
+                                    connection.Open();
+
+                                    SqlCommand command = connection.CreateCommand();
+                                    command.CommandText = "INSERT INTO Ledger (CompanyId, LedgerName, AccountingGroupId, CreatedBy, CreatedDate, IsActive) VALUES (@CompanyId, @LedgerName, @AccountingGroupId, @CreatedBy, @CreatedDate, @IsActive); SELECT SCOPE_IDENTITY();";
+                                    command.Parameters.AddWithValue("@CompanyId", companyid);
+                                    command.Parameters.AddWithValue("@LedgerName", TDSAccountName);
+                                    command.Parameters.AddWithValue("@AccountingGroupId", 27);
+                                    command.Parameters.AddWithValue("@CreatedBy", 1);
+                                    command.Parameters.AddWithValue("@CreatedDate", DateTime.Now);
+                                    command.Parameters.AddWithValue("@IsActive", 1);
+
+                                    int ledgerId = Convert.ToInt32(command.ExecuteScalar());
+
+                                    TDSLedgerID = ledgerId;
+                                }
+
+                            }
+
+
+
+                            Voucher VochTDSExpenses = new Voucher
+                            {
+                                CommodityId = 0,
+                                TranctDate = data["OriginalInvDate"],
+                                VoucherId = VochType,
+                                VoucherNo = invoiceNo,
+                                Narration = Convert.ToString(invoiceNo),
+                                LedgerId = TDSLedgerID,
+                                CompanyId = companyid,
+                                Credit = TDSAmount,
+                                Debit = 0,
+                                IsActive = 1,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
+                                LedgerNameForNarration = data["LedgerName"],
+                                CreatedBy = 1
+                            };
+                            voucherlist.Add(VochTDSExpenses);
+
+
+                            string TransPorterNameFroTDS = LorryData["Transporter"];
+                            var ledgerValTransPorterForTDS = (_tenantDBContext.Ledgers.
+                                              Where(l => l.LedgerName == TransPorterNameFroTDS && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+                            if (ledgerValTransPorterForTDS == 0 || ledgerValTransPorterForTDS == null)
+                            {
+                                /*Ledger ledger = new Ledger
                                 {
                                     CompanyId = companyid,
                                     LedgerName = LorryData["Transporter"],
@@ -1945,9 +2297,35 @@ namespace SutraPlus_DAL.Repository
                                 };
 
                                 ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
-                                ledgerValTransPorterName1 = ledger.LedgerId;
+                                ledgerValTransPorterForTDS = ledger.LedgerId;
                                 _tenantDBContext.Add(ledger);
-                                _tenantDBContext.SaveChanges();
+                                _tenantDBContext.SaveChanges();*/
+
+
+                                var builder = new SqlConnectionStringBuilder(TenantDBContext.staticConnectionString);
+                                string connectionString = builder.ToString();
+
+                                using (SqlConnection connection = new SqlConnection(connectionString))
+                                {
+                                    connection.Open();
+
+                                    string insertQuery = @"INSERT INTO Ledgers (CompanyId, LedgerName, AccountingGroupId, CreatedBy, CreatedDate, IsActive) 
+                           VALUES (@CompanyId, @LedgerName, @AccountingGroupId, @CreatedBy, @CreatedDate, @IsActive);
+                           SELECT SCOPE_IDENTITY();";
+
+                                    SqlCommand insertCommand = new SqlCommand(insertQuery, connection);
+                                    insertCommand.Parameters.AddWithValue("@CompanyId", companyid);
+                                    insertCommand.Parameters.AddWithValue("@LedgerName", Convert.ToString(LorryData["Transporter"]));
+                                    insertCommand.Parameters.AddWithValue("@AccountingGroupId", 21);
+                                    insertCommand.Parameters.AddWithValue("@CreatedBy", 1);
+                                    insertCommand.Parameters.AddWithValue("@CreatedDate", DateTime.Now);
+                                    insertCommand.Parameters.AddWithValue("@IsActive", 1);
+
+                                    int ledgerId = Convert.ToInt32(insertCommand.ExecuteScalar());
+
+                                    connection.Close();
+                                }
+
                             }
 
                             Voucher voucherlstAdvanceFrieght1 = new Voucher
@@ -1957,579 +2335,834 @@ namespace SutraPlus_DAL.Repository
                                 VoucherId = VochType,
                                 VoucherNo = invoiceNo,
                                 Narration = Convert.ToString(invoiceNo),
-                                LedgerId = ledgerValTransPorterName1,
-                                CompanyId = companyid,
-                                Credit = Convert.ToDecimal(LorryData["AdvanceFrieght"]),
-                                Debit = 0,
-                                IsActive = true,
-                                PartyInvoiceNumber = RartyInvoiceNumber,
-                                LedgerNameForNarration = data["LedgerName"],
-                                CreatedBy = 1
-                            };
-                            voucherlist.Add(voucherlstAdvanceFrieght1);
-                        }
-                    }
-
-                    if (LorryData["FrieghtPlus_Less"] == "Own Lorry Frieght")
-                    {
-                        if (LorryData["TotalFrieght"] > 0)
-                        {
-                            string TotalFrieghtName = "";
-
-                            TotalFrieghtName = "Lorry Frieght Account";
-
-                            var ledgerValTransPorterName1 = (_tenantDBContext.Ledgers.
-                                          Where(l => l.LedgerName == TotalFrieghtName && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-
-                            Voucher voucherlstAdvanceFrieght1 = new Voucher
-                            {
-                                CommodityId = 0,
-                                TranctDate = data["OriginalInvDate"],
-                                VoucherId = VochType,
-                                VoucherNo = invoiceNo,
-                                Narration = Convert.ToString(invoiceNo),
-                                LedgerId = ledgerValTransPorterName1,
+                                LedgerId = ledgerValTransPorterForTDS,
                                 CompanyId = companyid,
                                 Credit = 0,
-                                Debit = Convert.ToDecimal(LorryData["TotalFrieght"]),
-                                IsActive = true,
+                                Debit = TDSAmount,
+                                IsActive = 1,
                                 PartyInvoiceNumber = RartyInvoiceNumber,
                                 LedgerNameForNarration = data["LedgerName"],
                                 CreatedBy = 1
                             };
                             voucherlist.Add(voucherlstAdvanceFrieght1);
+
                         }
 
-                        if (Convert.ToDecimal(LorryData["AdvanceFrieght"]) > 0)
+
+
+
+                        var BillAmount = data["BillAmount"];
+                        if (BillAmount == null)
+                            data["BillAmount"] = 0;
+
+                        if (Convert.ToDecimal(data["BillAmount"]) != 0)
                         {
-                            string TransPorterName1 = "";
 
-                            if (LorryData["Transporter"] == null || LorryData["Transporter"] == "")
-                            {
-                                TransPorterName1 = "Lorry Frieght Advance Account";
-                            }
-                            else
-                            {
-                                TransPorterName1 = LorryData["Transporter"];
-                            }
-
-                            var ledgerValTransPorterName1 = (_tenantDBContext.Ledgers.
-                                          Where(l => l.LedgerName == TransPorterName1 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-
-                            if (ledgerValTransPorterName1 == 0 || ledgerValTransPorterName1 == null)
-                            {
-                                Ledger ledger = new Ledger
-                                {
-                                    CompanyId = companyid,
-                                    LedgerName = TransPorterName1,
-                                    AccountingGroupId = 21,
-                                    CreatedBy = 1,
-                                    CreatedDate = DateTime.Now,
-                                    IsActive = true
-                                };
-
-                                ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
-                                ledgerValTransPorterName1 = ledger.LedgerId;
-                                _tenantDBContext.Add(ledger);
-                                _tenantDBContext.SaveChanges();
-                            }
-
-
-                            Voucher voucherlstAdvanceFrieght1 = new Voucher
+                            Voucher voucherlstBillAmount = new Voucher
                             {
                                 CommodityId = 0,
                                 TranctDate = data["OriginalInvDate"],
                                 VoucherId = VochType,
                                 VoucherNo = invoiceNo,
                                 Narration = Convert.ToString(invoiceNo),
-                                LedgerId = ledgerValTransPorterName1,
+                                LedgerId = data["LedgerId"],
                                 CompanyId = companyid,
-                                Credit = Convert.ToDecimal(LorryData["AdvanceFrieght"]),
-                                Debit = 0,
-                                IsActive = true,
+                                Credit = 0,
+                                Debit = Convert.ToDecimal(data["BillAmount"]),
+                                IsActive = 1,
                                 PartyInvoiceNumber = RartyInvoiceNumber,
-                                LedgerNameForNarration = data["LedgerName"],
+                                LedgerNameForNarration = ItemNameForVoucherInsert + " Account",
                                 CreatedBy = 1
                             };
-                            voucherlist.Add(voucherlstAdvanceFrieght1);
+                            voucherlist.Add(voucherlstBillAmount);
                         }
-                    }
-
-                    var RoundOff = data["RoundOff"];
-                    if (RoundOff == null)
-                        data["RoundOff"] = 0;
-
-                    if (Convert.ToDecimal(data["RoundOff"]) != 0)
-                    {
-                        string RoundoffAccountName = "Round Off Account";
-                        var RoundoffLedgerID = (_tenantDBContext.Ledgers.
-                                      Where(l => l.LedgerName == RoundoffAccountName && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-                        Voucher voucherlstExpenses3 = new Voucher
-                        {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = RoundoffLedgerID,
-                            CompanyId = companyid,
-                            Credit = Convert.ToDecimal(data["RoundOff"]) > 0 ? Convert.ToDecimal(data["RoundOff"]) : 0,
-                            Debit = (Convert.ToDecimal(data["RoundOff"]) < 0 ? Convert.ToDecimal(data["RoundOff"]) : 0) * -1,
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = data["LedgerName"],
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(voucherlstExpenses3);
-                    }
-
-
-                    if (LorryData["FrieghtPlus_Less"] == "Own Lorry Frieght" && LorryData["Transporter"] != "" && LorryData["TotalFrieght"] > 0 && LorryData["TDS"] > 0)
-                    {
-                        var TDSAmount = (LorryData["TotalFrieght"] * LorryData["TDS"]) / 100;
-
-                        string TDSAccountName = "TDS On Rent";
-                        var TDSLedgerID = (_tenantDBContext.Ledgers.
-                                      Where(l => l.LedgerName == TDSAccountName && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-                        if (TDSLedgerID == 0 || TDSLedgerID == null)
-                        {
-                            Ledger ledger = new Ledger
-                            {
-                                CompanyId = companyid,
-                                LedgerName = TDSAccountName,
-                                AccountingGroupId = 27,
-                                CreatedBy = 1,
-                                CreatedDate = DateTime.Now,
-                                IsActive = true
-                            };
-
-                            ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
-                            TDSLedgerID = ledger.LedgerId;
-                            _tenantDBContext.Add(ledger);
-                            _tenantDBContext.SaveChanges();
-                        }
-
-
-
-                        Voucher VochTDSExpenses = new Voucher
-                        {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = TDSLedgerID,
-                            CompanyId = companyid,
-                            Credit = TDSAmount,
-                            Debit = 0,
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = data["LedgerName"],
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(VochTDSExpenses);
-
-
-                        string TransPorterNameFroTDS = LorryData["Transporter"];
-                        var ledgerValTransPorterForTDS = (_tenantDBContext.Ledgers.
-                                          Where(l => l.LedgerName == TransPorterNameFroTDS && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-                        if (ledgerValTransPorterForTDS == 0 || ledgerValTransPorterForTDS == null)
-                        {
-                            Ledger ledger = new Ledger
-                            {
-                                CompanyId = companyid,
-                                LedgerName = LorryData["Transporter"],
-                                AccountingGroupId = 21,
-                                CreatedBy = 1,
-                                CreatedDate = DateTime.Now,
-                                IsActive = true
-                            };
-
-                            ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
-                            ledgerValTransPorterForTDS = ledger.LedgerId;
-                            _tenantDBContext.Add(ledger);
-                            _tenantDBContext.SaveChanges();
-                        }
-
-                        Voucher voucherlstAdvanceFrieght1 = new Voucher
-                        {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = ledgerValTransPorterForTDS,
-                            CompanyId = companyid,
-                            Credit = 0,
-                            Debit = TDSAmount,
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = data["LedgerName"],
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(voucherlstAdvanceFrieght1);
-
-                    }
-
-
-
-
-                    var BillAmount = data["BillAmount"];
-                    if (BillAmount == null)
-                        data["BillAmount"] = 0;
-
-                    if (Convert.ToDecimal(data["BillAmount"]) != 0)
-                    {
-
-                        Voucher voucherlstBillAmount = new Voucher
-                        {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = data["LedgerId"],
-                            CompanyId = companyid,
-                            Credit = 0,
-                            Debit = Convert.ToDecimal(data["BillAmount"]),
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = ItemNameForVoucherInsert + " Account",
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(voucherlstBillAmount);
-                    }
-                    _tenantDBContext.AddRange(voucherlist);
-                    _tenantDBContext.SaveChanges();
-                }
-                else
-                {
-                    var Comm = (from t1 in _tenantDBContext.Inventory
-                                join t2 in _tenantDBContext.Commodities on t1.CommodityId equals t2.CommodityId
-                                where t1.CompanyId == companyid && t1.VochType == VochType && t1.VochNo == invoiceNo
-                                group t1 by new { t1.CommodityId, t2.CommodityName } into g
-                                select new
-                                {
-                                    CommodityName = g.Key.CommodityName,
-                                    Amount = g.Sum(t1 => t1.Amount)
-                                }).ToList();
-                    List<Voucher> voucherlist = new List<Voucher>();
-
-                    string FirstRowCommodityAccountName = "";
-
-                    foreach (var item in Comm)
-                    {
-                        var CommodityAccount = Comm.Select(c => c.CommodityName).First();
-                        string CommodityAccountName = CommodityAccount + " " + "Account";
-                        var sumofAmt = Comm.Select(c => c.Amount).First();
-                        var ledgerVal = (_tenantDBContext.Ledgers.
-                                      Where(l => l.LedgerName == CommodityAccountName && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-
-                        if (ledgerVal == 0 || ledgerVal == null)
-                        {
-                            Ledger ledger = new Ledger
-                            {
-                                CompanyId = companyid,
-                                LedgerName = CommodityAccountName,
-                                AccountingGroupId = 24,
-                                CreatedBy = 1,
-                                CreatedDate = DateTime.Now,
-                                IsActive = true
-                            };
-
-                            ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
-                            ledgerVal = ledger.LedgerId;
-                            _tenantDBContext.Add(ledger);
-                            _tenantDBContext.SaveChanges();
-                        }
-
-
-
-
-
-
-
-
-                        Voucher voucherlst = new Voucher
-                        {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = ledgerVal,
-                            CompanyId = companyid,
-                            Credit = 0,
-                            Debit = Convert.ToDecimal(item.Amount),
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = LorryData["DeliveryName"],
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(voucherlst);
-                    }
-
-                    var Igstvalue = data["Igstvalue"];
-                    if (Igstvalue == null)
-                        data["Igstvalue"] = 0;
-
-                    if (Convert.ToDecimal(data["Igstvalue"]) > 0)
-                    {
-                        string CommodityAccountName1 = "Input IGST";
-                        var ledgerVal1 = (_tenantDBContext.Ledgers.
-                                      Where(l => l.LedgerName == CommodityAccountName1 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-                        Voucher voucherlst = new Voucher
-                        {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = ledgerVal1,
-                            CompanyId = companyid,
-                            Credit = 0,
-                            Debit = Convert.ToDecimal(data["Igstvalue"]),
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = LorryData["DeliveryName"],
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(voucherlst);
-
-
+                        _tenantDBContext.AddRange(voucherlist);
+                        _tenantDBContext.SaveChanges();
                     }
                     else
                     {
-                        string CommodityAccountName1 = "Input SGST";
-                        var ledgerVal1 = (_tenantDBContext.Ledgers.
-                                      Where(l => l.LedgerName == CommodityAccountName1 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+                        var Comm = (from t1 in _tenantDBContext.Inventory
+                                    join t2 in _tenantDBContext.Commodities on t1.CommodityId equals t2.CommodityId
+                                    where t1.CompanyId == companyid && t1.VochType == VochType && t1.VochNo == invoiceNo
+                                    group t1 by new { t1.CommodityId, t2.CommodityName } into g
+                                    select new
+                                    {
+                                        CommodityName = g.Key.CommodityName,
+                                        Amount = g.Sum(t1 => t1.Amount)
+                                    }).ToList();
+                        List<Voucher> voucherlist = new List<Voucher>();
 
-                        Voucher voucherlst = new Voucher
+                        string FirstRowCommodityAccountName = "";
+
+                        foreach (var item in Comm)
                         {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = ledgerVal1,
-                            CompanyId = companyid,
-                            Credit = 0,
-                            Debit = Convert.ToDecimal(data["Sgstvalue"]),
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = data["LedgerName"],
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(voucherlst);
-
-                        string CommodityAccountName2 = "Input CGST";
-
-                        var ledgerVal2 = (_tenantDBContext.Ledgers.
-                                      Where(l => l.LedgerName == CommodityAccountName2 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-                        Voucher voucherlst1 = new Voucher
-                        {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = ledgerVal2,
-                            CompanyId = companyid,
-                            Credit = 0,
-                            Debit = Convert.ToDecimal(data["Cgstvalue"]),
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = data["LedgerName"],
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(voucherlst1);
-                    }
+                            var CommodityAccount = Comm.Select(c => c.CommodityName).First();
+                            string CommodityAccountName = CommodityAccount + " " + "Account";
+                            var sumofAmt = Comm.Select(c => c.Amount).First();
+                            var ledgerVal = (_tenantDBContext.Ledgers.
+                                          Where(l => l.LedgerName == CommodityAccountName && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
 
 
-
-
-                    if (Convert.ToDecimal(data["ExpenseAmount1"]) > 0)
-                    {
-                        string ExpenseName1 = data["ExpenseName1"];
-                        var Expense1LedgerID = (_tenantDBContext.Ledgers.
-                                      Where(l => l.LedgerName == ExpenseName1 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-
-                        if (Expense1LedgerID == 0 || Expense1LedgerID == null)
-                        {
-                            Ledger ledger = new Ledger
+                            if (ledgerVal == 0 || ledgerVal == null)
                             {
-                                CompanyId = companyid,
-                                LedgerName = ExpenseName1,
-                                AccountingGroupId = 24,
-                                CreatedBy = 1,
-                                CreatedDate = DateTime.Now,
-                                IsActive = true
-                            };
-
-                            ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
-                            Expense1LedgerID = ledger.LedgerId;
-                            _tenantDBContext.Add(ledger);
-                            _tenantDBContext.SaveChanges();
-                        }
-
-
-
-
-                        Voucher voucherlstExpenses1 = new Voucher
-                        {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = Expense1LedgerID,
-                            CompanyId = companyid,
-                            Credit = 0,
-                            Debit = Convert.ToDecimal(data["ExpenseAmount1"]),
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = data["LedgerName"],
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(voucherlstExpenses1);
-                    }
-
-                    if (Convert.ToDecimal(data["ExpenseAmount2"]) > 0)
-                    {
-                        string ExpenseName2 = data["ExpenseName2"];
-                        var Expense2LedgerID = (_tenantDBContext.Ledgers.
-                                      Where(l => l.LedgerName == ExpenseName2 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-
-                        if (Expense2LedgerID == 0 || Expense2LedgerID == null)
-                        {
-                            Ledger ledger = new Ledger
-                            {
-                                CompanyId = companyid,
-                                LedgerName = ExpenseName2,
-                                AccountingGroupId = 24,
-                                CreatedBy = 1,
-                                CreatedDate = DateTime.Now,
-                                IsActive = true
-                            };
-
-                            ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
-                            Expense2LedgerID = ledger.LedgerId;
-                            _tenantDBContext.Add(ledger);
-                            _tenantDBContext.SaveChanges();
-                        }
-
-
-                        Voucher voucherlstExpenses2 = new Voucher
-                        {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = Expense2LedgerID,
-                            CompanyId = companyid,
-                            Credit = 0,
-                            Debit = Convert.ToDecimal(data["ExpenseAmount2"]),
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = data["LedgerName"],
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(voucherlstExpenses2);
-                    }
-
-                    if (Convert.ToDecimal(data["ExpenseAmount3"]) > 0)
-                    {
-                        string ExpenseName3 = data["ExpenseName3"];
-                        var Expense3LedgerID = (_tenantDBContext.Ledgers.
-                                      Where(l => l.LedgerName == ExpenseName3 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-                        if (Expense3LedgerID == 0 || Expense3LedgerID == null)
-                        {
-                            Ledger ledger = new Ledger
-                            {
-                                CompanyId = companyid,
-                                LedgerName = ExpenseName3,
-                                AccountingGroupId = 24,
-                                CreatedBy = 1,
-                                CreatedDate = DateTime.Now,
-                                IsActive = true
-                            };
-
-                            ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
-                            Expense3LedgerID = ledger.LedgerId;
-                            _tenantDBContext.Add(ledger);
-                            _tenantDBContext.SaveChanges();
-                        }
-
-
-
-
-                        Voucher voucherlstExpenses3 = new Voucher
-                        {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = Expense3LedgerID,
-                            CompanyId = companyid,
-                            Credit = 0,
-                            Debit = Convert.ToDecimal(data["ExpenseAmount3"]),
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = data["LedgerName"],
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(voucherlstExpenses3);
-                    }
-
-
-
-                    if (LorryData["FrieghtPlus_Less"] == "Party Lorry Frieght")
-                    {
-                        if (Convert.ToDecimal(LorryData["AdvanceFrieght"]) > 0)
-                        {
-                            string TransPorterName1 = "";
-
-                            if (LorryData["Transporter"] == null || LorryData["Transporter"] == "")
-                            {
-                                TransPorterName1 = "Lorry Frieght Advance Account";
-                            }
-                            else
-                            {
-                                TransPorterName1 = LorryData["Transporter"];
-                            }
-
-                            var ledgerValTransPorterName1 = (_tenantDBContext.Ledgers.
-                                          Where(l => l.LedgerName == TransPorterName1 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-                            if (ledgerValTransPorterName1 == 0 || ledgerValTransPorterName1 == null)
-                            {
-                                Ledger ledger = new Ledger
+                                /*Ledger ledger = new Ledger
                                 {
                                     CompanyId = companyid,
-                                    LedgerName = LorryData["Transporter"],
-                                    AccountingGroupId = 21,
+                                    LedgerName = CommodityAccountName,
+                                    AccountingGroupId = 24,
                                     CreatedBy = 1,
                                     CreatedDate = DateTime.Now,
                                     IsActive = true
                                 };
 
                                 ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
-                                ledgerValTransPorterName1 = ledger.LedgerId;
+                                ledgerVal = ledger.LedgerId;
                                 _tenantDBContext.Add(ledger);
-                                _tenantDBContext.SaveChanges();
+                                _tenantDBContext.SaveChanges();*/
+
+                                var builder = new SqlConnectionStringBuilder(TenantDBContext.staticConnectionString);
+                                string connectionString = builder.ToString();
+
+                                using (SqlConnection connection = new SqlConnection(connectionString))
+                                {
+                                    connection.Open();
+
+                                    SqlCommand insertCommand = new SqlCommand(
+                                        "INSERT INTO Ledgers (CompanyId, LedgerName, AccountingGroupId, CreatedBy, CreatedDate, IsActive) " +
+                                        "VALUES (@CompanyId, @LedgerName, @AccountingGroupId, @CreatedBy, @CreatedDate, @IsActive);" +
+                                        "SELECT CAST(scope_identity() AS int)", connection);
+
+                                    insertCommand.Parameters.AddWithValue("@CompanyId", companyid);
+                                    insertCommand.Parameters.AddWithValue("@LedgerName", CommodityAccountName);
+                                    insertCommand.Parameters.AddWithValue("@AccountingGroupId", 24);
+                                    insertCommand.Parameters.AddWithValue("@CreatedBy", 1);
+                                    insertCommand.Parameters.AddWithValue("@CreatedDate", DateTime.Now);
+                                    insertCommand.Parameters.AddWithValue("@IsActive", 1);
+
+                                    int insertedLedgerId = (int)insertCommand.ExecuteScalar();
+
+                                    connection.Close();
+                                }
+
+                            }
+
+
+
+
+
+
+
+
+                            Voucher voucherlst = new Voucher
+                            {
+                                CommodityId = 0,
+                                TranctDate = data["OriginalInvDate"],
+                                VoucherId = VochType,
+                                VoucherNo = invoiceNo,
+                                Narration = Convert.ToString(invoiceNo),
+                                LedgerId = ledgerVal,
+                                CompanyId = companyid,
+                                Credit = 0,
+                                Debit = Convert.ToDecimal(item.Amount),
+                                IsActive = 1,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
+                                LedgerNameForNarration = LorryData["DeliveryName"],
+                                CreatedBy = 1
+                            };
+                            voucherlist.Add(voucherlst);
+                        }
+
+                        var Igstvalue = data["Igstvalue"];
+                        if (Igstvalue == null)
+                            data["Igstvalue"] = 0;
+
+                        if (Convert.ToDecimal(data["Igstvalue"]) > 0)
+                        {
+                            string CommodityAccountName1 = "Input IGST";
+                            var ledgerVal1 = (_tenantDBContext.Ledgers.
+                                          Where(l => l.LedgerName == CommodityAccountName1 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+                            Voucher voucherlst = new Voucher
+                            {
+                                CommodityId = 0,
+                                TranctDate = data["OriginalInvDate"],
+                                VoucherId = VochType,
+                                VoucherNo = invoiceNo,
+                                Narration = Convert.ToString(invoiceNo),
+                                LedgerId = ledgerVal1,
+                                CompanyId = companyid,
+                                Credit = 0,
+                                Debit = Convert.ToDecimal(data["Igstvalue"]),
+                                IsActive = 1,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
+                                LedgerNameForNarration = LorryData["DeliveryName"],
+                                CreatedBy = 1
+                            };
+                            voucherlist.Add(voucherlst);
+
+
+                        }
+                        else
+                        {
+                            string CommodityAccountName1 = "Input SGST";
+                            var ledgerVal1 = (_tenantDBContext.Ledgers.
+                                          Where(l => l.LedgerName == CommodityAccountName1 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+                            Voucher voucherlst = new Voucher
+                            {
+                                CommodityId = 0,
+                                TranctDate = data["OriginalInvDate"],
+                                VoucherId = VochType,
+                                VoucherNo = invoiceNo,
+                                Narration = Convert.ToString(invoiceNo),
+                                LedgerId = ledgerVal1,
+                                CompanyId = companyid,
+                                Credit = 0,
+                                Debit = Convert.ToDecimal(data["Sgstvalue"]),
+                                IsActive = 1,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
+                                LedgerNameForNarration = data["LedgerName"],
+                                CreatedBy = 1
+                            };
+                            voucherlist.Add(voucherlst);
+
+                            string CommodityAccountName2 = "Input CGST";
+
+                            var ledgerVal2 = (_tenantDBContext.Ledgers.
+                                          Where(l => l.LedgerName == CommodityAccountName2 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+                            Voucher voucherlst1 = new Voucher
+                            {
+                                CommodityId = 0,
+                                TranctDate = data["OriginalInvDate"],
+                                VoucherId = VochType,
+                                VoucherNo = invoiceNo,
+                                Narration = Convert.ToString(invoiceNo),
+                                LedgerId = ledgerVal2,
+                                CompanyId = companyid,
+                                Credit = 0,
+                                Debit = Convert.ToDecimal(data["Cgstvalue"]),
+                                IsActive = 1,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
+                                LedgerNameForNarration = data["LedgerName"],
+                                CreatedBy = 1
+                            };
+                            voucherlist.Add(voucherlst1);
+                        }
+
+
+
+
+                        if (Convert.ToDecimal(data["ExpenseAmount1"]) > 0)
+                        {
+                            string ExpenseName1 = data["ExpenseName1"];
+                            var Expense1LedgerID = (_tenantDBContext.Ledgers.
+                                          Where(l => l.LedgerName == ExpenseName1 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+
+                            if (Expense1LedgerID == 0 || Expense1LedgerID == null)
+                            {
+                                /*Ledger ledger = new Ledger
+                                {
+                                    CompanyId = companyid,
+                                    LedgerName = ExpenseName1,
+                                    AccountingGroupId = 24,
+                                    CreatedBy = 1,
+                                    CreatedDate = DateTime.Now,
+                                    IsActive = true
+                                };
+
+                                ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
+                                Expense1LedgerID = ledger.LedgerId;
+                                _tenantDBContext.Add(ledger);
+                                _tenantDBContext.SaveChanges();*/
+
+                                var builder = new SqlConnectionStringBuilder(TenantDBContext.staticConnectionString);
+                                string connectionString = builder.ToString();
+
+                                using (SqlConnection connection = new SqlConnection(connectionString))
+                                {
+                                    connection.Open();
+                                    string insertQuery = "INSERT INTO Ledger (CompanyId, LedgerName, AccountingGroupId, CreatedBy, CreatedDate, IsActive) " +
+                                                         "VALUES (@CompanyId, @LedgerName, @AccountingGroupId, @CreatedBy, @CreatedDate, @IsActive)";
+
+                                    SqlCommand insertCommand = new SqlCommand(insertQuery, connection);
+                                    insertCommand.Parameters.AddWithValue("@CompanyId", companyid);
+                                    insertCommand.Parameters.AddWithValue("@LedgerName", ExpenseName1);
+                                    insertCommand.Parameters.AddWithValue("@AccountingGroupId", 24);
+                                    insertCommand.Parameters.AddWithValue("@CreatedBy", 1);
+                                    insertCommand.Parameters.AddWithValue("@CreatedDate", DateTime.Now);
+                                    insertCommand.Parameters.AddWithValue("@IsActive", 1);
+
+                                    insertCommand.ExecuteNonQuery();
+
+                                    string selectMaxQuery = "SELECT MAX(LedgerId) FROM Ledger";
+                                    SqlCommand selectMaxCommand = new SqlCommand(selectMaxQuery, connection);
+                                    int ledgerId = Convert.ToInt32(selectMaxCommand.ExecuteScalar());
+
+                                    Expense1LedgerID = ledgerId;
+                                }
+
+                            }
+
+
+
+
+                            Voucher voucherlstExpenses1 = new Voucher
+                            {
+                                CommodityId = 0,
+                                TranctDate = data["OriginalInvDate"],
+                                VoucherId = VochType,
+                                VoucherNo = invoiceNo,
+                                Narration = Convert.ToString(invoiceNo),
+                                LedgerId = Expense1LedgerID,
+                                CompanyId = companyid,
+                                Credit = 0,
+                                Debit = Convert.ToDecimal(data["ExpenseAmount1"]),
+                                IsActive = 1,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
+                                LedgerNameForNarration = data["LedgerName"],
+                                CreatedBy = 1
+                            };
+                            voucherlist.Add(voucherlstExpenses1);
+                        }
+
+                        if (Convert.ToDecimal(data["ExpenseAmount2"]) > 0)
+                        {
+                            string ExpenseName2 = data["ExpenseName2"];
+                            var Expense2LedgerID = (_tenantDBContext.Ledgers.
+                                          Where(l => l.LedgerName == ExpenseName2 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+
+                            if (Expense2LedgerID == 0 || Expense2LedgerID == null)
+                            {
+                                /* Ledger ledger = new Ledger
+                                 {
+                                     CompanyId = companyid,
+                                     LedgerName = ExpenseName2,
+                                     AccountingGroupId = 24,
+                                     CreatedBy = 1,
+                                     CreatedDate = DateTime.Now,
+                                     IsActive = true
+                                 };
+
+                                 ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
+                                 Expense2LedgerID = ledger.LedgerId;
+                                 _tenantDBContext.Add(ledger);
+                                 _tenantDBContext.SaveChanges();*/
+
+                                var builder = new SqlConnectionStringBuilder(TenantDBContext.staticConnectionString);
+                                string connectionString = builder.ToString();
+                                using (SqlConnection connection = new SqlConnection(connectionString))
+                                {
+                                    // Open the connection
+                                    connection.Open();
+
+                                    // Create a SqlCommand object for inserting data
+                                    using (SqlCommand command = connection.CreateCommand())
+                                    {
+                                        command.CommandType = CommandType.Text;
+
+                                        // Insert command text
+                                        command.CommandText = "INSERT INTO Ledger (CompanyId, LedgerName, AccountingGroupId, CreatedBy, CreatedDate, IsActive) " +
+                                                              "VALUES (@CompanyId, @LedgerName, @AccountingGroupId, @CreatedBy, @CreatedDate, @IsActive)";
+
+                                        // Add parameters
+                                        command.Parameters.AddWithValue("@CompanyId", companyid);
+                                        command.Parameters.AddWithValue("@LedgerName", ExpenseName2);
+                                        command.Parameters.AddWithValue("@AccountingGroupId", 24);
+                                        command.Parameters.AddWithValue("@CreatedBy", 1);
+                                        command.Parameters.AddWithValue("@CreatedDate", DateTime.Now);
+                                        command.Parameters.AddWithValue("@IsActive", 1);
+
+                                        // Execute the insert command
+                                        command.ExecuteNonQuery();
+                                    }
+
+                                    // Retrieve the maximum LedgerId
+                                    int ledgerId;
+                                    using (SqlCommand command = connection.CreateCommand())
+                                    {
+                                        command.CommandText = "SELECT MAX(LedgerId) FROM Ledger";
+
+                                        // Execute the select command
+                                        ledgerId = Convert.ToInt32(command.ExecuteScalar());
+                                    }
+
+                                    // Set Expense2LedgerID
+                                    Expense2LedgerID = ledgerId;
+
+                                    Console.WriteLine("Expense2LedgerID: " + Expense2LedgerID);
+                                }
+
+                            }
+
+
+                            Voucher voucherlstExpenses2 = new Voucher
+                            {
+                                CommodityId = 0,
+                                TranctDate = data["OriginalInvDate"],
+                                VoucherId = VochType,
+                                VoucherNo = invoiceNo,
+                                Narration = Convert.ToString(invoiceNo),
+                                LedgerId = Expense2LedgerID,
+                                CompanyId = companyid,
+                                Credit = 0,
+                                Debit = Convert.ToDecimal(data["ExpenseAmount2"]),
+                                IsActive = 1,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
+                                LedgerNameForNarration = data["LedgerName"],
+                                CreatedBy = 1
+                            };
+                            voucherlist.Add(voucherlstExpenses2);
+                        }
+
+                        if (Convert.ToDecimal(data["ExpenseAmount3"]) > 0)
+                        {
+                            string ExpenseName3 = data["ExpenseName3"];
+                            var Expense3LedgerID = (_tenantDBContext.Ledgers.
+                                          Where(l => l.LedgerName == ExpenseName3 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+                            if (Expense3LedgerID == 0 || Expense3LedgerID == null)
+                            {
+                                /*Ledger ledger = new Ledger
+                                {
+                                    CompanyId = companyid,
+                                    LedgerName = ExpenseName3,
+                                    AccountingGroupId = 24,
+                                    CreatedBy = 1,
+                                    CreatedDate = DateTime.Now,
+                                    IsActive = true
+                                };
+
+                                ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
+                                Expense3LedgerID = ledger.LedgerId;
+                                _tenantDBContext.Add(ledger);
+                                _tenantDBContext.SaveChanges();*/
+                                var builder = new SqlConnectionStringBuilder(TenantDBContext.staticConnectionString);
+                                string connectionString = builder.ToString();
+                                using (SqlConnection connection = new SqlConnection(connectionString))
+                                {
+                                    // Open the connection
+                                    connection.Open();
+
+                                    // Create a command to insert the new ledger
+                                    SqlCommand insertCommand = new SqlCommand("INSERT INTO Ledger (CompanyId, LedgerName, AccountingGroupId, CreatedBy, CreatedDate, IsActive) " +
+                                                                              "VALUES (@CompanyId, @LedgerName, @AccountingGroupId, @CreatedBy, @CreatedDate, @IsActive); " +
+                                                                              "SELECT SCOPE_IDENTITY();", connection);
+                                    insertCommand.Parameters.AddWithValue("@CompanyId", companyid);
+                                    insertCommand.Parameters.AddWithValue("@LedgerName", ExpenseName3);
+                                    insertCommand.Parameters.AddWithValue("@AccountingGroupId", 24);
+                                    insertCommand.Parameters.AddWithValue("@CreatedBy", 1);
+                                    insertCommand.Parameters.AddWithValue("@CreatedDate", DateTime.Now);
+                                    insertCommand.Parameters.AddWithValue("@IsActive", 1);
+
+                                    // Execute the insert command and get the new LedgerId
+                                    int ledgerId = Convert.ToInt32(insertCommand.ExecuteScalar());
+
+                                    // Set the Expense3LedgerID to the new LedgerId
+                                    int expense3LedgerId = ledgerId;
+
+                                    // Close the connection
+                                    connection.Close();
+                                }
+
+                            }
+
+
+
+
+                            Voucher voucherlstExpenses3 = new Voucher
+                            {
+                                CommodityId = 0,
+                                TranctDate = data["OriginalInvDate"],
+                                VoucherId = VochType,
+                                VoucherNo = invoiceNo,
+                                Narration = Convert.ToString(invoiceNo),
+                                LedgerId = Expense3LedgerID,
+                                CompanyId = companyid,
+                                Credit = 0,
+                                Debit = Convert.ToDecimal(data["ExpenseAmount3"]),
+                                IsActive = 1,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
+                                LedgerNameForNarration = data["LedgerName"],
+                                CreatedBy = 1
+                            };
+                            voucherlist.Add(voucherlstExpenses3);
+                        }
+
+
+
+                        if (LorryData["FrieghtPlus_Less"] == "Party Lorry Frieght")
+                        {
+                            if (Convert.ToDecimal(LorryData["AdvanceFrieght"]) > 0)
+                            {
+                                string TransPorterName1 = "";
+
+                                if (LorryData["Transporter"] == null || LorryData["Transporter"] == "")
+                                {
+                                    TransPorterName1 = "Lorry Frieght Advance Account";
+                                }
+                                else
+                                {
+                                    TransPorterName1 = LorryData["Transporter"];
+                                }
+
+                                var ledgerValTransPorterName1 = (_tenantDBContext.Ledgers.
+                                              Where(l => l.LedgerName == TransPorterName1 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+                                if (ledgerValTransPorterName1 == 0 || ledgerValTransPorterName1 == null)
+                                {
+                                    /* Ledger ledger = new Ledger
+                                     {
+                                         CompanyId = companyid,
+                                         LedgerName = LorryData["Transporter"],
+                                         AccountingGroupId = 21,
+                                         CreatedBy = 1,
+                                         CreatedDate = DateTime.Now,
+                                         IsActive = true
+                                     };
+
+                                     ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
+                                     ledgerValTransPorterName1 = ledger.LedgerId;
+                                     _tenantDBContext.Add(ledger);
+                                     _tenantDBContext.SaveChanges();*/
+                                    var builder = new SqlConnectionStringBuilder(TenantDBContext.staticConnectionString);
+                                    string connectionString = builder.ToString();
+                                    using (SqlConnection connection = new SqlConnection(connectionString))
+                                    {
+                                        connection.Open();
+
+                                        string insertQuery = @"INSERT INTO Ledgers (CompanyId, LedgerName, AccountingGroupId, CreatedBy, CreatedDate, IsActive)
+                                                       VALUES (@CompanyId, @LedgerName, @AccountingGroupId, @CreatedBy, @CreatedDate, @IsActive);
+                                                       SELECT SCOPE_IDENTITY();";
+                                        using (SqlCommand command = new SqlCommand(insertQuery, connection))
+                                        {
+                                            command.Parameters.AddWithValue("@CompanyId", companyid);
+                                            command.Parameters.AddWithValue("@LedgerName", Convert.ToString(LorryData["Transporter"]));
+                                            command.Parameters.AddWithValue("@AccountingGroupId", 21);
+                                            command.Parameters.AddWithValue("@CreatedBy", 1);
+                                            command.Parameters.AddWithValue("@CreatedDate", DateTime.Now);
+                                            command.Parameters.AddWithValue("@IsActive", 1);
+
+                                            int ledgerId = Convert.ToInt32(command.ExecuteScalar());
+                                            ledgerValTransPorterName1 = ledgerId;
+                                        }
+                                    }
+
+                                }
+
+                                Voucher voucherlstAdvanceFrieght1 = new Voucher
+                                {
+                                    CommodityId = 0,
+                                    TranctDate = data["OriginalInvDate"],
+                                    VoucherId = VochType,
+                                    VoucherNo = invoiceNo,
+                                    Narration = Convert.ToString(invoiceNo),
+                                    LedgerId = ledgerValTransPorterName1,
+                                    CompanyId = companyid,
+                                    Credit = 0,
+                                    Debit = Convert.ToDecimal(LorryData["AdvanceFrieght"]),
+                                    IsActive = 1,
+                                    PartyInvoiceNumber = RartyInvoiceNumber,
+                                    LedgerNameForNarration = data["LedgerName"],
+                                    CreatedBy = 1
+                                };
+                                voucherlist.Add(voucherlstAdvanceFrieght1);
+                            }
+                        }
+
+                        if (LorryData["FrieghtPlus_Less"] == "Own Lorry Frieght")
+                        {
+                            if (LorryData["TotalFrieght"] > 0)
+                            {
+                                string TotalFrieghtName = "";
+
+                                TotalFrieghtName = "Lorry Frieght Account";
+
+                                var ledgerValTransPorterName1 = (_tenantDBContext.Ledgers.
+                                              Where(l => l.LedgerName == TotalFrieghtName && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+
+                                Voucher voucherlstAdvanceFrieght1 = new Voucher
+                                {
+                                    CommodityId = 0,
+                                    TranctDate = data["OriginalInvDate"],
+                                    VoucherId = VochType,
+                                    VoucherNo = invoiceNo,
+                                    Narration = Convert.ToString(invoiceNo),
+                                    LedgerId = ledgerValTransPorterName1,
+                                    CompanyId = companyid,
+                                    Credit = Convert.ToDecimal(LorryData["TotalFrieght"]),
+                                    Debit = 0,
+                                    IsActive = 1,
+                                    PartyInvoiceNumber = RartyInvoiceNumber,
+                                    LedgerNameForNarration = data["LedgerName"],
+                                    CreatedBy = 1
+                                };
+                                voucherlist.Add(voucherlstAdvanceFrieght1);
+                            }
+
+                            if (Convert.ToDecimal(LorryData["AdvanceFrieght"]) > 0)
+                            {
+                                string TransPorterName1 = "";
+
+                                if (LorryData["Transporter"] == null || LorryData["Transporter"] == "")
+                                {
+                                    TransPorterName1 = "Lorry Frieght Advance Account";
+                                }
+                                else
+                                {
+                                    TransPorterName1 = LorryData["Transporter"];
+                                }
+
+                                var ledgerValTransPorterName1 = (_tenantDBContext.Ledgers.
+                                              Where(l => l.LedgerName == TransPorterName1 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+
+                                if (ledgerValTransPorterName1 == 0 || ledgerValTransPorterName1 == null)
+                                {
+                                    /*Ledger ledger = new Ledger
+                                    {
+                                        CompanyId = companyid,
+                                        LedgerName = TransPorterName1,
+                                        AccountingGroupId = 21,
+                                        CreatedBy = 1,
+                                        CreatedDate = DateTime.Now,
+                                        IsActive = true
+                                    };
+
+                                    ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
+                                    ledgerValTransPorterName1 = ledger.LedgerId;
+                                    _tenantDBContext.Add(ledger);
+                                    _tenantDBContext.SaveChanges();*/
+
+                                    var builder = new SqlConnectionStringBuilder(TenantDBContext.staticConnectionString);
+                                    string connectionString = builder.ToString();
+                                    using (SqlConnection connection = new SqlConnection(connectionString))
+                                    {
+                                        // Open the connection
+                                        connection.Open();
+
+                                        // Create a SqlCommand to insert the new Ledger record
+                                        string insertQuery = @"INSERT INTO Ledger (CompanyId, LedgerName, AccountingGroupId, CreatedBy, CreatedDate, IsActive)
+                                                       VALUES (@CompanyId, @LedgerName, @AccountingGroupId, @CreatedBy, @CreatedDate, @IsActive);
+                                                       SELECT SCOPE_IDENTITY();";
+
+                                        using (SqlCommand command = new SqlCommand(insertQuery, connection))
+                                        {
+                                            // Set parameters for the insert query
+                                            command.Parameters.AddWithValue("@CompanyId", companyid);
+                                            command.Parameters.AddWithValue("@LedgerName", TransPorterName1);
+                                            command.Parameters.AddWithValue("@AccountingGroupId", 21);
+                                            command.Parameters.AddWithValue("@CreatedBy", 1);
+                                            command.Parameters.AddWithValue("@CreatedDate", DateTime.Now);
+                                            command.Parameters.AddWithValue("@IsActive", 1);
+
+                                            // Execute the insert query and retrieve the newly generated LedgerId
+                                            int newLedgerId = Convert.ToInt32(command.ExecuteScalar());
+
+                                            // Assign the newly generated LedgerId to the ledger object
+                                            ledgerValTransPorterName1 = newLedgerId;
+                                        }
+                                    }
+
+                                }
+
+
+                                Voucher voucherlstAdvanceFrieght1 = new Voucher
+                                {
+                                    CommodityId = 0,
+                                    TranctDate = data["OriginalInvDate"],
+                                    VoucherId = VochType,
+                                    VoucherNo = invoiceNo,
+                                    Narration = Convert.ToString(invoiceNo),
+                                    LedgerId = ledgerValTransPorterName1,
+                                    CompanyId = companyid,
+                                    Debit = Convert.ToDecimal(LorryData["AdvanceFrieght"]),
+                                    Credit = 0,
+                                    IsActive = 1,
+                                    PartyInvoiceNumber = RartyInvoiceNumber,
+                                    LedgerNameForNarration = data["LedgerName"],
+                                    CreatedBy = 1
+                                };
+                                voucherlist.Add(voucherlstAdvanceFrieght1);
+                            }
+                        }
+
+
+                        if (Convert.ToDecimal(data["RoundOff"]) != 0)
+                        {
+                            string RoundoffAccountName = "Round Off Account";
+                            var RoundoffLedgerID = (_tenantDBContext.Ledgers.
+                                          Where(l => l.LedgerName == RoundoffAccountName && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+                            Voucher voucherlstExpenses3 = new Voucher
+                            {
+                                CommodityId = 0,
+                                TranctDate = data["OriginalInvDate"],
+                                VoucherId = VochType,
+                                VoucherNo = invoiceNo,
+                                Narration = Convert.ToString(invoiceNo),
+                                LedgerId = RoundoffLedgerID,
+                                CompanyId = companyid,
+                                Debit = Convert.ToDecimal(data["RoundOff"]) > 0 ? Convert.ToDecimal(data["RoundOff"]) : 0,
+                                Credit = (Convert.ToDecimal(data["RoundOff"]) < 0 ? Convert.ToDecimal(data["RoundOff"]) : 0) * -1,
+                                IsActive = 1,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
+                                LedgerNameForNarration = data["LedgerName"],
+                                CreatedBy = 1
+                            };
+                            voucherlist.Add(voucherlstExpenses3);
+                        }
+
+
+                        if (LorryData["FrieghtPlus_Less"] == "Own Lorry Frieght" && LorryData["Transporter"] != "" && LorryData["TotalFrieght"] > 0 && LorryData["TDS"] > 0)
+                        {
+                            var TDSAmount = (LorryData["TotalFrieght"] * LorryData["TDS"]) / 100;
+
+                            string TDSAccountName = "TDS On Rent";
+                            var TDSLedgerID = (_tenantDBContext.Ledgers.
+                                          Where(l => l.LedgerName == TDSAccountName && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+                            if (TDSLedgerID == 0 || TDSLedgerID == null)
+                            {
+                                /*  Ledger ledger = new Ledger
+                                  {
+                                      CompanyId = companyid,
+                                      LedgerName = TDSAccountName,
+                                      AccountingGroupId = 27,
+                                      CreatedBy = 1,
+                                      CreatedDate = DateTime.Now,
+                                      IsActive = true
+                                  };
+
+                                  ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
+                                  TDSLedgerID = ledger.LedgerId;
+                                  _tenantDBContext.Add(ledger);
+                                  _tenantDBContext.SaveChanges();*/
+
+                                var builder = new SqlConnectionStringBuilder(TenantDBContext.staticConnectionString);
+                                string connectionString = builder.ToString();
+                                using (SqlConnection connection = new SqlConnection(connectionString))
+                                {
+                                    // Open the connection
+                                    connection.Open();
+
+                                    // Create a SqlCommand for inserting the ledger
+                                    string insertQuery = @"INSERT INTO Ledgers (CompanyId, LedgerName, AccountingGroupId, CreatedBy, CreatedDate, IsActive) 
+                           VALUES (@CompanyId, @LedgerName, @AccountingGroupId, @CreatedBy, @CreatedDate, @IsActive)";
+
+                                    SqlCommand insertCommand = new SqlCommand(insertQuery, connection);
+
+                                    // Set the parameters for the insert command
+                                    insertCommand.Parameters.AddWithValue("@CompanyId", companyid);
+                                    insertCommand.Parameters.AddWithValue("@LedgerName", TDSAccountName);
+                                    insertCommand.Parameters.AddWithValue("@AccountingGroupId", 27);
+                                    insertCommand.Parameters.AddWithValue("@CreatedBy", 1);
+                                    insertCommand.Parameters.AddWithValue("@CreatedDate", DateTime.Now);
+                                    insertCommand.Parameters.AddWithValue("@IsActive", 1);
+
+                                    // Execute the insert command
+                                    insertCommand.ExecuteNonQuery();
+
+                                    // Create a SqlCommand for getting the max LedgerId
+                                    string maxQuery = "SELECT MAX(LedgerId) FROM Ledgers";
+
+                                    SqlCommand maxCommand = new SqlCommand(maxQuery, connection);
+
+                                    // Get the max LedgerId
+                                    int maxLedgerId = Convert.ToInt32(maxCommand.ExecuteScalar());
+
+                                    // Set the LedgerId and TDSLedgerID
+                                    int newLedgerId = maxLedgerId + 1;
+                                    TDSLedgerID = newLedgerId;
+
+                                    // Close the connection
+                                    connection.Close();
+                                }
+
+
+
+                            }
+
+
+
+                            Voucher VochTDSExpenses = new Voucher
+                            {
+                                CommodityId = 0,
+                                TranctDate = data["OriginalInvDate"],
+                                VoucherId = VochType,
+                                VoucherNo = invoiceNo,
+                                Narration = Convert.ToString(invoiceNo),
+                                LedgerId = TDSLedgerID,
+                                CompanyId = companyid,
+                                Credit = 0,
+                                Debit = TDSAmount,
+                                IsActive = 1,
+                                PartyInvoiceNumber = RartyInvoiceNumber,
+                                LedgerNameForNarration = data["LedgerName"],
+                                CreatedBy = 1
+                            };
+                            voucherlist.Add(VochTDSExpenses);
+
+
+                            string TransPorterNameFroTDS = LorryData["Transporter"];
+                            var ledgerValTransPorterForTDS = (_tenantDBContext.Ledgers.
+                                              Where(l => l.LedgerName == TransPorterNameFroTDS && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
+
+                            if (ledgerValTransPorterForTDS == 0 || ledgerValTransPorterForTDS == null)
+                            {
+                                /* Ledger ledger = new Ledger
+                                 {
+                                     CompanyId = companyid,
+                                     LedgerName = LorryData["Transporter"],
+                                     AccountingGroupId = 21,
+                                     CreatedBy = 1,
+                                     CreatedDate = DateTime.Now,
+                                     IsActive = true
+                                 };
+
+                                 ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
+                                 ledgerValTransPorterForTDS = ledger.LedgerId;
+                                 _tenantDBContext.Add(ledger);
+                                 _tenantDBContext.SaveChanges();*/
+                                var builder = new SqlConnectionStringBuilder(TenantDBContext.staticConnectionString);
+                                string connectionString = builder.ToString();
+                                using (SqlConnection connection = new SqlConnection(connectionString))
+                                {
+                                    // Open the connection
+                                    connection.Open();
+
+                                    // Create a command for inserting ledger
+                                    string insertQuery = @"INSERT INTO Ledgers (CompanyId, LedgerName, AccountingGroupId, CreatedBy, CreatedDate, IsActive) 
+                           VALUES (@CompanyId, @LedgerName, @AccountingGroupId, @CreatedBy, @CreatedDate, @IsActive);
+                           SELECT SCOPE_IDENTITY();"; // This will return the inserted ledger's ID
+
+                                    using (SqlCommand command = new SqlCommand(insertQuery, connection))
+                                    {
+                                        // Set parameters
+                                        command.Parameters.AddWithValue("@CompanyId", companyid);
+                                        command.Parameters.AddWithValue("@LedgerName", Convert.ToString(LorryData["Transporter"]));
+                                        command.Parameters.AddWithValue("@AccountingGroupId", 21);
+                                        command.Parameters.AddWithValue("@CreatedBy", 1);
+                                        command.Parameters.AddWithValue("@CreatedDate", DateTime.Now);
+                                        command.Parameters.AddWithValue("@IsActive", 1);
+
+                                        // Execute the command and get the inserted ledger's ID
+                                        int newLedgerId = Convert.ToInt32(command.ExecuteScalar());
+
+                                        // Assign the new ledger ID
+                                        int ledgerId = newLedgerId;
+
+                                        // Use ledgerId as needed
+                                        ledgerValTransPorterForTDS = ledgerId;
+                                    }
+
+                                    // Close the connection
+                                    connection.Close();
+                                }
+
                             }
 
                             Voucher voucherlstAdvanceFrieght1 = new Voucher
@@ -2539,263 +3172,58 @@ namespace SutraPlus_DAL.Repository
                                 VoucherId = VochType,
                                 VoucherNo = invoiceNo,
                                 Narration = Convert.ToString(invoiceNo),
-                                LedgerId = ledgerValTransPorterName1,
+                                LedgerId = ledgerValTransPorterForTDS,
                                 CompanyId = companyid,
-                                Credit = 0,
-                                Debit = Convert.ToDecimal(LorryData["AdvanceFrieght"]),
-                                IsActive = true,
-                                PartyInvoiceNumber = RartyInvoiceNumber,
-                                LedgerNameForNarration = data["LedgerName"],
-                                CreatedBy = 1
-                            };
-                            voucherlist.Add(voucherlstAdvanceFrieght1);
-                        }
-                    }
-
-                    if (LorryData["FrieghtPlus_Less"] == "Own Lorry Frieght")
-                    {
-                        if (LorryData["TotalFrieght"] > 0)
-                        {
-                            string TotalFrieghtName = "";
-
-                            TotalFrieghtName = "Lorry Frieght Account";
-
-                            var ledgerValTransPorterName1 = (_tenantDBContext.Ledgers.
-                                          Where(l => l.LedgerName == TotalFrieghtName && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-
-                            Voucher voucherlstAdvanceFrieght1 = new Voucher
-                            {
-                                CommodityId = 0,
-                                TranctDate = data["OriginalInvDate"],
-                                VoucherId = VochType,
-                                VoucherNo = invoiceNo,
-                                Narration = Convert.ToString(invoiceNo),
-                                LedgerId = ledgerValTransPorterName1,
-                                CompanyId = companyid,
-                                Credit = Convert.ToDecimal(LorryData["TotalFrieght"]),
+                                Credit = TDSAmount,
                                 Debit = 0,
-                                IsActive = true,
+                                IsActive = 1,
                                 PartyInvoiceNumber = RartyInvoiceNumber,
                                 LedgerNameForNarration = data["LedgerName"],
                                 CreatedBy = 1
                             };
                             voucherlist.Add(voucherlstAdvanceFrieght1);
+
                         }
 
-                        if (Convert.ToDecimal(LorryData["AdvanceFrieght"]) > 0)
+
+
+
+
+
+                        if (Convert.ToDecimal(data["BillAmount"]) != 0)
                         {
-                            string TransPorterName1 = "";
 
-                            if (LorryData["Transporter"] == null || LorryData["Transporter"] == "")
-                            {
-                                TransPorterName1 = "Lorry Frieght Advance Account";
-                            }
-                            else
-                            {
-                                TransPorterName1 = LorryData["Transporter"];
-                            }
-
-                            var ledgerValTransPorterName1 = (_tenantDBContext.Ledgers.
-                                          Where(l => l.LedgerName == TransPorterName1 && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-
-                            if (ledgerValTransPorterName1 == 0 || ledgerValTransPorterName1 == null)
-                            {
-                                Ledger ledger = new Ledger
-                                {
-                                    CompanyId = companyid,
-                                    LedgerName = TransPorterName1,
-                                    AccountingGroupId = 21,
-                                    CreatedBy = 1,
-                                    CreatedDate = DateTime.Now,
-                                    IsActive = true
-                                };
-
-                                ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
-                                ledgerValTransPorterName1 = ledger.LedgerId;
-                                _tenantDBContext.Add(ledger);
-                                _tenantDBContext.SaveChanges();
-                            }
-
-
-                            Voucher voucherlstAdvanceFrieght1 = new Voucher
+                            Voucher voucherlstBillAmount = new Voucher
                             {
                                 CommodityId = 0,
                                 TranctDate = data["OriginalInvDate"],
                                 VoucherId = VochType,
                                 VoucherNo = invoiceNo,
                                 Narration = Convert.ToString(invoiceNo),
-                                LedgerId = ledgerValTransPorterName1,
+                                LedgerId = data["LedgerId"],
                                 CompanyId = companyid,
-                                Debit = Convert.ToDecimal(LorryData["AdvanceFrieght"]),
-                                Credit = 0,
-                                IsActive = true,
+                                Credit = Convert.ToDecimal(data["BillAmount"]),
+                                Debit = 0,
+                                IsActive = 1,
                                 PartyInvoiceNumber = RartyInvoiceNumber,
-                                LedgerNameForNarration = data["LedgerName"],
+                                LedgerNameForNarration = ItemNameForVoucherInsert + " Account",
                                 CreatedBy = 1
                             };
-                            voucherlist.Add(voucherlstAdvanceFrieght1);
-                        }
-                    }
-
-
-                    if (Convert.ToDecimal(data["RoundOff"]) != 0)
-                    {
-                        string RoundoffAccountName = "Round Off Account";
-                        var RoundoffLedgerID = (_tenantDBContext.Ledgers.
-                                      Where(l => l.LedgerName == RoundoffAccountName && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-                        Voucher voucherlstExpenses3 = new Voucher
-                        {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = RoundoffLedgerID,
-                            CompanyId = companyid,
-                            Debit = Convert.ToDecimal(data["RoundOff"]) > 0 ? Convert.ToDecimal(data["RoundOff"]) : 0,
-                            Credit = (Convert.ToDecimal(data["RoundOff"]) < 0 ? Convert.ToDecimal(data["RoundOff"]) : 0) * -1,
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = data["LedgerName"],
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(voucherlstExpenses3);
-                    }
-
-
-                    if (LorryData["FrieghtPlus_Less"] == "Own Lorry Frieght" && LorryData["Transporter"] != "" && LorryData["TotalFrieght"] > 0 && LorryData["TDS"] > 0)
-                    {
-                        var TDSAmount = (LorryData["TotalFrieght"] * LorryData["TDS"]) / 100;
-
-                        string TDSAccountName = "TDS On Rent";
-                        var TDSLedgerID = (_tenantDBContext.Ledgers.
-                                      Where(l => l.LedgerName == TDSAccountName && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
-
-                        if (TDSLedgerID == 0 || TDSLedgerID == null)
-                        {
-                            Ledger ledger = new Ledger
-                            {
-                                CompanyId = companyid,
-                                LedgerName = TDSAccountName,
-                                AccountingGroupId = 27,
-                                CreatedBy = 1,
-                                CreatedDate = DateTime.Now,
-                                IsActive = true
-                            };
-
-                            ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
-                            TDSLedgerID = ledger.LedgerId;
-                            _tenantDBContext.Add(ledger);
-                            _tenantDBContext.SaveChanges();
+                            voucherlist.Add(voucherlstBillAmount);
                         }
 
 
 
-                        Voucher VochTDSExpenses = new Voucher
-                        {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = TDSLedgerID,
-                            CompanyId = companyid,
-                            Credit = 0,
-                            Debit = TDSAmount,
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = data["LedgerName"],
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(VochTDSExpenses);
+                        _tenantDBContext.AddRange(voucherlist);
+                        _tenantDBContext.SaveChanges();
 
 
-                        string TransPorterNameFroTDS = LorryData["Transporter"];
-                        var ledgerValTransPorterForTDS = (_tenantDBContext.Ledgers.
-                                          Where(l => l.LedgerName == TransPorterNameFroTDS && l.CompanyId == companyid).Select(l => l.LedgerId)).FirstOrDefault();
 
-                        if (ledgerValTransPorterForTDS == 0 || ledgerValTransPorterForTDS == null)
-                        {
-                            Ledger ledger = new Ledger
-                            {
-                                CompanyId = companyid,
-                                LedgerName = LorryData["Transporter"],
-                                AccountingGroupId = 21,
-                                CreatedBy = 1,
-                                CreatedDate = DateTime.Now,
-                                IsActive = true
-                            };
 
-                            ledger.LedgerId = _tenantDBContext.Ledgers.Select(x => x.LedgerId).ToList().Max() + 1;
-                            ledgerValTransPorterForTDS = ledger.LedgerId;
-                            _tenantDBContext.Add(ledger);
-                            _tenantDBContext.SaveChanges();
-                        }
-
-                        Voucher voucherlstAdvanceFrieght1 = new Voucher
-                        {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = ledgerValTransPorterForTDS,
-                            CompanyId = companyid,
-                            Credit = TDSAmount,
-                            Debit = 0,
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = data["LedgerName"],
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(voucherlstAdvanceFrieght1);
 
                     }
-
-
-
-
-
-
-                    if (Convert.ToDecimal(data["BillAmount"]) != 0)
-                    {
-
-                        Voucher voucherlstBillAmount = new Voucher
-                        {
-                            CommodityId = 0,
-                            TranctDate = data["OriginalInvDate"],
-                            VoucherId = VochType,
-                            VoucherNo = invoiceNo,
-                            Narration = Convert.ToString(invoiceNo),
-                            LedgerId = data["LedgerId"],
-                            CompanyId = companyid,
-                            Credit = Convert.ToDecimal(data["BillAmount"]),
-                            Debit = 0,
-                            IsActive = true,
-                            PartyInvoiceNumber = RartyInvoiceNumber,
-                            LedgerNameForNarration = ItemNameForVoucherInsert + " Account",
-                            CreatedBy = 1
-                        };
-                        voucherlist.Add(voucherlstBillAmount);
-                    }
-
-
-
-                    _tenantDBContext.AddRange(voucherlist);
-                    _tenantDBContext.SaveChanges();
-
-
-
-
-
-                }
-
-
-
-
+                } 
+                  
                 _logger.LogDebug("salesRepo : InvoiceDetails Added");
                 return "Added Successfully...!|||||" + Convert.ToString(invoiceNo) + "|||||" + Convert.ToString(VochType) + "|||||" + Convert.ToString(RartyInvoiceNumber);
 
@@ -2866,7 +3294,7 @@ namespace SutraPlus_DAL.Repository
                 int ledgerid_Invoice = data["LedgerId"];
                 int vochNo_Invoice = data["InvoiceNO"];
                 int vochtype_Invoice = data["VouchType"];
-                string DisplayInvNo = data["DisplayInvNo"];
+                //string DisplayInvNo = data["DisplayInvNo"];
 
                 //string invoice_Type = data["InvoiceType"];
                 //var LedgerName = _tenantDBContext.Ledgers
@@ -2880,7 +3308,7 @@ namespace SutraPlus_DAL.Repository
                                     join led in _tenantDBContext.Ledgers.DefaultIfEmpty() on bls.LedgerId equals led.LedgerId
                                     join comdty in _tenantDBContext.Commodities.DefaultIfEmpty() on inv.CommodityId equals comdty.CommodityId
                                     where bls.VochType == inv.VochType && bls.VochNo == inv.VochNo && bls.VochType == VochType.VoucherId && inv.LedgerId == led.LedgerId
-                                    && bls.CompanyId == companyid_Invoice && bls.VochNo == vochNo_Invoice && bls.VochType == vochtype_Invoice
+                                    && bls.CompanyId == companyid_Invoice && bls.VochNo == vochNo_Invoice && bls.VochType == vochtype_Invoice && bls.IsActive == 1
                                     select new
                                     {
                                         tcsValue = bls.TCSValue,
@@ -2991,7 +3419,7 @@ namespace SutraPlus_DAL.Repository
 
                 var Itemresult = (from t1 in _tenantDBContext.Inventory
                                   join t2 in _tenantDBContext.Commodities on t1.CommodityId equals t2.CommodityId
-                                  where t1.CompanyId == companyid_Invoice && t1.VochType == vochtype_Invoice && t1.VochNo == vochNo_Invoice
+                                  where t1.CompanyId == companyid_Invoice && t1.VochType == vochtype_Invoice && t1.VochNo == vochNo_Invoice && t1.IsActive == 1
                                   select new
                                   {
                                       id = t1 != null ? t1.Id : 0,
@@ -3004,8 +3432,8 @@ namespace SutraPlus_DAL.Repository
                                       InvoiceType = t1 != null ? t1.InvoiceType : "",
                                       VochNo = t1 != null ? t1.VochNo : 0,
                                       LedgerId = t1 != null ? t1.LedgerId : 0,
-                                      CommodityId = t1 != null ? t1.CommodityId : 0,
-                                      CommodityName = t1 != null ? t1.CommodityName : "",
+                                      CommodityId = t1 != null ? t2.CommodityId : 0,
+                                      CommodityName = t1 != null ? t2.CommodityName : "",
                                       TranctDate = t1 != null ? t1.TranctDate : null,
                                       WeightPerBag = t1 != null ? t1.WeightPerBag : 0,
                                       NoOfBags = t1 != null ? t1.NoOfBags : 0,
@@ -3023,7 +3451,7 @@ namespace SutraPlus_DAL.Repository
                                       CGSTRate = t1 != null ? t1.CGSTRate : 0,
                                       SGSTRate = t1 != null ? t1.SGSTRate : 0,
                                       Taxable = t1 != null ? t1.Taxable : 0,
-                                      IsActive = t1 != null ? t1.IsActive : false
+                                      IsActive = t1 != null ? t1.IsActive : 0
                                   }).ToList();
 
 
@@ -3163,7 +3591,7 @@ namespace SutraPlus_DAL.Repository
                     //CGSTRate = Itemresult.FirstOrDefault()?.CGSTRate ?? 0,
                     //SGSTRate = Itemresult.FirstOrDefault()?.SGSTRate ?? 0,
                     Taxable = Itemresult.FirstOrDefault()?.Taxable ?? 0,
-                    IsActive = Itemresult.FirstOrDefault()?.IsActive ?? false
+                    IsActive = Itemresult.FirstOrDefault()?.IsActive ?? 0
                 };
 
   
@@ -3321,7 +3749,7 @@ namespace SutraPlus_DAL.Repository
                     query = query
                      .Where(e =>
                          (searchText != null && (e.LedgerName != null && e.LedgerName.Contains(searchText))) &&
-                         (e.IsActive.GetValueOrDefault() && (invoiceType == null || (e.InvoiceType != null && e.InvoiceType.Contains(invoiceType))))
+                         (e.IsActive.GetValueOrDefault() == 1 && (invoiceType == null || (e.InvoiceType != null && e.InvoiceType.Contains(invoiceType))))
                      );
                 }
 
@@ -3338,7 +3766,7 @@ namespace SutraPlus_DAL.Repository
                                      join led in _tenantDBContext.Ledgers on bls.LedgerId equals led.LedgerId
                                      join comdty in _tenantDBContext.Commodities on inv.CommodityId equals comdty.CommodityId
                                      where bls.VochType == inv.VochType && bls.VochNo == inv.VochNo && bls.VochType == VochType.VoucherId && inv.LedgerId == led.LedgerId
-                                     && bls.CompanyId == companyId && bls.VochType >= 9 && bls.VochType <= 13 && bls.IsActive == true && bls.IsServiceInvoice == null || bls.IsServiceInvoice == false
+                                     && bls.CompanyId == companyId && (bls.VochType >= 9 && bls.VochType <= 13) && bls.IsActive == 1 && bls.IsServiceInvoice == null || bls.IsServiceInvoice == false
                                      select new BillSummary
                                      {
                                          LedgerId = led.LedgerId,
@@ -3360,7 +3788,7 @@ namespace SutraPlus_DAL.Repository
                                      join led in _tenantDBContext.Ledgers on bls.LedgerId equals led.LedgerId
                                      join comdty in _tenantDBContext.Commodities on inv.CommodityId equals comdty.CommodityId
                                      where bls.VochType == inv.VochType && bls.VochNo == inv.VochNo && bls.VochType == VochType.VoucherId && inv.LedgerId == led.LedgerId
-                                     && bls.CompanyId == companyId && bls.VochType >= 2 && bls.VochType <= 4 && bls.IsActive == true
+                                     && bls.CompanyId == companyId && bls.VochType >= 2 && bls.VochType <= 4 && bls.IsActive == 1
                                      select new BillSummary
                                      {
                                          LedgerId = led.LedgerId,
@@ -3382,7 +3810,7 @@ namespace SutraPlus_DAL.Repository
                                      join led in _tenantDBContext.Ledgers on bls.LedgerId equals led.LedgerId
                                      join comdty in _tenantDBContext.Commodities on inv.CommodityId equals comdty.CommodityId
                                      where bls.VochType == inv.VochType && bls.VochNo == inv.VochNo && bls.VochType == VochType.VoucherId && inv.LedgerId == led.LedgerId
-                                     && bls.CompanyId == companyId && bls.VochType == 6 && bls.IsActive == true
+                                     && bls.CompanyId == companyId && bls.VochType == 6 && bls.IsActive == 1
                                      select new BillSummary
                                      {
                                          LedgerId = led.LedgerId,
@@ -3403,7 +3831,7 @@ namespace SutraPlus_DAL.Repository
                                      join led in _tenantDBContext.Ledgers on bls.LedgerId equals led.LedgerId
                                      join comdty in _tenantDBContext.Commodities on inv.CommodityId equals comdty.CommodityId
                                      where bls.VochType == inv.VochType && bls.VochNo == inv.VochNo && bls.VochType == VochType.VoucherId && inv.LedgerId == led.LedgerId
-                                     && bls.CompanyId == companyId && bls.VochType == 5 && bls.IsActive == true
+                                     && bls.CompanyId == companyId && bls.VochType == 5 && bls.IsActive == 1
                                      select new BillSummary
                                      {
                                          LedgerId = led.LedgerId,
@@ -3425,7 +3853,7 @@ namespace SutraPlus_DAL.Repository
                                      join led in _tenantDBContext.Ledgers on bls.LedgerId equals led.LedgerId
                                      join comdty in _tenantDBContext.Commodities on inv.CommodityId equals comdty.CommodityId
                                      where bls.VochType == inv.VochType && bls.VochNo == inv.VochNo && bls.VochType == VochType.VoucherId && inv.LedgerId == led.LedgerId
-                                     && bls.CompanyId == companyId && bls.VochType == 8 && bls.IsActive == true
+                                     && bls.CompanyId == companyId && bls.VochType == 8 && bls.IsActive == 1
                                      select new BillSummary
                                      {
                                          LedgerId = led.LedgerId,
@@ -3448,7 +3876,7 @@ namespace SutraPlus_DAL.Repository
                                      join led in _tenantDBContext.Ledgers on bls.LedgerId equals led.LedgerId
                                      join comdty in _tenantDBContext.Commodities on inv.CommodityId equals comdty.CommodityId
                                      where bls.VochType == inv.VochType && bls.VochNo == inv.VochNo && bls.VochType == VochType.VoucherId && inv.LedgerId == led.LedgerId
-                                     && bls.CompanyId == companyId && bls.VochType >= 2 && bls.VochType <= 4 && bls.IsActive == true && bls.TotalWeight == 0
+                                     && bls.CompanyId == companyId && bls.VochType >= 2 && bls.VochType <= 4 && bls.IsActive == 1 && bls.TotalWeight == 0
                                      select new BillSummary
                                      {
                                          LedgerId = led.LedgerId,
@@ -3470,7 +3898,7 @@ namespace SutraPlus_DAL.Repository
                                      join led in _tenantDBContext.Ledgers on bls.LedgerId equals led.LedgerId
                                      join comdty in _tenantDBContext.Commodities on inv.CommodityId equals comdty.CommodityId
                                      where bls.VochType == inv.VochType && bls.VochNo == inv.VochNo && bls.VochType == VochType.VoucherId && inv.LedgerId == led.LedgerId
-                                     && bls.CompanyId == companyId && bls.VochType >= 9 && bls.VochType <= 13 && bls.IsActive == true && bls.IsServiceInvoice == true
+                                     && bls.CompanyId == companyId && bls.VochType >= 9 && bls.VochType <= 13 && bls.IsActive == 1 && bls.IsServiceInvoice == true
                                      select new BillSummary
                                      {
                                          LedgerId = led.LedgerId,
@@ -3494,7 +3922,7 @@ namespace SutraPlus_DAL.Repository
                                      join led in _tenantDBContext.Ledgers on bls.LedgerId equals led.LedgerId
                                      join comdty in _tenantDBContext.Commodities on inv.CommodityId equals comdty.CommodityId
                                      where bls.VochType == inv.VochType && bls.VochNo == inv.VochNo && bls.VochType == VochType.VoucherId && inv.LedgerId == led.LedgerId
-                                     && bls.CompanyId == companyId && bls.VochType == 12 && bls.IsActive == true
+                                     && bls.CompanyId == companyId && bls.VochType == 12 && bls.IsActive == 1
                                      select new BillSummary
                                      {
                                          LedgerId = led.LedgerId,
@@ -3516,7 +3944,7 @@ namespace SutraPlus_DAL.Repository
                                      join led in _tenantDBContext.Ledgers on bls.LedgerId equals led.LedgerId
                                      join comdty in _tenantDBContext.Commodities on inv.CommodityId equals comdty.CommodityId
                                      where bls.VochType == inv.VochType && bls.VochNo == inv.VochNo && bls.VochType == VochType.VoucherId && inv.LedgerId == led.LedgerId
-                                     && bls.CompanyId == companyId && bls.VochType == 14 && bls.IsActive == true
+                                     && bls.CompanyId == companyId && bls.VochType == 14 && bls.IsActive == 1
                                      select new BillSummary
                                      {
                                          LedgerId = led.LedgerId,
@@ -3538,7 +3966,7 @@ namespace SutraPlus_DAL.Repository
                                      join led in _tenantDBContext.Ledgers on bls.LedgerId equals led.LedgerId
                                      join comdty in _tenantDBContext.Commodities on inv.CommodityId equals comdty.CommodityId
                                      where bls.VochType == inv.VochType && bls.VochNo == inv.VochNo && bls.VochType == VochType.VoucherId && inv.LedgerId == led.LedgerId
-                                     && bls.CompanyId == companyId && bls.VochType == 15 && bls.IsActive == true
+                                     && bls.CompanyId == companyId && bls.VochType == 15 && bls.IsActive == 1
                                      select new BillSummary
                                      {
                                          LedgerId = led.LedgerId,
@@ -3560,7 +3988,7 @@ namespace SutraPlus_DAL.Repository
                                      join led in _tenantDBContext.Ledgers on bls.LedgerId equals led.LedgerId
                                      join comdty in _tenantDBContext.Commodities on inv.CommodityId equals comdty.CommodityId
                                      where bls.VochType == inv.VochType && bls.VochNo == inv.VochNo && bls.VochType == VochType.VoucherId && inv.LedgerId == led.LedgerId
-                                     && bls.CompanyId == companyId && bls.VochType == 16 && bls.IsActive == true
+                                     && bls.CompanyId == companyId && bls.VochType == 16 && bls.IsActive == 1
                                      select new BillSummary
                                      {
                                          LedgerId = led.LedgerId,
@@ -3582,7 +4010,7 @@ namespace SutraPlus_DAL.Repository
                                      join led in _tenantDBContext.Ledgers on bls.LedgerId equals led.LedgerId
                                      join comdty in _tenantDBContext.Commodities on inv.CommodityId equals comdty.CommodityId
                                      where bls.VochType == inv.VochType && bls.VochNo == inv.VochNo && bls.VochType == VochType.VoucherId && inv.LedgerId == led.LedgerId
-                                     && bls.CompanyId == companyId && bls.VochType == 13 && bls.IsActive == true
+                                     && bls.CompanyId == companyId && bls.VochType == 13 && bls.IsActive == 1
                                      select new BillSummary
                                      {
                                          LedgerId = led.LedgerId,
@@ -3675,7 +4103,7 @@ namespace SutraPlus_DAL.Repository
                        join comdty in _tenantDBContext.Commodities on Inv.CommodityId equals comdty.CommodityId
                        where Inv.VochType > 1 &&
                              Inv.VochType < 5 &&
-                             Inv.IsActive == true &&
+                             Inv.IsActive == 1 &&
                              Inv.CompanyId == companyId &&
                              Inv.TranctDate >= startDate && Inv.TranctDate <= endDate
                        orderby Inv.TranctDate, led.LedgerName
@@ -4324,7 +4752,7 @@ namespace SutraPlus_DAL.Repository
                         entity.DeliveryStateCode = LorryData["DeliveryStateCode"];
                         entity.Distance = LorryData["Distance"];
                         entity.DCNote = LorryData["Dcnote"];
-                        entity.IsActive = true;
+                        entity.IsActive = 1;
                     }
                     ///List<Inventory> inventorylist = new List<Inventory>();
                     _tenantDBContext.Update(entity);
@@ -4367,7 +4795,7 @@ namespace SutraPlus_DAL.Repository
                             Itementity.SGSTRate = data["Sgstvalue"];
                             Itementity.CGSTRate = data["Csgstvalue"];
                             Itementity.Taxable = data["TaxableValue"];
-                            Itementity.IsActive = true;
+                            Itementity.IsActive = 1;
                             _tenantDBContext.UpdateRange(Itementity);
                             _tenantDBContext.SaveChanges();
                         };
@@ -4399,18 +4827,18 @@ namespace SutraPlus_DAL.Repository
                 {
                     using (var context = new MasterDBContext())
                     {
-                        var activeentity = _tenantDBContext.BillSummaries.SingleOrDefault(item => item._Id == id && item.IsActive == true);
-                        var deactivateentity = _tenantDBContext.BillSummaries.SingleOrDefault(item => item._Id == id && item.IsActive == false);
+                        var activeentity = _tenantDBContext.BillSummaries.SingleOrDefault(item => item._Id == id && item.IsActive == 1);
+                        var deactivateentity = _tenantDBContext.BillSummaries.SingleOrDefault(item => item._Id == id && item.IsActive == 0);
                         if (activeentity != null)
                         {
-                            activeentity.IsActive = false;
+                            activeentity.IsActive = 0;
                             _tenantDBContext.SaveChanges();
                             _tenantDBContext.Update(activeentity);
                             _logger.LogDebug("SalesReo : sales Deactivated");
                         }
                         else if (deactivateentity != null)
                         {
-                            deactivateentity.IsActive = true;
+                            deactivateentity.IsActive = 1;
                             _tenantDBContext.SaveChanges();
                             _tenantDBContext.Update(deactivateentity);
                             _logger.LogDebug("SalesRepo : sales Activated");

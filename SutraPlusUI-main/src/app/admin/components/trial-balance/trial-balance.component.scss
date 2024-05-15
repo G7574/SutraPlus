@@ -1,0 +1,9 @@
+@media print {
+  table.my-table {
+    width: 100% !important; /* Adjust this value as needed */
+  }
+
+  .form-to-hide {
+    display: none;
+  }
+}

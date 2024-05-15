@@ -1,0 +1,223 @@
+<form class="row justify-content-center mb-4">
+
+  <div class="col-md-2">
+    <div style="display: flex; align-items: center">
+      <label for="startDate" style="margin-right: 10px">From:</label>
+      <div class="input-group">
+        <input
+          class="form-control"
+          placeholder="yyyy-mm-dd"
+          name="dp"
+          [(ngModel)]="startDate"
+          ngbDatepicker
+          #da="ngbDatepicker"
+          [minDate]="minYear"
+          [maxDate]="maxYear"
+          readonly
+        />
+        <button class="btn btn-outline-secondary bi bi-calendar3" (click)="da.toggle()" type="button"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-2">
+    <div style="display: flex; align-items: center">
+      <label for="endDate" style="margin-right: 10px">To:</label>
+      <div class="input-group">
+        <input
+          class="form-control"
+          placeholder="yyyy-mm-dd"
+          name="dp"
+          [(ngModel)]="endDate"
+          ngbDatepicker
+          #d="ngbDatepicker"
+          [minDate]="minYear1"
+          [maxDate]="maxYear1"
+          readonly
+        />
+        <button class="btn btn-outline-secondary bi bi-calendar3" (click)="d.toggle()" type="button"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- From Date -->
+  <!-- <div class="col-md-2">
+    <div style="display: flex; align-items: center;">
+      <label for="startDate" style="margin-right: 10px">From:</label>
+      <input type="date" id="startDate" name="startDate" class="form-control" [(ngModel)]="startDate" />
+    </div>
+  </div> -->
+
+  <!-- To Date -->
+  <!-- <div class="col-md-2">
+    <div style="display: flex; align-items: center;">
+      <label for="endDate" style="margin-right: 10px">To:</label>
+      <input type="date" id="endDate" name="endDate" class="form-control" [(ngModel)]="endDate" />
+    </div>
+  </div> -->
+
+  <div class="col-md-2">
+
+    <ng-select #party (keyup)="getPartyList(party.searchTerm)" [items]="partyList"
+                         bindLabel="ledgerName" bindValue="ledgerId" formControlName="DrpParty"
+                         placeholder="Select Party">
+                <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                  <div class="item">
+                    <div (click)="onClickTest($event, item)">
+                      {{ item.ledgerName }}
+                    </div>
+                  </div>
+                </ng-template>
+              </ng-select>
+
+  </div>
+
+  <div class="col-md-2">
+    <button type="submit" class="btn btn-dark" (click)="onSubmit()" style="font-size: 11px; width: 100%;">
+      Submit
+    </button>
+  </div>
+
+</form>
+
+<c-row>
+  <c-col md="12">
+      <c-card class="my-3">
+          <c-card-body class="p-3">
+              <div class="table-responsive">
+                  <table [striped]="true" [responsive]="true" cTable>
+                      <thead>
+                          <tr>
+                              <th scope="col">Date</th>
+                              <th scope="col">Transcation</th>
+                              <th scope="col">Document No.</th>
+                              <th scope="col" class="text-left">Particular</th>
+                              <th scope="col" class="text-center">Credit</th>
+                              <th scope="col" class="text-center">Debit</th>
+                              <th scope="col" class="text-center">Closing Balance</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+
+                        <tr>
+                          <td>{{startDate | date:'dd-MM-yyyy' || '-'}}</td>
+                          <td>{{'-'}}</td>
+                          <td>{{'-'}}</td>
+                          <td> Opening Balance </td>
+                          <td style="text-align: right;">
+
+                            <div *ngIf="openingBalacnce > 0">
+                              {{ formatToIndianRupees(openingBalacnce) || '-' }}
+                          </div>
+                          <div *ngIf="openingBalacnce < 0">
+                            {{ '-' }}
+                        </div>
+
+                          </td>
+
+                              <td style="text-align: right;" >
+                                  <div *ngIf="openingBalacnce < 0">
+                                      {{ formatToIndianRupees(openingBalacnce * -1) || '-' }}
+                                  </div>
+                                  <div *ngIf="openingBalacnce > 0">
+                                    {{ '-' }}
+                                </div>
+                              </td>
+
+                                <td style="text-align: right;">
+                                  <div *ngIf="openingBalacnce < 0">
+                                    {{ formatToIndianRupees(openingBalacnce * -1) || '-' }}
+                                </div>
+                                  <div *ngIf="openingBalacnce > 0">
+                                    {{ '-' }}
+                                </div>
+                                </td>
+
+                      </tr>
+
+                          <tr *ngFor="let item of invoiceList; let i = index;">
+                              <td>{{item.TranctDate | date:'dd-MM-yyyy' || '-'}}</td>
+                              <td>{{item.VoucherName || '-'}}</td>
+                              <td>{{item.PartyInvoiceNumber || '-'}}</td>
+                              <td>{{item.LedgerNameForNarration + ' - ' + item.Narration || '-'}}</td>
+                              <td style="text-align: right;">
+
+                                  <div *ngIf="item.Credit == 0">
+                                    --
+                                  </div>
+
+                                  <div *ngIf="item.Credit != 0">
+                                    {{formatToIndianRupees(item.Credit) ||'-'}}
+                                  </div>
+
+                              </td>
+
+                                  <td style="text-align: right;">
+
+                                    <div *ngIf="item.Debit == 0">
+                                        --
+                                    </div>
+
+                                    <div *ngIf="item.Debit != 0">
+                                      {{ formatToIndianRupees(item.Debit) ||'-'}}
+                                    </div>
+
+                                  </td>
+
+                                    <td style="text-align: right;"> {{ formatToIndianRupees(fun(closingBal[i])) || '-' }}
+
+                                  </td>
+
+                          </tr>
+                          <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td> Total </td>
+                            <td style="text-align: right;">{{ formatToIndianRupees(getTotalCredit()) }}</td>
+                            <td style="text-align: right;">{{ formatToIndianRupees(getTotalDebit()) }}</td>
+                            <td></td>
+                          </tr>
+
+                          <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td> Closing Balance </td>
+                            <td style="text-align: right;">
+                              <div *ngIf="finalBal < 0"> {{ formatToIndianRupees(finalBal * -1)}} </div>
+                            </td>
+                            <td style="text-align: right;">
+                               <div *ngIf="finalBal > 0"> {{ formatToIndianRupees(finalBal) }}
+                            </div> </td>
+                            <td></td>
+                          </tr>
+
+                          <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td> Grand Total </td>
+                            <td style="text-align: right;">
+                              <div *ngIf="finalBal < 0"> {{formatToIndianRupees((finalBal * -1) + getTotalCredit())}} </div>
+                              <div *ngIf="finalBal > 0"> {{ formatToIndianRupees(finalBal + getTotalDebit())}}</div>
+                            </td>
+                            <td style="text-align: right;">
+                               <div *ngIf="finalBal > 0"> {{ formatToIndianRupees(finalBal + getTotalDebit()) }}</div>
+                               <div *ngIf="finalBal < 0"> {{formatToIndianRupees((finalBal * -1) + getTotalCredit())}} </div>
+                            </td>
+                            <td></td>
+                          </tr>
+
+                      </tbody>
+                  </table>
+              </div>
+
+              <div class="text-center text-dark" *ngIf="invoiceList.length===0">
+                  No Records Found
+              </div>
+
+          </c-card-body>
+      </c-card>
+  </c-col>
+</c-row>

@@ -86,6 +86,10 @@ export class AdminServicesService {
     return this.dataService.postAnonymous('Sales/GetInvtype',data);
   }
 
+  GetInvtypeForCalculation(data:any): Observable<any> {
+    return this.dataService.postAnonymous('Sales/GetInvtypeForCalculation',data);
+  }
+
   createProduct(data: any): Observable<any> {
     return this.dataService.postAnonymous('TenantDBCommon/AddProduct', data);
   }
@@ -110,6 +114,26 @@ export class AdminServicesService {
     return this.dataService.postAnonymous('TenantDBCommon/GetLedgerList', data);
   }
 
+  GetAkadaData(data: any): Observable<any> {
+    return this.dataService.postAnonymous('TenantDBCommon/GetAkadaData', data);
+  }
+
+  GetDaySummary(data: any): Observable<any> {
+    return this.dataService.postAnonymous('TenantDBCommon/GetDaySummary', data);
+  }
+
+  GetVocuherDataForDaySummary(data: any): Observable<any> {
+    return this.dataService.postAnonymous('TenantDBCommon/GetVocuherDataForDaySummary', data);
+  }
+
+  GetMarks(data: any): Observable<any> {
+    return this.dataService.postAnonymous('TenantDBCommon/GetMarks', data);
+  }
+
+  GetDataMyMark(data: any): Observable<any> {
+    return this.dataService.postAnonymous('TenantDBCommon/GetDataMyMark', data);
+  }
+
   getLedgerListForOtherAccounts(data: any): Observable<any> {
     return this.dataService.postAnonymous('TenantDBCommon/GetLedgerListForOtherAccounts', data);
   }
@@ -120,6 +144,22 @@ export class AdminServicesService {
 
   updateData(data: any): Observable<any> {
     return this.dataService.postAnonymous('TenantDBCommon/updateData', data);
+  }
+
+  GetVoucherDataForAccountStatementPage(data: any): Observable<any> {
+    return this.dataService.postAnonymous('TenantDBCommon/GetVoucherDataForAccountStatementPage', data);
+  }
+
+  GetTrialBalance(data: any): Observable<any> {
+    return this.dataService.postAnonymous('TenantDBCommon/GetTrialBalance', data);
+  }
+
+  GetTransactionSummary(data: any): Observable<any> {
+    return this.dataService.postAnonymous('TenantDBCommon/GetTransactionSummary', data);
+  }
+
+  GetOpeningBalance(data: any): Observable<any> {
+    return this.dataService.postAnonymous('TenantDBCommon/GetOpeningBalance', data);
   }
 
   getInvoiceList(data: any): Observable<any> {

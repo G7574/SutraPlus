@@ -22,6 +22,7 @@ import { Ledger } from '../sales/models/ladger.model';
 import * as XLSX from 'xlsx';
 import { constant } from 'lodash-es';
 import { SelectBankDailogComponent } from '../select-bank-dailog/select-bank-dailog.component';
+import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
@@ -60,19 +61,41 @@ export class PaymentListComponent implements OnInit {
     private spinner: NgxSpinnerService,
     public commonService: CommonService,
     private activatedRoute: ActivatedRoute,
+    private calendar: NgbCalendar,
     private dialog: MatDialog,
   ) { }
   isTableViewVisible: boolean = true;
+
+  minYear : NgbDateStruct;
+  maxYear : NgbDateStruct;
+  minYear1 : NgbDateStruct;
+  maxYear1 : NgbDateStruct;
+
   ngOnInit(): void {
-    const currentDate = new Date();
     // this.startDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1));
-    this.endDate = this.formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0));
+
+    const currentDate = this.calendar.getToday();
+    this.startDate = currentDate;
+    this.endDate = currentDate;
+
     this.financialYear = sessionStorage.getItem('financialYear');
     this.customerCode = sessionStorage.getItem('globalCustomerCode');
     this.userDetails = sessionStorage.getItem('userDetails');
     this.userDetails = JSON.parse(this.userDetails);
     this.userEmail = this.userDetails?.result?.UserEmailId;
     this.globalCompanyId = sessionStorage.getItem('companyID');
+
+    let [startYear, endYear] = this.financialYear.split("-");
+    this.minYear = { year: Number(startYear), month: 4, day: 1 };
+    this.maxYear = { year: Number(endYear), month: 3, day: 31 };
+
+    this.minYear1 = { year: Number(startYear), month: 4, day: 1 };
+    this.maxYear1 = { year: Number(endYear), month: 3, day: 31 };
+
+    if(this.startDate.year > this.maxYear.year) {
+      this.endDate = this.minYear;
+    }
+
     // this.SearchText = sessionStorage.getItem("SearchText");
     // this.activatedRoute.queryParams.subscribe((params) => {
 
@@ -88,6 +111,13 @@ export class PaymentListComponent implements OnInit {
   reportUrl: string = "rptPaymentList";
   // The built-in controller in the back-end ASP.NET Core Reporting application.
   invokeAction: string = '/DXXRDV';
+
+  ngbDateToDate(date: NgbDateStruct): Date {
+    if (date === null) {
+      return null;
+    }
+    return new Date(date.year, date.month - 1, date.day);
+  }
 
   private formatDate(date: Date): string {
     const year = date.getFullYear();
@@ -195,7 +225,7 @@ export class PaymentListComponent implements OnInit {
     let partyDetails = {
       SearchText: this.SearchText,
       Balance: this.balance,
-      Date: this.endDate ,
+      Date: this.formatDate(this.ngbDateToDate(this.endDate)) ,
       Page: {
         PageNumber: this.pageNumber,
         PageSize: 20,
@@ -275,7 +305,7 @@ export class PaymentListComponent implements OnInit {
   exportToExcel(): void {
     const customLines = [
       ['Search Filter'],
-      ['Date',this.endDate],
+      ['Date',this.formatDate(this.ngbDateToDate(this.endDate))],
       ['Search Text',this.SearchText],
       ['Balance > ',this.balance]
     ];
@@ -315,7 +345,7 @@ export class PaymentListComponent implements OnInit {
 
     const customLines = [
       ['Search Filter'],
-      ['Date',this.endDate],
+      ['Date',this.formatDate(this.ngbDateToDate(this.endDate))],
       ['Search Text',this.SearchText],
       ['Balance > ',this.balance]
     ];

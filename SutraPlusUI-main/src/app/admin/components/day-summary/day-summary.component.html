@@ -1,0 +1,116 @@
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+
+<c-row>
+    <c-col md="12">
+        <c-card class="my-3">
+            <c-card-header>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Day Summary <span class="badge badge-primary">{{totalInvoice}}</span>
+                    </h6>
+
+                </div>
+            </c-card-header>
+            <c-card-body class="p-3">
+                <div class="table-responsive">
+                    <table [striped]="true" [responsive]="true" cTable>
+                        <thead>
+                            <tr>
+                                <th scope="col" class="text-center">Sr.&nbsp;No.</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Party&nbsp;Name</th>
+                                <th style="text-align: right" scope="col">InvoiceNumber</th>
+                                <th style="text-align: right" scope="col">Credit</th>
+                                <th style="text-align: right" scope="col">Debit</th>
+                                <th style="text-align: right" scope="col">Difference</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of invoiceList; let i = index;">
+                                <td class="text-center">{{10 *(pageNumber-1)+i+1}}</td>
+                                <td>{{item.Tranctdate | date:'MM/dd/yyyy' || '-'}}</td>
+                                <td>{{item.LedgerName || '-'}}</td>
+                                <td style="text-align: right">{{item.Partyinvoicenumber}}</td>
+                                <td style="text-align: right">{{item.CR.toFixed(2)}}</td>
+                                <td style="text-align: right">{{item.DR.toFixed(2)}}</td>
+                                <td style="text-align: right">{{(item.CR - item.DR).toFixed(2)}}</td>
+                                <td>
+                                  <div class="col-md-2">
+                                    <div style="display: flex;">
+                                      <button class="btn btn-dark" (click)="viewClick(item)"> View </button>
+                                    </div>
+                                  </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="text-center text-dark" *ngIf="invoiceList.length===0">
+                    No Records Found
+                </div>
+
+              </c-card-body>
+        </c-card>
+    </c-col>
+</c-row>
+
+<c-modal size="xl" id="ModalCRDRDetails" [visible]="crdrvisible" (click)="onModalClosed()">
+  <c-modal-header style="margin-bottom: 0% !important">
+    <h3 cModalTitle>Credit Debit Information for this Invoice</h3>
+    <button (click)="toggleCrDrDetails()" cButtonClose class="fw-bold"></button>
+  </c-modal-header>
+  <c-modal-body>
+    <c-row>
+      <c-col [sm]="12" id="tblCRDRDetails">
+        <table>
+          <thead>
+            <th style="background: #b1c2d1">Date</th>
+            <th style="background: #b1c2d1">Party&nbsp;Name</th>
+            <th style="background: #b1c2d1; text-align: right">InvoiceNumber</th>
+            <th style="background: #b1c2d1; text-align: right">Credit</th>
+            <th style="background: #b1c2d1; text-align: right">Debit</th>
+           </thead>
+
+          <tbody>
+            <tr *ngFor="let CRDRDetailsData of CRDRDetails; let i = index">
+              <td>{{ CRDRDetailsData.TranctDate | date:'MM/dd/yyyy' || '-' }}</td>
+              <td>{{ CRDRDetailsData.LedgerName }}</td>
+              <td>{{ CRDRDetailsData.PartyInvoiceNumber }}</td>
+              <td style="text-align: right">
+                {{ CRDRDetailsData.Credit.toFixed(2) }}
+              </td>
+              <td style="text-align: right">
+                {{ CRDRDetailsData.Debit.toFixed(2) }}
+              </td>
+              <tr>
+                <td style="background: #b1c2d1"></td>
+                <td style="background: #b1c2d1"></td>
+                <td style="
+                    background: #b1c2d1;
+                    text-align: right;
+                    font-weight: bold;
+                  ">
+                  Total
+                </td>
+                <td style="
+                    background: #b1c2d1;
+                    text-align: right;
+                    font-weight: bold;
+                  ">
+                  {{ TotalCreditAmount }}
+                </td>
+                <td style="
+                    background: #b1c2d1;
+                    text-align: right;
+                    font-weight: bold;
+                  ">
+                  {{ TotalDebitAmount }}
+                </td>
+            </tr>
+          </tbody>
+        </table>
+      </c-col>
+    </c-row>
+  </c-modal-body>
+</c-modal>

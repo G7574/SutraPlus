@@ -1,0 +1,65 @@
+
+/* webkit solution */
+::-webkit-input-placeholder {
+  text-align: left;
+}
+
+/* mozilla solution */
+input:-moz-placeholder {
+  text-align: left;
+}
+
+#table1 tr {
+  border: 1px solid #fff !important;
+}
+
+.myclass {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  width: 140px;
+}
+
+.myclass input {
+  width: 75px;
+}
+
+#formGroup4 input .ng-invalid {
+  border: 1px solid red;
+}
+
+#tblPartyDetails table td {
+  font-size: 12px !important;
+}
+
+#tblCRDRDetails table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#tblCRDRDetails td,
+th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+.modal-title {
+  margin-bottom: 0% !important;
+}
+
+#ModalCRDRDetails .modal-body {
+  padding: 0%;
+}
+
+
+.dropdown-menu-scrollable {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+
+#table input{
+  font-size:11px;
+}

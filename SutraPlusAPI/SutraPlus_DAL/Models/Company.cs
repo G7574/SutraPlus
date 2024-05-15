@@ -129,7 +129,7 @@ namespace SutraPlus_DAL.Models
         public string? PhyPath { get; set; }
         public int? DeleteEx { get; set; }
         public int? ResetPacking { get; set; }
-        public Boolean IsActive { get; set; }
+        public int IsActive { get; set; }
         public string InvoiceString { get; set; }
     }
 }

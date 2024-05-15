@@ -200,6 +200,8 @@ export class AddUserMasterComponent implements OnInit {
             this.toastr.success('User Added Successfully!');
             this.location.back();
             this.spinner.hide();
+          } else {
+            this.toastr.error(res);
           }
           this.spinner.hide();
         },

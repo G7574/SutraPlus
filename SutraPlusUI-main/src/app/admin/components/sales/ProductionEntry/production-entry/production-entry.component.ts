@@ -3,6 +3,7 @@ import { ProductionMaster } from '../../models/production-master.model';
 import { AdminServicesService } from 'src/app/admin/services/admin-services.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
+import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-production-entry',
   templateUrl: './production-entry.component.html',
@@ -12,17 +13,30 @@ export class ProductionEntryComponent {
   globalCompanyId!: number;
   productionList: ProductionMaster[] = [];
   addEntryModel: ProductionMaster = new ProductionMaster();
-  ngOnInit() { }
+  ngOnInit() {
+  }
+
+  minYear : NgbDateStruct;
+  maxYear : NgbDateStruct;
+  financialYear: string = "";
 
   constructor(
     private adminService: AdminServicesService,
     private spinner: NgxSpinnerService,
+    private calendar: NgbCalendar,
     private toastr: ToastrService
   ) {
     this.spinner.show();
     this.globalCompanyId = Number(sessionStorage.getItem('companyID'));
     this.getList();
     this.spinner.hide();
+  }
+
+  ngbDateToDate(date: NgbDateStruct): Date {
+    if (date === null) {
+      return null;
+    }
+    return new Date(date.year, date.month - 1, date.day);
   }
 
   getList() {

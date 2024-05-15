@@ -6,7 +6,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Constants } from '../../../share/models/constants';
 import { AuthenticationServiceService } from '../../services/authentication-service.service';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -42,7 +42,8 @@ export class LoginComponent implements OnInit {
     private spinner: NgxSpinnerService,
     private toastrService: ToastrService,
     public commonService: CommonService,
-    public adminService: AdminServicesService
+    public adminService: AdminServicesService,
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {

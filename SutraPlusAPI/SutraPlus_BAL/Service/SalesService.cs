@@ -73,6 +73,23 @@ namespace SutraPlus_BAL.Service
                 throw ex;
             }
         }
+        public JObject GetInvtypeForCalculation(JObject Data)
+        {
+            try
+            {
+                var response = new JObject();
+                var data = JsonConvert.DeserializeObject<dynamic>(Data["SalesDetails"].ToString());
+                int CompanyId = data["CompanyId"]; 
+                int LedgerId = data["LedgerId"];  
+                response = _salesRepository.GetInvtypeForCalculation(CompanyId, LedgerId);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                throw ex;
+            }
+        }
         public JObject GetEinvoiceKey(JObject Data)
         {
             try

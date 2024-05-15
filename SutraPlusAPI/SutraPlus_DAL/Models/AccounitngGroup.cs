@@ -5,7 +5,7 @@ namespace SutraPlus_DAL.Models
 {
     public partial class AccounitngGroup
     {
-        public int _Id { get; set; }
+        //public int _Id { get; set; }
         public long? AccontingGroupId { get; set; }
         public string? GroupName { get; set; } = null!;
         public string? UnderHead { get; set; }
@@ -17,6 +17,6 @@ namespace SutraPlus_DAL.Models
         public int? PandLposition { get; set; }
         public int? CreditPosition { get; set; }
         public int? DebitPosition { get; set; }
-        public Boolean? IsActive { get; set; }
+        //public Boolean? IsActive { get; set; }
     }
 }

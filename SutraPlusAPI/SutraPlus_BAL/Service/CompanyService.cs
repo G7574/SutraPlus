@@ -90,7 +90,7 @@ namespace SutraPlus_BAL.Service
                     Account3 = data["Account3"],
                     CreatedDate = DateTime.Now,
                     Logo = data["Logo"],
-                    IsActive = true
+                    IsActive = 1
                 };
                 return _companyRepository.Add(company);
             }

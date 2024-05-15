@@ -17,6 +17,7 @@ import { AdminServicesService } from '../../services/admin-services.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { isNil } from 'lodash-es';
 import { Ledger } from '../sales/models/ladger.model';
+import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-common-report-generator',
@@ -181,6 +182,13 @@ export class CommonReportGeneratorComponent implements OnInit {
 
   }
 
+  minYear : NgbDateStruct;
+  maxYear : NgbDateStruct;
+
+
+  minYear1 : NgbDateStruct;
+  maxYear1 : NgbDateStruct;
+
   ngOnInit(): void {
 
     this.financialYear = sessionStorage.getItem('financialYear');
@@ -189,21 +197,41 @@ export class CommonReportGeneratorComponent implements OnInit {
     this.startYear = startYear;
     this.endYear = endYear;
 
-    const currentDate = new Date();
+    // const currentDate = new Date();
     //this.startDate = this.formatDate(new Date(Number(this.startYear), 3, 1));
     //this.endDate = this.formatDate(new Date(Number(this.endYear), 2, 31));
 
-    this.startDate = this.formatDate(new Date(Number(this.startYear), currentDate.getMonth(), 1));
-    this.endDate = this.formatDate(new Date(Number(this.startYear), currentDate.getMonth() + 1, 0));
+    // this.startDate = this.formatDate(new Date(Number(this.startYear), currentDate.getMonth(), 1));
+    // this.endDate = this.formatDate(new Date(Number(this.startYear), currentDate.getMonth() + 1, 0));
 
-    $("#startDate").val(this.startDate);
-    $("#endDate").val(this.endDate);
+    // $("#startDate").val(this.startDate);
+
+    const currentDate = this.calendar.getToday();
+    this.startDate = { year: currentDate.year, month: currentDate.month, day: 1 };
+    this.endDate = this.calendar.getNext(this.startDate, 'm', 1);
+
+    $("#startDate").val(this.formatDate(this.ngbDateToDate(this.startDate)));
+    $("#endDate").val(this.formatDate(this.ngbDateToDate(this.endDate)));
+
+    this.minYear = { year: Number(startYear), month: 4, day: 1 };
+    this.maxYear = { year: Number(endYear), month: 3, day: 31 };
+
+    this.minYear1 = { year: Number(startYear), month: 4, day: 1 };
+    this.maxYear1 = { year: Number(endYear), month: 3, day: 31 };
+    // $("#endDate").val(this.endDate);
 
     this.validateEinvoiceEnabled(this.globalCompanyId);
 
     this.getGroups();
 
     // Additional initialization logic can be added here
+  }
+
+  ngbDateToDate(date: NgbDateStruct): Date {
+    if (date === null) {
+      return null;
+    }
+    return new Date(date.year, date.month - 1, date.day);
   }
 
   validateEinvoiceEnabled(companyId: Number): void {
@@ -253,6 +281,7 @@ export class CommonReportGeneratorComponent implements OnInit {
     private toastr: ToastrService,
     private router: Router,
     private spinner: NgxSpinnerService,
+    private calendar: NgbCalendar,
     private adminService: AdminServicesService,
   ) {
     this.globalCompanyId = Number(sessionStorage.getItem('companyID'));
@@ -364,7 +393,7 @@ generateRepo(selected : boolean) {
     {
         case "All":
             this.reportType = "";
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99"+
+            this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99"+
             "|" +
             "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
             "&DataSource=" + sessionStorage.getItem("DataSource") +
@@ -374,14 +403,14 @@ generateRepo(selected : boolean) {
         case "Purchase":
             this.reportType = "Purchase";
             if(this.ledgerId != null && this.ledgerId > 0) {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4" + "&ledgerId=" + this.ledgerId+
+              this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4" + "&ledgerId=" + this.ledgerId+
               "|" +
               "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
               "&DataSource=" + sessionStorage.getItem("DataSource") +
               "&UserID=" + sessionStorage.getItem("UserID") +
               "&Password=" + sessionStorage.getItem("Password"));
             } else {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4"+
+              this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4"+
               "|" +
               "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
               "&DataSource=" + sessionStorage.getItem("DataSource") +
@@ -392,14 +421,14 @@ generateRepo(selected : boolean) {
         case "Sales":
             this.reportType = "Sales";
             if(this.ledgerId != null && this.ledgerId > 0) {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13" + "&ledgerId=" + this.ledgerId+
+              this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13" + "&ledgerId=" + this.ledgerId+
               "|" +
               "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
               "&DataSource=" + sessionStorage.getItem("DataSource") +
               "&UserID=" + sessionStorage.getItem("UserID") +
               "&Password=" + sessionStorage.getItem("Password"));
             } else {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13"+
+              this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13"+
               "|" +
               "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
               "&DataSource=" + sessionStorage.getItem("DataSource") +
@@ -410,14 +439,14 @@ generateRepo(selected : boolean) {
         case "PurchaseReturn":
             this.reportType = "Purchare Return";
             if(this.ledgerId != null && this.ledgerId > 0) {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14" + "&ledgerId=" + this.ledgerId+
+              this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=14" + "&ledgerId=" + this.ledgerId+
               "|" +
               "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
               "&DataSource=" + sessionStorage.getItem("DataSource") +
               "&UserID=" + sessionStorage.getItem("UserID") +
               "&Password=" + sessionStorage.getItem("Password"));
             } else {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14"+
+              this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=14"+
               "|" +
               "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
               "&DataSource=" + sessionStorage.getItem("DataSource") +
@@ -428,14 +457,14 @@ generateRepo(selected : boolean) {
         case "SalesReturn":
             this.reportType = "Sales Return";
             if(this.ledgerId != null && this.ledgerId > 0) {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6" + "&ledgerId=" + this.ledgerId+
+              this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=6" + "&ledgerId=" + this.ledgerId+
               "|" +
               "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
               "&DataSource=" + sessionStorage.getItem("DataSource") +
               "&UserID=" + sessionStorage.getItem("UserID") +
               "&Password=" + sessionStorage.getItem("Password"));
             } else {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6"+
+              this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=6"+
               "|" +
               "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
               "&DataSource=" + sessionStorage.getItem("DataSource") +
@@ -446,14 +475,14 @@ generateRepo(selected : boolean) {
         case "CreditNote":
             this.reportType = "Credit Note";
             if(this.ledgerId != null && this.ledgerId > 0) {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9" + "&ledgerId=" + this.ledgerId+
+              this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=9" + "&ledgerId=" + this.ledgerId+
               "|" +
               "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
               "&DataSource=" + sessionStorage.getItem("DataSource") +
               "&UserID=" + sessionStorage.getItem("UserID") +
               "&Password=" + sessionStorage.getItem("Password"));
             } else {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9"+
+              this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=9"+
               "|" +
               "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
               "&DataSource=" + sessionStorage.getItem("DataSource") +
@@ -464,14 +493,14 @@ generateRepo(selected : boolean) {
         case "DebitNote":
             this.reportType = "Debit Note";
             if(this.ledgerId != null && this.ledgerId > 0) {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15" + "&ledgerId=" + this.ledgerId+
+              this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=15" + "&ledgerId=" + this.ledgerId+
               "|" +
               "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
               "&DataSource=" + sessionStorage.getItem("DataSource") +
               "&UserID=" + sessionStorage.getItem("UserID") +
               "&Password=" + sessionStorage.getItem("Password"));
             } else {
-              this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15"+
+              this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=15"+
               "|" +
               "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
               "&DataSource=" + sessionStorage.getItem("DataSource") +
@@ -488,7 +517,7 @@ generateRepo(selected : boolean) {
   {
       case "All":
           this.reportType = "";
-          this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99"+
+          this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=0&vochtype1=99"+
           "|" +
           "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
           "&DataSource=" + sessionStorage.getItem("DataSource") +
@@ -498,14 +527,14 @@ generateRepo(selected : boolean) {
       case "Purchase":
           this.reportType = "Purchase";
           if(this.ledgerId1 != null && this.ledgerId1 > 0) {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4" + "&ledgerId=" + this.ledgerId1+
+            this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4" + "&ledgerId=" + this.ledgerId1+
             "|" +
             "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
             "&DataSource=" + sessionStorage.getItem("DataSource") +
             "&UserID=" + sessionStorage.getItem("UserID") +
             "&Password=" + sessionStorage.getItem("Password"));
           } else {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4"+
+            this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=2&vochtype1=4"+
             "|" +
             "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
             "&DataSource=" + sessionStorage.getItem("DataSource") +
@@ -516,14 +545,14 @@ generateRepo(selected : boolean) {
       case "Sales":
           this.reportType = "Sales";
           if(this.ledgerId1 != null && this.ledgerId1 > 0) {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13" + "&ledgerId=" + this.ledgerId1+
+            this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13" + "&ledgerId=" + this.ledgerId1+
             "|" +
             "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
             "&DataSource=" + sessionStorage.getItem("DataSource") +
             "&UserID=" + sessionStorage.getItem("UserID") +
             "&Password=" + sessionStorage.getItem("Password"));
           } else {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13"+
+            this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=9&vochtype1=13"+
             "|" +
             "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
             "&DataSource=" + sessionStorage.getItem("DataSource") +
@@ -534,14 +563,14 @@ generateRepo(selected : boolean) {
       case "PurchaseReturn":
           this.reportType = "Purchare Return";
           if(this.ledgerId1 != null && this.ledgerId1 > 0) {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14" + "&ledgerId=" + this.ledgerId1+
+            this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=14" + "&ledgerId=" + this.ledgerId1+
             "|" +
             "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
             "&DataSource=" + sessionStorage.getItem("DataSource") +
             "&UserID=" + sessionStorage.getItem("UserID") +
             "&Password=" + sessionStorage.getItem("Password"));
           } else {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=14"+
+            this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=14"+
             "|" +
             "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
             "&DataSource=" + sessionStorage.getItem("DataSource") +
@@ -552,14 +581,14 @@ generateRepo(selected : boolean) {
       case "SalesReturn":
           this.reportType = "Sales Return";
           if(this.ledgerId1 != null && this.ledgerId1 > 0) {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6" + "&ledgerId=" + this.ledgerId1+
+            this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=6" + "&ledgerId=" + this.ledgerId1+
             "|" +
             "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
             "&DataSource=" + sessionStorage.getItem("DataSource") +
             "&UserID=" + sessionStorage.getItem("UserID") +
             "&Password=" + sessionStorage.getItem("Password"));
           } else {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=6"+
+            this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=6"+
             "|" +
             "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
             "&DataSource=" + sessionStorage.getItem("DataSource") +
@@ -570,14 +599,14 @@ generateRepo(selected : boolean) {
       case "CreditNote":
           this.reportType = "Credit Note";
           if(this.ledgerId1 != null && this.ledgerId1 > 0) {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9" + "&ledgerId=" + this.ledgerId1+
+            this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=9" + "&ledgerId=" + this.ledgerId1+
             "|" +
             "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
             "&DataSource=" + sessionStorage.getItem("DataSource") +
             "&UserID=" + sessionStorage.getItem("UserID") +
             "&Password=" + sessionStorage.getItem("Password"));
           } else {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=9"+
+            this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=9"+
             "|" +
             "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
             "&DataSource=" + sessionStorage.getItem("DataSource") +
@@ -588,14 +617,14 @@ generateRepo(selected : boolean) {
       case "DebitNote":
           this.reportType = "Debit Note";
           if(this.ledgerId1 != null && this.ledgerId1 > 0) {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15" + "&ledgerId=" + this.ledgerId1+
+            this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=15" + "&ledgerId=" + this.ledgerId1+
             "|" +
             "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
             "&DataSource=" + sessionStorage.getItem("DataSource") +
             "&UserID=" + sessionStorage.getItem("UserID") +
             "&Password=" + sessionStorage.getItem("Password"));
           } else {
-            this.openNewTab(this.reportUrl + "&StartDate=" + $("#startDate").val() + "&EndDate=" + $("#endDate").val() + "&companyidrecord=" + globalCompanyId + "&vochtype1=15"+
+            this.openNewTab(this.reportUrl + "&StartDate=" + this.formatDate(this.ngbDateToDate(this.startDate)) + "&EndDate=" + this.formatDate(this.ngbDateToDate(this.endDate)) + "&companyidrecord=" + globalCompanyId + "&vochtype1=15"+
             "|" +
             "dataBaseName=" + sessionStorage.getItem("dataBaseName") +
             "&DataSource=" + sessionStorage.getItem("DataSource") +
@@ -615,7 +644,7 @@ generateRepo(selected : boolean) {
 openNewTab(data:any) {
 
   sessionStorage.setItem('query', data);
-  sessionStorage.setItem('headerContent', this.reportName + " " + this.reportType + " Report for the period " + this.startDate + " to " + this.endDate);
+  sessionStorage.setItem('headerContent', this.reportName + " " + this.reportType + " Report for the period " + this.formatDate(this.ngbDateToDate(this.startDate)) + " to " + this.formatDate(this.ngbDateToDate(this.endDate)));
 
   const url = this.router.createUrlTree(['/'], { fragment: 'ReportView' }).toString();
   window.open(url, '_blank');

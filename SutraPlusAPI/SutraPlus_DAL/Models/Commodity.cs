@@ -46,6 +46,6 @@ namespace SutraPlus_DAL.Models
         public decimal? ClosingValue { get; set; }
         public decimal? OutLetId { get; set; }
         public bool? IsService { get; set; }
-        public bool IsActive { get; set; }
+        public int IsActive { get; set; }
     }
 }

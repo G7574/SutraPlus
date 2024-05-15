@@ -73,6 +73,6 @@ namespace SutraPlus_DAL.Models
         public int? ISUSED { get; set; }
         public DateTime? OriginalInvDate { get; set; }
         public decimal? Frieght { get; set; }
-        public Boolean? IsActive { get; set; }
+        public int? IsActive { get; set; }
     }
 }

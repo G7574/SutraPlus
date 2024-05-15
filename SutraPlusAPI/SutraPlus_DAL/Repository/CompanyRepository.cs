@@ -43,7 +43,7 @@ namespace SutraPlus_DAL.Repository
                 _logger.LogDebug("Company Repo : List Companies");
 
                 var result = (from a in _tenantDBContext.Companies                              
-                            where a.IsActive == true                            
+                            where a.IsActive == 1                            
                             select new
                             {
                                 CompanyId = a.CompanyId,
@@ -183,7 +183,7 @@ namespace SutraPlus_DAL.Repository
                         entity.CreatedDate = DateTime.Now;
                         entity.Logo = data["Logo"];
                        
-                        entity.IsActive = true;
+                        entity.IsActive = 1;
                         _tenantDBContext.SaveChanges();
                         _tenantDBContext.Update(entity);
                     }
@@ -261,7 +261,7 @@ namespace SutraPlus_DAL.Repository
                         entity.EinvoiceReq = data["EInvoiceReq"];
                         entity.Pin = data["Pin"];
 
-                        entity.IsActive = true;
+                        entity.IsActive = 1;
                         _tenantDBContext.SaveChanges();
                         _tenantDBContext.Update(entity);
                     }
@@ -289,7 +289,7 @@ namespace SutraPlus_DAL.Repository
                     long selectedCompanyId = data["CompanyId"];
                     DateTime selectedDate = data["TranctDate"];
                     var result = _tenantDBContext.Inventory
-                        .Where(n=>n.CompanyId == selectedCompanyId && n.NoOfBags > 0 && n.IsTender == 1 && n.IsActive == true && n.TranctDate == selectedDate)
+                        .Where(n=>n.CompanyId == selectedCompanyId && n.NoOfBags > 0 && n.IsTender == 1 && n.IsActive == 1 && n.TranctDate == selectedDate)
                                                            .AsEnumerable().GroupBy(n=>n.Mark).ToList();
 
                     if(result != null)
@@ -382,7 +382,7 @@ namespace SutraPlus_DAL.Repository
                     DateTime TransDate = data["TransDate"];
 
                     var toShowInventory = _tenantDBContext.Inventory
-                        .Where(i => i.IsActive == true &&
+                        .Where(i => i.IsActive == 1 &&
                                     i.VochType == 2 &&
                                     i.VochNo == 0 &&
                                     i.CompanyId == selectedCompanyId &&
@@ -393,7 +393,7 @@ namespace SutraPlus_DAL.Repository
                     {
                         foreach (var item in toShowInventory)
                         {
-                            item.IsActive = false;
+                            item.IsActive = 0;
                         }
                     }
 
@@ -408,14 +408,14 @@ namespace SutraPlus_DAL.Repository
 
                     foreach (var voucherToUpdate in vouchersToUpdate)
                     {
-                        voucherToUpdate.IsActive = false;
+                        voucherToUpdate.IsActive = 0;
                     }
 
                     var billSummariesToUpdate = _tenantDBContext.BillSummaries.Where(bs => bs.CompanyId == selectedLedgerId && bs.VochType == 2 && bs.VochNo == 0 && bs.TranctDate == TransDate).ToList();
 
                     foreach (var billSummaryToUpdate in billSummariesToUpdate)
                     {
-                        billSummaryToUpdate.IsActive = false;
+                        billSummaryToUpdate.IsActive = 0;
                     }
 
 
@@ -498,7 +498,7 @@ namespace SutraPlus_DAL.Repository
 
                     if (result != null)
                     {
-                        result.IsActive = false;
+                        result.IsActive = 0;
                     }
 
                     var bagWeightsToUpdate = _tenantDBContext.BagWeights.Where(bw => bw.CompanyId == selectedCompanyId && bw.LedgerId == selectedLedgerId && bw.LotNo == LotNo && bw.TranctDate == TransDate).ToList();
@@ -512,14 +512,14 @@ namespace SutraPlus_DAL.Repository
 
                     foreach (var voucherToUpdate in vouchersToUpdate)
                     {
-                        voucherToUpdate.IsActive = false;
+                        voucherToUpdate.IsActive = 0;
                     }
 
                     var billSummariesToUpdate = _tenantDBContext.BillSummaries.Where(bs => bs.CompanyId == selectedLedgerId && bs.VochType == 2 && bs.VochNo == 0 && bs.TranctDate == TransDate).ToList();
 
                     foreach (var billSummaryToUpdate in billSummariesToUpdate)
                     {
-                        billSummaryToUpdate.IsActive = false;
+                        billSummaryToUpdate.IsActive = 0;
                     }
 
 
@@ -793,7 +793,7 @@ namespace SutraPlus_DAL.Repository
                         Mark = data["Mark"] ?? 0,
                         CommodityId = data["CommodityId"] ?? 0,
                         CommodityName = data["CommodityName"] ?? 0,
-                        IsActive = true,
+                        IsActive = 1,
                         LedgerId = data["LedgerId"] ?? 0,
                         VochType = 2,
                         VochNo = 0,
@@ -859,7 +859,7 @@ namespace SutraPlus_DAL.Repository
                                                         i.VochType == 2 &&
                                                         i.VochNo == 0 &&
                                                         i.LedgerId == ledgerId &&
-                                                        i.IsActive == true &&
+                                                        i.IsActive == 1 &&
                                                         i.CommodityId == commodityId)
                                             .OrderBy(n=>n.LotNo).ToList();
 
@@ -916,7 +916,7 @@ namespace SutraPlus_DAL.Repository
 
                     var query = from a in _tenantDBContext.Inventory
                                 join b in _tenantDBContext.Ledgers on a.LedgerId equals b.LedgerId
-                                where a.VochNo == 0 && a.IsTender == 1 && a.IsActive == true && a.CompanyId == CompanyId
+                                where a.VochNo == 0 && a.IsTender == 1 && a.IsActive == 1 && a.CompanyId == CompanyId
                                 group new { a, b } by new { a.TranctDate, b.LedgerName } into g
                                 select new
                                 {
@@ -1046,7 +1046,7 @@ namespace SutraPlus_DAL.Repository
 
 
                     var toShowInventory = _tenantDBContext.Inventory
-                        .Where(i => i.IsActive == true &&
+                        .Where(i => i.IsActive == 1 &&
                                     i.VochType == 2 &&
                                     i.VochNo == 0 && 
                                     i.CompanyId == selectedCompanyId &&
@@ -1200,7 +1200,7 @@ namespace SutraPlus_DAL.Repository
                                i.VochType == 2 &&
                                i.VochNo == 0 &&
                                i.LedgerId == ledgerId &&
-                               i.IsActive == true &&
+                               i.IsActive == 1 &&
                                i.CommodityId == commodityId)
                    .FirstOrDefault();
                        
@@ -1408,7 +1408,7 @@ namespace SutraPlus_DAL.Repository
 
                 
                     var toShowInventory = _tenantDBContext.Inventory
-                        .Where(i => i.IsActive == true &&
+                        .Where(i => i.IsActive == 1 &&
                                     i.VochType == 2 &&
                                     i.VochNo == 0 &&
                                     i.TranctDate == selectedDate &&
@@ -1615,7 +1615,7 @@ namespace SutraPlus_DAL.Repository
             // New fields for TCS
             companyEntity.Tcsreq = data.Value<int>("TCSREQ");
             companyEntity.TcsreqinReceipt = data.Value<int>("TCSREQinReceipt");
-            companyEntity.IsActive = true;
+            companyEntity.IsActive = 1;
 
             _tenantDBContext.SaveChanges();
         }
@@ -1629,7 +1629,7 @@ namespace SutraPlus_DAL.Repository
                 _tenantDBContext.SaveChanges();
             }
 
-            companyEntity.IsActive = true;
+            companyEntity.IsActive = 1;
             _tenantDBContext.SaveChanges();
         }
 

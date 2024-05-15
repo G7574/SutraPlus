@@ -53,6 +53,11 @@ import { CommonReportGeneratorComponent } from './components/common-report-gener
 import { GoodsInvoicePrintViewComponent } from './components/sales/goods-invoice/goods-invoice-print-view/goods-invoice-print-view.component';
 import { VerifyBillsComponent } from './components/purchase/verify-bills/verify-bills.component';
 import { EditVerifyBillComponent } from './components/purchase/edit-verify-bill/edit-verify-bill.component';
+import { PrintAkadaComponent } from './components/print-akada/print-akada.component';
+import { DaySummaryComponent } from './components/day-summary/day-summary.component';
+import { AccountStatementComponent } from './components/account-statement/account-statement.component';
+import { TrialBalanceComponent } from './components/trial-balance/trial-balance.component';
+import { TransactionSummaryComponent } from './components/transaction-summary/transaction-summary.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent },
@@ -87,12 +92,17 @@ const routes: Routes = [
   { path: 'reports', component: ReportsMainComponent },
   { path: 'ItemWise', component: ItemWiseReportComponent },
   { path: 'ReportGenerator', component: CommonReportGeneratorComponent  },
+  { path: 'TrialBalance', component: TrialBalanceComponent  },
+  { path: 'TransactionSummary', component: TransactionSummaryComponent  },
+  { path: 'AccountStatement', component: AccountStatementComponent  },
+  { path: 'PrintAkada', component: PrintAkadaComponent },
   { path: 'GoodsInvoicePrintView', component: GoodsInvoicePrintViewComponent  },
   { path: 'ItemWiseReportView', component: ItemWiseReportViewComponent },
   { path: 'PartyWiseCaseReport', component: PartyWiseCaseReportComponent },
   { path: 'PartyWiseCommHamali', component: PartyWiseCommHamaliComponent },
   { path: 'PaymentList', component: PaymentListComponent },
   { path: 'TDSReport',component: TDSReportComponent },
+  { path: 'DaySummary',component: DaySummaryComponent },
   { path: 'PrintPartyReport', component: PrintPartyReportComponent },
   { path: 'ListAndRegisters', component: ListAndRegistersComponent },
   { path: 'MonthWise', component: MonthWiseReportComponent },

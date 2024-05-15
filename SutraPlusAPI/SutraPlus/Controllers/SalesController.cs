@@ -64,6 +64,23 @@ namespace SutraPlus.Controllers
             }
         }
 
+        [HttpPost("GetInvtypeForCalculation")]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetInvtypeForCalculation([FromBody] JObject Data)
+        {
+            try
+            {
+                var result = _salesService.GetInvtypeForCalculation(Data);
+                return Ok(result);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost("GetEinvoiceKey")]
         [AllowAnonymous]
         public async Task<ActionResult> GetEinvoiceKey([FromBody] JObject Data)

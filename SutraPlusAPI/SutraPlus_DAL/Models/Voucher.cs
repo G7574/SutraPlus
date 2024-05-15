@@ -51,7 +51,7 @@ namespace SutraPlus_DAL.Models
         public int? IsDperc { get; set; }
         public int? QuantraDone { get; set; }
         public int? IsHide { get; set; }
-        public bool? IsActive { get; set; }
+        public int? IsActive { get; set; }
         public int? IsPayToGarmer { get; set; }
     }
 }

@@ -1,0 +1,163 @@
+<form class="row justify-content-center mb-4 form-to-hide">
+
+  <!-- <div class="col-md-1" style="visibility: collapse;">
+    <label for="dropdown" style="padding-top: 10px;">Group Name:</label>
+  </div>
+
+  <div class="col-md-3" style="visibility: collapse;">
+    <select class="form-control" id="dropdown" (change)="onChange($event)">
+      <option value="">-- Select GroupName --</option>
+      <option *ngFor="let option of groupNameList" [value]="option">{{ option }}</option>
+    </select>
+  </div> -->
+
+  <div class="col-md-3">
+    <div style="display: flex; align-items: center">
+      <label for="startDate" style="margin-right: 10px">From:</label>
+      <div class="input-group">
+        <input
+          class="form-control"
+          placeholder="yyyy-mm-dd"
+          name="dp"
+          [(ngModel)]="startDate"
+          ngbDatepicker
+          #da="ngbDatepicker"
+          [minDate]="minYear"
+          [maxDate]="maxYear"
+          readonly
+        />
+        <button class="btn btn-outline-secondary bi bi-calendar3" (click)="da.toggle()" type="button"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-2">
+    <div style="display: flex; align-items: center">
+      <label for="endDate" style="margin-right: 10px">To:</label>
+      <div class="input-group">
+        <input
+          class="form-control"
+          placeholder="yyyy-mm-dd"
+          name="dp"
+          [(ngModel)]="endDate"
+          ngbDatepicker
+          #d="ngbDatepicker"
+          [minDate]="minYear1"
+          [maxDate]="maxYear1"
+          readonly
+        />
+        <button class="btn btn-outline-secondary bi bi-calendar3" (click)="d.toggle()" type="button"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-2">
+    <button type="submit" class="btn btn-dark" (click)="onSubmit()" style="font-size: 11px; width: 100%;">
+      Submit
+    </button>
+  </div>
+
+</form>
+<c-row>
+  <c-col md="12">
+      <c-card class="my-3">
+          <c-card-body class="p-3">
+              <div class="table-responsive">
+
+                  <table [striped]="true" [responsive]="true" cTable>
+                      <thead>
+                          <tr>
+                              <th scope="col">S.No </th>
+                              <th scope="col">Party Name</th>
+                              <th scope="col">Place</th>
+                              <th scope="col" class="text-center">Opening Balance - Cr </th>
+                              <th scope="col" class="text-center">Opening Balance - Dr </th>
+                              <th scope="col" class="text-center">Credit </th>
+                              <th scope="col" class="text-center">Debit </th>
+                              <th scope="col" class="text-center">Closing Balance - Cr </th>
+                              <th scope="col" class="text-center">Closing Balance - Dr </th>
+                          </tr>
+                      </thead>
+
+                      <tbody>
+                        <ng-container *ngFor="let group of invoiceList; let groupIndex = index;">
+                          <tr *ngFor="let item of group.Data; let i = index;">
+                            <td> {{item.counter}} </td>
+                            <td>{{item.LedgerName || '-'}}</td>
+                            <td>{{item.Place || '-'}}</td>
+
+                            <td>
+                              <div *ngIf="item.OpeningBalance > 0">{{item.OpeningBalance}}</div>
+                              <div *ngIf="item.OpeningBalance < 0">--</div>
+                            </td>
+                            <td>
+                              <div *ngIf="item.OpeningBalance > 0">--</div>
+                              <div *ngIf="item.OpeningBalance < 0">{{item.OpeningBalance * -1}}</div>
+                            </td>
+
+                            <td>{{item.Credit || '-'}}</td>
+                            <td>{{item.Debit || '-'}}</td>
+
+                            <td>
+                              <div *ngIf="item.Balance > 0">{{item.Balance}}</div>
+                              <div *ngIf="item.Balance < 0">--</div>
+                            </td>
+                            <td>
+                              <div *ngIf="item.Balance > 0">--</div>
+                              <div *ngIf="item.Balance < 0">{{item.Balance * -1}}</div>
+                            </td>
+                          </tr>
+
+                          <!-- <tr>
+                            <td *ngIf="temp == ''" colspan="3"> <span style="font-weight: bold;"> Sub-Total </span> </td>
+                            <td *ngIf="temp != ''" colspan="3"> <span style="font-weight: bold;"> Grand-Total </span> </td>
+                            <td style="font-weight: bold;">{{calculateCredit(group.Data).toFixed(2)}}</td>
+                            <td style="font-weight: bold;">{{calculateDebit(group.Data).toFixed(2)}}</td>
+                          </tr> -->
+                        </ng-container>
+
+                        <tr *ngIf="temp == ''">
+                          <td colspan="3"> <span style="font-weight: bolder;"> Grand Total </span> </td>
+
+                          <td style="font-weight: bolder;">{{calculateOpeningCreditSum() || "--"}}</td>
+                          <td style="font-weight: bolder;">{{calculateOpeningDebitSum() || "--"}}</td>
+
+                          <td style="font-weight: bolder;">{{calculateTotalCreditSum() || "--"}}</td>
+                          <td style="font-weight: bolder;">{{calculateTotalDebitSum() || "--"}}</td>
+
+                          <td style="font-weight: bolder;">{{grandTotalCredit || "--"}}</td>
+                          <td style="font-weight: bolder;">{{grandTotalDebit || "--"}}</td>
+                        </tr>
+
+                      </tbody>
+
+
+                  </table>
+
+              </div>
+
+              <div class="text-center text-dark" *ngIf="invoiceList.length===0">
+                  No Records Found
+              </div>
+
+              <div class="d-flex justify-content-end align-items-center" *ngIf="invoiceList">
+                <ul class="pagination">
+                    <li [ngClass]="[pages[0]===1&&commonService.gettotalPages(totalInvoice)>5 ? 'disabled' : '']"
+                        (click)="pageNumber>1 ? previous() : '' " class="page-item"><a
+                            [ngClass]="[pageNumber===1 ? 'disabled' : '' , pages[0]===1&&commonService.gettotalPages(totalInvoice)>5 ? 'disabled' : '']"
+                            class="page-link">Previous</a></li>
+                    <li (click)="changePage(data)" *ngFor="let data of pages" class="page-item">
+                        <a [ngClass]="[pageNumber===data ? 'active-page' : '']"
+                            class="page-link">{{data}}</a></li>
+                    <li [ngClass]="[pageNumber===commonService.gettotalPages(totalInvoice) ? 'disabled' : '', commonService.gettotalPages(totalInvoice)===pages[commonService.getLastIndex(pages)] ? 'disabled' : '']"
+                        (click)="pageNumber<commonService.gettotalPages(totalInvoice) ? next() : '';"
+                        class="page-item"><a
+                            [ngClass]="[pageNumber===commonService.gettotalPages(totalInvoice) ? 'disabled' : '', commonService.gettotalPages(totalInvoice)===pages[commonService.getLastIndex(pages)] ? 'disabled' : '']"
+                            class="page-link">Next</a></li>
+                </ul>
+            </div>
+
+          </c-card-body>
+      </c-card>
+  </c-col>
+</c-row>

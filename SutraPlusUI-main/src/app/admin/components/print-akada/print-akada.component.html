@@ -1,0 +1,108 @@
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+
+<form class="row justify-content-center mb-4 form-to-hide">
+  <div class="col-md-2">
+    <div style="display: flex; align-items: center;">
+      <label for="date" style="margin-right: 10px">Date:</label>
+      <!-- <input type="date" id="date" name="date" class="form-control" [value]="date" (change)="onStartDateChange($event)" /> -->
+      <div class="input-group">
+        <input
+          class="form-control"
+          placeholder="yyyy-mm-dd"
+          name="dp"
+          [(ngModel)]="date"
+          ngbDatepicker
+          #da="ngbDatepicker"
+          [minDate]="minYear"
+          [maxDate]="maxYear"
+          readonly
+        />
+        <button class="btn btn-outline-secondary bi bi-calendar3" (click)="da.toggle()" type="button"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-2">
+    <div style="display: flex; align-items: center;">
+      <button class="btn btn-dark" (click)="search()"> Submit </button>
+    </div>
+  </div>
+
+  <div class="col-md-2">
+
+      <!-- <label cLabel style="width: 100%">Mark :
+      </label> -->
+      <ng-select #party (keyup)="getPartyList(party.searchTerm)" [items]="partyList"
+                bindLabel="ledgerName" bindValue="ledgerId" formControlName="DrpParty"
+                placeholder="Select Mark">
+        <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+          <div class="item">
+            <div (click)="onClickTest($event, item)">
+              {{ item }}
+            </div>
+          </div>
+        </ng-template>
+      </ng-select>
+
+  </div>
+
+  <div class="col-md-2">
+      <button class="btn btn-dark" (click)="print()"> Print </button>
+  </div>
+
+  <div class="col-md-2">
+      <button class="btn btn-dark" (click)="exportAsExcel()"> To Excel </button>
+  </div>
+
+</form>
+<c-row>
+    <c-col md="12">
+        <c-card class="my-3">
+            <c-card-header>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Akada Details <span class="badge badge-primary">{{totalInvoice}}</span>
+                    </h6>
+
+                </div>
+            </c-card-header>
+            <c-card-body class="p-3">
+                <div class="table-responsive">
+                    <table [striped]="true" [responsive]="true" cTable>
+                        <thead>
+                            <tr>
+                                <th scope="col" class="text-center">Sr.&nbsp;No.</th>
+                                <th scope="col">Party&nbsp;Name</th>
+                                <th scope="col">Lot&nbsp;No.</th>
+                                <th scope="col">Mark</th>
+                                <th scope="col">Bags</th>
+                                <th scope="col">Weight</th>
+                                <th scope="col">Rate</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Individual Weights</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of invoiceList; let i = index;">
+                                <td class="text-center">{{10 *(pageNumber-1)+i+1}}</td>
+                                <td>{{item.PartyName || '-'}}</td>
+                                <td>{{item.LotNo || '-'}}</td>
+                                <td>{{item.Mark}}</td>
+                                <td>{{item.NoOfBags}}</td>
+                                <td>{{item.TotalWeight}}</td>
+                                <td>{{item.Rate}}</td>
+                                <td>{{item.Amount.toFixed(2)}}</td>
+                                <td>{{item.Individualeights}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="text-center text-dark" *ngIf="invoiceList.length===0">
+                    No Records Found
+                </div>
+
+
+            </c-card-body>
+        </c-card>
+    </c-col>
+</c-row>

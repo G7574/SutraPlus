@@ -242,6 +242,11 @@ export const navItems: INavData[] = [
         url: 'admin/ReportGenerator',
         linkProps: { queryParams: { ReportName: 'ReportGenerator' } },
       },
+      {
+        name: 'PrintAkada',
+        url: 'admin/PrintAkada',
+        linkProps: { queryParams: { ReportName: 'PrintAkada' } },
+      },
       // {
       //   name: 'Item Wise',
       //   url: 'admin/ItemWise',
@@ -263,18 +268,19 @@ export const navItems: INavData[] = [
       //   url: 'admin/PartyWiseCommHamali',
       //   linkProps: { queryParams: { ReportName: 'Party Wise Comm Hamali Report' } },
       // },
-      {
-        name: 'Print Party Report',
-        url: 'admin/PrintPartyReport',
-        linkProps: { queryParams: { ReportName: 'Print Party Report' } },
-      },
+      // {
+      //   name: 'Print Party Report',
+      //   url: 'admin/PrintPartyReport',
+      //   linkProps: { queryParams: { ReportName: 'Print Party Report' } },
+      // },
       {
         name: 'Day Summary',
-
+        url: 'admin/DaySummary',
+        linkProps: { queryParams: { ReportName: 'DaySummary' } },
       },
       {
         name: 'Account Statement',
-
+        url: 'admin/AccountStatement'
       },
       {
         name: 'Print Day Book',
@@ -282,11 +288,11 @@ export const navItems: INavData[] = [
       },
       {
         name: 'Transaction Summary',
-
+        url: 'admin/TransactionSummary'
       },
       {
         name: 'Trial Balance',
-
+        url: 'admin/TrialBalance'
       },
       {
         name: 'Trial Balance (Without Auto Grouping)',

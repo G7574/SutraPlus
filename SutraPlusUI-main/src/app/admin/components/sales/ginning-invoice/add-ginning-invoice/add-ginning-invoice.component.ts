@@ -716,7 +716,7 @@ export class AddGinningInvoiceComponent implements OnInit {
           "DealerType": this.dealerType,
           "PAN": this.PANNumber,
           "GST": this.getParty.value.gst,
-          "InvoiceType": "SalesGinning", //refer all types of invoice 
+          "InvoiceType": "SalesGinning", //refer all types of invoice
           "InoviceNo": this.getParty.value.invoiceNo,
           "State": this.defaultState,
           "ExpenseName1": this.ExpenseName1,
